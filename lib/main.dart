@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'src/config/app_config.dart';
 
 void main() {
-  runApp(MyApp());
+  var configuredApp = new AppConfig(
+    appName: 'Restfulness Dev',
+    build: 'development',
+    apiBaseUrl: 'http://localhost:5000/',
+    child:  MyApp(),
+  );
+
+  runApp(configuredApp);
 }
 
 class MyApp extends StatelessWidget {
