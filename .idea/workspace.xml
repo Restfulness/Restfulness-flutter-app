@@ -2,12 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="480b7949-5166-4511-984a-4641d1456d56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/src/app.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/src/config/app_config.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/src/resources/authorization_api_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/restApi.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/blocs/authentication/auth_bloc.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/blocs/authentication/auth_provider.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/blocs/authentication/auth_validator.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/models/login_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/models/sighup_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/models/user_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/resources/authorization_db_provider.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/resources/repository.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/screens/decision_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/screens/login_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/screens/main_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/screens/register_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main_prod.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main_prod.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/app.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/resources/authorization_api_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/resources/authorization_api_provider.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
@@ -20,6 +33,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="module-info" />
         <option value="Dart File" />
       </list>
     </option>
@@ -73,22 +87,22 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="499" y="164" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.834@0.0.1536.834" timestamp="1602236722458" />
-    <state width="1491" height="213" key="GridCell.Tab.0.bottom" timestamp="1602237429354">
+    <state width="1491" height="217" key="GridCell.Tab.0.bottom" timestamp="1602345569498">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1491" height="213" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1602237429354" />
-    <state width="1491" height="213" key="GridCell.Tab.0.center" timestamp="1602237429354">
+    <state width="1491" height="217" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1602345569498" />
+    <state width="1491" height="217" key="GridCell.Tab.0.center" timestamp="1602345569497">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1491" height="213" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1602237429354" />
-    <state width="1491" height="213" key="GridCell.Tab.0.left" timestamp="1602237429354">
+    <state width="1491" height="217" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1602345569497" />
+    <state width="1491" height="217" key="GridCell.Tab.0.left" timestamp="1602345569497">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1491" height="213" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1602237429354" />
-    <state width="1491" height="213" key="GridCell.Tab.0.right" timestamp="1602237429354">
+    <state width="1491" height="217" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1602345569497" />
+    <state width="1491" height="217" key="GridCell.Tab.0.right" timestamp="1602345569498">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state width="1491" height="213" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1602237429354" />
+    <state width="1491" height="217" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1602345569498" />
     <state x="478" y="128" key="RollbackChangesDialog" timestamp="1602236605216">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
@@ -105,5 +119,9 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="500" y="249" key="git4idea.ui.GitUnstashDialog/0.0.1536.834@0.0.1536.834" timestamp="1602236396832" />
+    <state x="47" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1602342743248">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="47" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1602342743248" />
   </component>
 </project>
