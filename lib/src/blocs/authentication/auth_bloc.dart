@@ -45,7 +45,7 @@ class AuthBloc extends Object with AuthValidator {
     final validPassword = _passwordLogin.value;
 
     /// login
-    Repository user = new Repository();
+    Repository user = new Repository(context);
     await user.initialization;
     final response =
         await user.login(validUsername, validPassword); //TODO  need response handler

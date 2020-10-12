@@ -1,15 +1,23 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' show Client;
+import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/models/sighup_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 
-final String _rootUrl =
-    "http://localhost:5000"; //TODO need to get from context
+
+String _rootUrl ;
 
 class AuthorizationApiProvider implements Source {
   Client client = new Client();
+
+
+  void setAppUrl(BuildContext context){
+    var config = AppConfig.of(context);
+    _rootUrl = config.apiBaseUrl;
+  }
 
   Future<UserModel> login(String username, String password) async {
     final response = await client.post(

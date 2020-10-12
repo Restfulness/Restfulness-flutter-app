@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -6,6 +7,7 @@ import 'authorization_db_provider.dart';
 
 class Repository {
   Future _doneFuture;
+  AuthorizationApiProvider apiProvider = new AuthorizationApiProvider();
 
   List<Source> sources = <Source>[
     authorizationDbProvide,
@@ -14,8 +16,9 @@ class Repository {
 
   List<Cache> caches = <Cache>[authorizationDbProvide];
 
-  Repository() {
+  Repository(BuildContext context) {
     _doneFuture = authorizationDbProvide.init();
+    apiProvider.setAppUrl(context);
   }
 
   Future<UserModel> login(String username, String password) async {
