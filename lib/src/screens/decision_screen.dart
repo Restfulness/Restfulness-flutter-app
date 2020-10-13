@@ -31,10 +31,6 @@ class _DecisionScreenState extends State<DecisionScreen> {
           _redirectToPage(context, MainScreen());
         }
       }
-
-      setState(() {
-        //_state = result.username;
-      });
     });
   }
 

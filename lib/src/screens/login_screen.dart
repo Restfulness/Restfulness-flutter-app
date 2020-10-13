@@ -20,11 +20,12 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
-        body: buildBody(bloc,context),
+        body: buildBody(bloc, context),
       ),
     );
   }
-  buildBody(AuthBloc bloc,BuildContext context) {
+
+  buildBody(AuthBloc bloc, BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
 
     return SingleChildScrollView(
@@ -45,7 +46,7 @@ class LoginScreen extends StatelessWidget {
             Container(margin: EdgeInsets.only(top: 20.0)),
             loginAndForgotPassButtons(bloc),
             Container(margin: EdgeInsets.only(top: 20.0)),
-            buildSignUpButton(context,bloc),
+            buildSignUpButton(context, bloc),
           ],
         ),
       ),
@@ -58,13 +59,13 @@ class LoginScreen extends StatelessWidget {
       child: Text(
         "Welcome To Restfulness",
         textAlign: TextAlign.left,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0 ,color: Colors.blue),
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 26.0, color: Colors.blue),
       ),
     );
   }
 
   Widget usernameField(AuthBloc bloc) {
-
     return StreamBuilder(
       stream: bloc.usernameLogin,
       builder: (context, snapshot) {
@@ -103,7 +104,7 @@ class LoginScreen extends StatelessWidget {
             ),
             border: OutlineInputBorder(),
             labelText: "Password",
-            hintText: "strong password",
+            hintText: "password",
             errorText: snapshot.error,
           ),
         );
@@ -146,9 +147,8 @@ class LoginScreen extends StatelessWidget {
                 disabledTextColor: Colors.white,
                 onPressed: snapshot.hasData
                     ? () {
-                  bloc.submitLogin(context);
-
-                }
+                        bloc.submitLogin(context);
+                      }
                     : null,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
@@ -182,7 +182,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget buildSignUpButton(BuildContext context,AuthBloc bloc) {
+  Widget buildSignUpButton(BuildContext context, AuthBloc bloc) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ButtonTheme(
