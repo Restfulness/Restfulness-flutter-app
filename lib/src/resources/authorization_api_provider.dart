@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' show Client;
 import 'package:restfulness/src/config/app_config.dart';
-import 'package:restfulness/src/models/sighup_model.dart';
+import 'package:restfulness/src/models/signup_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 
@@ -50,9 +51,9 @@ class AuthorizationApiProvider implements Source {
       body: jsonEncode(
           <String, String>{'password': username, 'username': password}),
     );
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       return SignUpModel.fromJson(data);
     }
     return null; // TODO check http response to handling result

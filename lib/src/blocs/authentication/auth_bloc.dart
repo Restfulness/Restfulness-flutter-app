@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/screens/main_screen.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,11 +14,9 @@ class AuthBloc extends Object with AuthValidator {
   final _passwordSignUp = BehaviorSubject<String>();
 
   // Stream
-  Observable<String> get usernameLogin =>
-      _usernameLogin.stream.transform(validUsername);
+  Observable<String> get usernameLogin => _usernameLogin.stream;
 
-  Observable<String> get passwordLogin =>
-      _passwordLogin.stream.transform(validPassword);
+  Observable<String> get passwordLogin => _passwordLogin.stream;
 
   Observable<bool> get submitButtonLogin =>
       Observable.combineLatest2(usernameLogin, passwordLogin, (e, p) => true);
@@ -47,8 +46,8 @@ class AuthBloc extends Object with AuthValidator {
     /// login
     Repository user = new Repository(context);
     await user.initialization;
-    final response =
-        await user.login(validUsername, validPassword); //TODO  need response handler
+    final response = await user.login(
+        validUsername, validPassword); //TODO  need response handler
 
     if (response != null) {
       _redirectToPage(context, MainScreen());
@@ -64,7 +63,26 @@ class AuthBloc extends Object with AuthValidator {
     final validUsername = _usernameSignUp.value.toLowerCase();
     final validPassword = _passwordSignUp.value;
 
-    /// Sign-up
+    /// Sign-up  TODO refactor signUp after Restfulness api changed
+    AuthorizationApiProvider userSignUp = new AuthorizationApiProvider();
+
+    final response = await userSignUp.signUp(
+        validUsername, validPassword); //TODO  need response handler
+    if (response != null) {
+      /// login
+      Repository user = new Repository(context);
+      await user.initialization;
+      final response = await user.login(
+          validUsername, validPassword); //TODO  need response handler
+
+      if (response != null) {
+        _redirectToPage(context, MainScreen());
+      }
+    } else {
+      _usernameSignUp.sink.addError('Username exists');
+    }
+
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   Future<void> _redirectToPage(BuildContext context, Widget page) async {
