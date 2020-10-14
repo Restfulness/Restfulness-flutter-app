@@ -8,14 +8,12 @@ import 'package:restfulness/src/models/signup_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 
-
-String _rootUrl ;
+String _rootUrl;
 
 class AuthorizationApiProvider implements Source {
   Client client = new Client();
 
-
-  void setAppUrl(BuildContext context){
+  void setAppUrl(BuildContext context) {
     var config = AppConfig.of(context);
     _rootUrl = config.apiBaseUrl;
   }
@@ -27,7 +25,7 @@ class AuthorizationApiProvider implements Source {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(
-          <String, String>{'password': username, 'username': password}),
+          <String, String>{'username': username, 'password': password}),
     );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -49,7 +47,7 @@ class AuthorizationApiProvider implements Source {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(
-          <String, String>{'password': username, 'username': password}),
+          <String, String>{'username': username, 'password': password}),
     );
 
     if (response.statusCode == 200) {
