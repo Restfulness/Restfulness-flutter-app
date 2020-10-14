@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:restfulness/src/models/signup_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'authorization_db_provider.dart';
 
