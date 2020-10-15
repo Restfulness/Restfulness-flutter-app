@@ -18,7 +18,7 @@ void main() {
   });
 
   test("Test Login api if username and password is correct", () async {
-    apiProvider.client = MockClient((request) async {
+    apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLoginResponse), 200);
     });
 
@@ -27,16 +27,20 @@ void main() {
   });
 
   test("Test Login api if username or password is not correct", () async {
-    apiProvider.client = MockClient((request) async {
+    apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLoginFailedResponse), 401);
     });
 
-    final user = await apiProvider.login("wrong", "wrong");
-    expect(user, null);//TODO need refactoring after HTTP request handler is implemented
+    try {
+      await apiProvider.login("wrong", "wrong");
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Bad username or password");
+    }
   });
 
   test("Test SignUp api if username is not exists", () async {
-    apiProvider.client = MockClient((request) async {
+    apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeSignUpResponse), 200);
     });
 
@@ -45,11 +49,15 @@ void main() {
   });
 
   test("Test SignUp api if username is exists", () async {
-    apiProvider.client = MockClient((request) async {
+    apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeSignUpFailedResponse), 403);
     });
 
-    final user = await apiProvider.signUp("test", "test");
-    expect(user, null);
+    try {
+      await apiProvider.signUp("test", "test");
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Username exists");
+    }
   });
 }

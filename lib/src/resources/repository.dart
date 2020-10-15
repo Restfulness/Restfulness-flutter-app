@@ -8,11 +8,6 @@ class Repository {
   Future _doneFuture;
   AuthorizationApiProvider apiProvider = new AuthorizationApiProvider();
 
-  List<Source> sources = <Source>[
-    authorizationDbProvide,
-    AuthorizationApiProvider(),
-  ];
-
   List<Cache> caches = <Cache>[authorizationDbProvide];
 
   Repository(BuildContext context) {
@@ -23,25 +18,13 @@ class Repository {
   Future<UserModel> login(String username, String password) async {
     UserModel user;
 
-    var source;
-    for (source in sources) {
-      user = await source.login(username, password);
-      if (user != null) {
-        break;
-      }
-    }
-
-    for (Cache cache in caches) {
-      if (cache != source && user !=
-          null) { // TODO check http response in AuthorizationApiProvider to handling exception(should remove user != null )
-        cache.addUser(user);
-      }
+    user = await apiProvider.login(username, password);
+    if (user != null) {
+      caches[0].addUser(user);
     }
 
     return user;
   }
-
-
 
   Future<UserModel> currentUser() async {
     UserModel user;
