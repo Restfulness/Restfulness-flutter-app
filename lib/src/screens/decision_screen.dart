@@ -16,18 +16,17 @@ class _DecisionScreenState extends State<DecisionScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      //TODO: init
       final repository = new Repository(context);
-      await repository.initialization;
+      await repository.initializationAuth;
 
-      final user = await repository.currentUser(); //TODO need response handler
+      final user = await repository.currentUser();
 
       if (user == null) {
         _redirectToPage(context, LoginScreen());
       } else {
-        repository.clearCache();
-        final userLogin = await repository.login(user.username, user.password); //TODO need response handler
-        if(userLogin != null){
+        repository.clearUserCache();
+        final userLogin = await repository.login(user.username, user.password);
+        if(userLogin.accessToken.isNotEmpty){
           _redirectToPage(context, MainScreen());
         }
       }

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' show Client;
 import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/signup_model.dart';
@@ -9,11 +7,11 @@ import 'package:restfulness/src/resources/repository.dart';
 
 String _rootUrl;
 
-class AuthorizationApiProvider implements Source {
+class AuthorizationApiProvider implements UserSource {
 
   ApiHelper apiHelper = ApiHelper();
 
-  void setAppUrl(BuildContext context) {
+  void init(BuildContext context) {
     var config = AppConfig.of(context);
     _rootUrl = config.apiBaseUrl;
   }

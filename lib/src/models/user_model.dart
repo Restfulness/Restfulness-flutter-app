@@ -4,7 +4,7 @@ class UserModel {
   String password;
   String accessToken;
 
-  UserModel.fromJson(Map<String ,dynamic> parsedJson){
+  UserModel.fromJson(Map<String, dynamic> parsedJson) {
     username = parsedJson['username'];
     password = parsedJson['password'];
     accessToken = parsedJson['accessToken'];
@@ -16,10 +16,10 @@ class UserModel {
     accessToken = parsedJson['accessToken'];
   }
 
-  Map<String , dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
-      'id' : id,
-      'username':username,
+      'id': id,
+      'username': username,
       'password': password,
       'accessToken': accessToken,
     };
