@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'repository.dart';
 
-class AuthorizationDBProvider implements Source, Cache {
+class AuthorizationDBProvider implements Cache {
   Database db;
 
   Future<Database> init() async {
@@ -30,20 +30,6 @@ class AuthorizationDBProvider implements Source, Cache {
     return db;
   }
 
-  Future<UserModel> login(String username, String password) async {
-    final maps = await db.query(
-      "User",
-      columns: null,
-      where: "username = ? and password = ?",
-      whereArgs: [username, password],
-    );
-
-    if (maps.length > 0) {
-      return UserModel.fromDB(maps.first);
-    }
-    return null;
-  }
-
   Future<UserModel> currentUser() async {
     print("query $db");
     final maps = await db.query(
@@ -60,6 +46,7 @@ class AuthorizationDBProvider implements Source, Cache {
   }
 
   Future<int> addUser(UserModel userModel) {
+    //TODO hash password before saving
     return db.insert("User", userModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.ignore);
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
@@ -46,14 +48,16 @@ class AuthBloc extends Object with AuthValidator {
     /// login
     Repository user = new Repository(context);
     await user.initialization;
-    final response = await user.login(
-        validUsername, validPassword); //TODO  need response handler
 
-    if (response != null) {
-      _redirectToPage(context, MainScreen());
-    } else {
-      _usernameLogin.sink.addError('Bad username or password');
-      _passwordLogin.sink.addError('Bad username or password');
+    try {
+      final response = await user.login(validUsername, validPassword);
+      if (response.accessToken.isNotEmpty) {
+        _redirectToPage(context, MainScreen());
+      }
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      _usernameLogin.sink.addError(jsonData["msg"]);
+      _passwordLogin.sink.addError(jsonData["msg"]);
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
@@ -66,20 +70,20 @@ class AuthBloc extends Object with AuthValidator {
     /// Sign-up  TODO refactor signUp after Restfulness api changed
     AuthorizationApiProvider userSignUp = new AuthorizationApiProvider();
 
-    final response = await userSignUp.signUp(
-        validUsername, validPassword); //TODO  need response handler
-    if (response != null) {
-      /// login
-      Repository user = new Repository(context);
-      await user.initialization;
-      final response = await user.login(
-          validUsername, validPassword); //TODO  need response handler
+    try {
+      final response = await userSignUp.signUp(validUsername, validPassword);
+      if (response.username.isNotEmpty) {
+        Repository user = new Repository(context);
+        await user.initialization;
 
-      if (response != null) {
-        _redirectToPage(context, MainScreen());
+        final response = await user.login(validUsername, validPassword);
+        if (response.accessToken.isNotEmpty) {
+          _redirectToPage(context, MainScreen());
+        }
       }
-    } else {
-      _usernameSignUp.sink.addError('Username exists');
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      _usernameSignUp.sink.addError(jsonData["msg"]);
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
