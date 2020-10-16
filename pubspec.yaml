@@ -33,6 +33,7 @@ dependencies:
   path_provider: ^0.4.1
   rxdart: ^0.22.0
   mockito: ^4.1.2
+  material_design_icons_flutter: 4.0.5755
 
 dev_dependencies:
   flutter_test:

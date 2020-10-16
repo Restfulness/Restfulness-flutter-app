@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'repository.dart';
 
-class AuthorizationDBProvider implements Cache {
+class AuthorizationDBProvider implements UserCache {
   Database db;
 
   Future<Database> init() async {
@@ -67,4 +67,4 @@ class AuthorizationDBProvider implements Cache {
   }
 }
 
-final authorizationDbProvide = new AuthorizationDBProvider();
+final authorizationDbProvider = new AuthorizationDBProvider();

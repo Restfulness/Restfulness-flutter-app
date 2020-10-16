@@ -19,7 +19,7 @@ class ApiHelper {
     return responseJson;
   }
 
-  Future<dynamic> post(String url,{Map<String, String> headers, Map<String, String>  body} ) async {
+  Future<dynamic> post(String url,{Map<String, String> headers, Map<String, dynamic>  body} ) async {
     var responseJson;
     try {
       final response = await client.post(url, headers: headers, body: jsonEncode(body));
