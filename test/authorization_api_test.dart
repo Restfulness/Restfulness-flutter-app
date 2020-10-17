@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
+import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 
 const fakeLoginResponse = {"access_token": "string_token"};
@@ -14,6 +15,10 @@ void main() {
   AuthorizationApiProvider apiProvider;
 
   setUp(() {
+    AppConfig(
+        flavor: Flavor.DEV,
+        values: AppValues(apiBaseUrl: 'http://localhost:5000'));
+
     apiProvider = new AuthorizationApiProvider();
   });
 

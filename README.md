@@ -17,12 +17,10 @@ And if your are using Andriod Studio go to __pubspec.yaml__ file and click on __
 ## Usage
 Make sure you are implemented [Restfulness-core-api](https://github.com/Restfulness/Restfulness-core-api) and the server is running, then go to __main.dart__ and change __AppConfig__. if your server not running on localhost change __apiBaseUrl__ to your server IP
 ```dart
- var configuredApp = new AppConfig(
-   appName: 'Restfulness Dev',
-   build: 'development',
-   apiBaseUrl: 'http://localhost:5000',
-   child: App(),
-  );
+   AppConfig(
+      flavor: Flavor.DEV,
+      color: Colors.blue,
+      values: AppValues(apiBaseUrl: 'http://localhost:5000'));
 ```
 
 ## Contributing
