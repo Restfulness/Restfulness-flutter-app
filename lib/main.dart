@@ -4,11 +4,9 @@ import 'src/app.dart';
 import 'src/config/app_config.dart';
 
 void main() {
-  var configuredApp = new AppConfig(
-    appName: 'Restfulness Dev',
-    build: 'development',
-    apiBaseUrl: 'http://localhost:5000',
-    child: App(),
-  );
-  runApp(configuredApp);
+  AppConfig(
+      flavor: Flavor.DEV,
+      color: Colors.blue,
+      values: AppValues(apiBaseUrl: 'http://localhost:5000'));
+  runApp(App());
 }

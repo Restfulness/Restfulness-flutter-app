@@ -1,24 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 
-String _rootUrl;
 
 class LinkApiProvider implements LinkSource {
   ApiHelper apiHelper = ApiHelper();
-
-  void init(BuildContext context) async {
-    var config = AppConfig.of(context);
-    _rootUrl = config.apiBaseUrl;
-  }
 
   @override
   Future<LinkModel> insertLink(
       List<String> category, String url, String token) async {
     final response = await apiHelper.post(
-      "$_rootUrl/links/add",
+      "links/add",
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',

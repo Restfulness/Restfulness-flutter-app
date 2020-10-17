@@ -46,7 +46,7 @@ class AuthBloc extends Object with AuthValidator {
     final validPassword = _passwordLogin.value;
 
     /// login
-    Repository user = new Repository(context);
+    Repository user = new Repository();
     await user.initializationAuth;
 
     try {
@@ -73,7 +73,7 @@ class AuthBloc extends Object with AuthValidator {
     try {
       final response = await userSignUp.signUp(validUsername, validPassword);
       if (response.username.isNotEmpty) {
-        Repository user = new Repository(context);
+        Repository user = new Repository();
         await user.initializationAuth;
 
         final response = await user.login(validUsername, validPassword);

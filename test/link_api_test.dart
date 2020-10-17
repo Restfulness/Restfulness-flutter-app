@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
+import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
 
 const fakeLinkAddSuccess = {"id": 1};
@@ -16,10 +17,15 @@ void main() {
   LinkApiProvider apiProvider;
 
   setUp(() {
+    AppConfig(
+        flavor: Flavor.DEV,
+        values: AppValues(apiBaseUrl: 'http://localhost:5000'));
+
     apiProvider = new LinkApiProvider();
   });
 
   test("Test add link API if everything is correct", () async {
+
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLinkAddSuccess), 200);
     });

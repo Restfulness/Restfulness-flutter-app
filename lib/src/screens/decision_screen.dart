@@ -16,7 +16,7 @@ class _DecisionScreenState extends State<DecisionScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final repository = new Repository(context);
+      final repository = new Repository();
       await repository.initializationAuth;
 
       final user = await repository.currentUser();

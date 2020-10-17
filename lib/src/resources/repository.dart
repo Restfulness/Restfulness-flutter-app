@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
@@ -20,12 +21,9 @@ class Repository {
   ];
   List<LinkCache> linkCaches = <LinkCache>[linkDbProvide];
 
-  Repository(BuildContext context) {
+  Repository() {
     _doneInitForAuth = authorizationDbProvider.init();
     _doneInitForLinks = linkDbProvide.init();
-
-    authApiProvider.init(context);
-    linkApiProvider.init(context);
   }
 
   Future<UserModel> login(String username, String password) async {

@@ -28,7 +28,7 @@ class MainScreen extends StatelessWidget {
           final tags = value["tags"];
 
           if (value != null) {
-            Repository repository = new Repository(context);
+            Repository repository = new Repository();
             await repository.initializationLink;
 
             try {
