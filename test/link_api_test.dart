@@ -25,13 +25,12 @@ void main() {
   });
 
   test("Test add link API if everything is correct", () async {
-
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLinkAddSuccess), 200);
     });
 
-    final link =
-        await apiProvider.insertLink(["programming"], "http://github.com","token");
+    final link = await apiProvider.insertLink(
+        category: ["programming"], url: "http://github.com", token: "token");
     expect(link.id, 1);
   });
 
@@ -41,10 +40,12 @@ void main() {
     });
 
     try {
-      await apiProvider.insertLink(["programming"],"github", "token");
+      await apiProvider
+          .insertLink(category: ["programming"], url: "github", token: "token");
     } catch (e) {
       var jsonData = json.decode(e.toString());
-      expect(jsonData["msg"], "Link is not valid. Valid link looks like:http://example.com or https://example.com");
+      expect(jsonData["msg"],
+          "Link is not valid. Valid link looks like:http://example.com or https://example.com");
     }
   });
 
@@ -54,7 +55,8 @@ void main() {
     });
 
     try {
-      await apiProvider.insertLink(["programming"],"github", "wrongToken");
+      await apiProvider.insertLink(
+          category: ["programming"], url: "github", token: "wrongToken");
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Failed to add new link");

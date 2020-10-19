@@ -2,24 +2,61 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/src/blocs/link/links_bloc.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/widgets/create_link_preview_widget.dart';
+import 'package:restfulness/src/widgets/refresh.dart';
 
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bloc = LinksProvider.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Home "),
       ),
       floatingActionButton: new Builder(builder: (BuildContext context) {
-        return buildFloatingActionButton(context);
+        return buildFloatingActionButton(context, bloc);
       }),
-      body: Text("home"),
+      body: buildList(bloc),
     );
   }
 
-  Widget buildFloatingActionButton(BuildContext context) {
+  Widget buildList(LinksBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.links,
+        builder: (context, snapshot) {
+          if(snapshot.error != null){
+            WidgetsBinding.instance.addPostFrameCallback((_) => Scaffold.of(context).showSnackBar(new SnackBar(
+                content: new Text(snapshot.error),
+                duration: Duration(seconds: 2))));
+            return  CircularProgressIndicator(value:  0,);
+          }
+          if (!snapshot.hasData) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height / 1.3,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          return Refresh(
+            child: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, int index) {
+                CircularProgressIndicator(value: 0);
+                return CreateLinkPreviewWidget(url: snapshot.data[index].url);
+              },
+            ),
+          );
+        });
+  }
+
+  Widget buildFloatingActionButton(BuildContext context, LinksBloc bloc) {
     return FloatingActionButton(
       child: Icon(MdiIcons.plusThick),
       onPressed: () => {
@@ -44,6 +81,7 @@ class MainScreen extends StatelessWidget {
                       ],
                     ),
                     duration: Duration(seconds: 2)));
+                bloc.fetchLinks();
               }
             } catch (e) {
               Scaffold.of(context).showSnackBar(new SnackBar(

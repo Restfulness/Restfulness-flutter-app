@@ -6,16 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/exceptions/app_exceptions.dart';
 
-
 final String baseUrl = AppConfig.instance.values.apiBaseUrl;
 
 class ApiHelper {
   http.Client client = new http.Client();
 
-  Future<dynamic> get(String url) async {
+  Future<dynamic> get(String url, {Map<String, String> headers}) async {
     var responseJson;
     try {
-      final response = await client.get('$baseUrl/$url');
+      final response = await client.get('$baseUrl/$url', headers: headers);
       responseJson = _response(response);
     } on SocketException {
       throw FetchDataException("No Internet connection");
@@ -25,7 +24,6 @@ class ApiHelper {
 
   Future<dynamic> post(String url,
       {Map<String, String> headers, Map<String, dynamic> body}) async {
-
     var responseJson;
     try {
       final response = await client.post('$baseUrl/$url',
