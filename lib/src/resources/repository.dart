@@ -81,6 +81,14 @@ class Repository {
     return link;
   }
 
+  Future<bool> deleteLink(int id) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final links = linkSources[1].deleteLink(token: user.accessToken , id:id);
+
+    return links;
+  }
+
+
   clearLinkCache() async {
     await linkDbProvide.clear();
   }
@@ -105,6 +113,8 @@ abstract class UserCache {
 abstract class LinkSource {
   Future<LinkModel> insertLink(
       {List<String> category, String url, @required String token});
+
+  Future<bool> deleteLink({@required String token, int id});
 
   Future<List<LinkModel>> fetchAllLinks({@required String token});
 

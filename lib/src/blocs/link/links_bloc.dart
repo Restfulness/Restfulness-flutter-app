@@ -6,17 +6,18 @@ import 'package:rxdart/rxdart.dart';
 
 class LinksBloc {
   final _repository = new Repository();
-  final _links = BehaviorSubject<List<LinkModel>>();
+  final _fetchLinks = BehaviorSubject<List<LinkModel>>();
+
+
 
   // Stream
-  Observable<List<LinkModel>> get links => _links.stream;
-
+  Observable<List<LinkModel>> get links => _fetchLinks.stream;
   fetchLinks() async {
     try {
       final ids = await _repository.fetchAllLinks();
-      _links.sink.add(ids);
+      _fetchLinks.sink.add(ids);
     } catch (e) {
-      _links.sink.addError(json.decode(e.toString())["msg"]);
+      _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
     }
   }
 
@@ -25,6 +26,7 @@ class LinksBloc {
   }
 
   dispose() {
-    _links.close();
+    _fetchLinks.close();
+
   }
 }
