@@ -81,33 +81,6 @@ class CreateLinkPreviewWidget extends StatelessWidget {
           ],
         ),
         Positioned(
-          child: ButtonTheme(
-            minWidth: 1,
-            height: 40.0,
-            child: FlatButton(
-              child: Icon(
-                MdiIcons.trashCanOutline,
-                color: Colors.red,
-              ),
-              shape: CircleBorder(),
-              color: Colors.white,
-              onPressed: () async {
-                try {
-                  Repository repository = new Repository();
-                  final response = await repository.deleteLink(id);
-                  if (response) {
-                    showSnackBar(context, "Deleted successfully");
-                    bloc.fetchLinks();
-                  }
-                } catch (e) {
-                  showSnackBar(context, json.decode(e.toString())["msg"]);
-                }
-              },
-            ),
-          ),
-          right: 1,
-        ),
-        Positioned(
           child: Tags(
             itemCount: category.length,
             itemBuilder: (int index) {
@@ -123,7 +96,33 @@ class CreateLinkPreviewWidget extends StatelessWidget {
           top: 10,
           left: 10,
         ),
-
+            Positioned(
+              child: ButtonTheme(
+                minWidth: 1,
+                height: 40.0,
+                child: FlatButton(
+                  child: Icon(
+                    MdiIcons.trashCanOutline,
+                    color: Colors.red,
+                  ),
+                  shape: CircleBorder(),
+                  color: Colors.white,
+                  onPressed: () async {
+                    try {
+                      Repository repository = new Repository();
+                      final response = await repository.deleteLink(id);
+                      if (response) {
+                        showSnackBar(context, "Deleted successfully");
+                        bloc.fetchLinks();
+                      }
+                    } catch (e) {
+                      showSnackBar(context, json.decode(e.toString())["msg"]);
+                    }
+                  },
+                ),
+              ),
+              right: 1,
+            ),
         ],
       ),
     ),);
