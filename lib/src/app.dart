@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'blocs/authentication/auth_provider.dart';
+import 'blocs/link/links_provider.dart';
 import 'screens/decision_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -9,15 +10,17 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
-      child: MaterialApp(
-        title: 'Restfulness',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        onGenerateRoute: routes,
-      ),
+        child: LinksProvider(
+          child: MaterialApp(
+            title: 'Restfulness',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            onGenerateRoute: routes,
+          ),
+        ) ,
     );
   }
 

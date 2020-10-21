@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
@@ -29,7 +30,7 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<LinkModel> fetchLink(int id) async {
+  Future<LinkModel> fetchLink({@required int id, String token}) async {
     final maps = await db.query(
       "Links",
       columns: null,
@@ -53,17 +54,13 @@ class LinkDBProvider implements LinkSource, LinkCache {
     return db.delete("Links");
   }
 
-  Future<List<int>> fetchTopIds() {
+  @override
+  Future<LinkModel> insertLink({List<String> category, String url,@required String token}) {
     return null;
   }
 
   @override
-  Future<LinkModel> insertLink(List <String> category, String url,String token) {
-    return null;
-  }
-
-  @override
-  Future<List<int>> fetchAllLinks() {
+  Future<List<LinkModel>> fetchAllLinks({@required String token}) {
     return null;
   }
 }

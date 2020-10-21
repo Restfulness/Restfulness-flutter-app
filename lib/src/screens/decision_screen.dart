@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 
 import 'login_screen.dart';
@@ -27,6 +28,8 @@ class _DecisionScreenState extends State<DecisionScreen> {
         repository.clearUserCache();
         final userLogin = await repository.login(user.username, user.password);
         if(userLogin.accessToken.isNotEmpty){
+          final bloc = LinksProvider.of(context);
+          bloc.fetchLinks();
           _redirectToPage(context, MainScreen());
         }
       }
