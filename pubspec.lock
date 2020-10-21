@@ -160,6 +160,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.6"
+  flutter_tags:
+    dependency: "direct main"
+    description:
+      name: flutter_tags
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.9"
   flutter_test:
     dependency: "direct dev"
     description: flutter

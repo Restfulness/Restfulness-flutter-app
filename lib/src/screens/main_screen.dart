@@ -29,11 +29,14 @@ class MainScreen extends StatelessWidget {
     return StreamBuilder(
         stream: bloc.links,
         builder: (context, snapshot) {
-          if(snapshot.error != null){
-            WidgetsBinding.instance.addPostFrameCallback((_) => Scaffold.of(context).showSnackBar(new SnackBar(
-                content: new Text(snapshot.error),
-                duration: Duration(seconds: 2))));
-            return  CircularProgressIndicator(value:  0,);
+          if (snapshot.error != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) =>
+                Scaffold.of(context).showSnackBar(new SnackBar(
+                    content: new Text(snapshot.error),
+                    duration: Duration(seconds: 2))));
+            return CircularProgressIndicator(
+              value: 0,
+            );
           }
           if (!snapshot.hasData) {
             return SizedBox(
@@ -49,7 +52,10 @@ class MainScreen extends StatelessWidget {
               itemCount: snapshot.data.length,
               itemBuilder: (context, int index) {
                 CircularProgressIndicator(value: 0);
-                return CreateLinkPreviewWidget(url: snapshot.data[index].url);
+                return CreateLinkPreviewWidget(
+                    id: snapshot.data[index].id,
+                    url: snapshot.data[index].url,
+                    category: snapshot.data[index].categories);
               },
             ),
           );

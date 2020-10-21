@@ -54,4 +54,17 @@ class LinkApiProvider implements LinkSource {
 
     return LinkModel.fromJson(response);
   }
+
+  @override
+  Future<bool> deleteLink({String token, int id}) async {
+    final response = await apiHelper.delete(
+      "links/delete/$id",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      }
+    );
+    return true;
+  }
+
 }

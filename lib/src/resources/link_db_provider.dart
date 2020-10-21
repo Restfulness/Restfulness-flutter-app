@@ -63,6 +63,11 @@ class LinkDBProvider implements LinkSource, LinkCache {
   Future<List<LinkModel>> fetchAllLinks({@required String token}) {
     return null;
   }
+
+  @override
+  Future<bool> deleteLink({String token, int id}) {
+    return null;
+  }
 }
 
 final linkDbProvide = new LinkDBProvider();

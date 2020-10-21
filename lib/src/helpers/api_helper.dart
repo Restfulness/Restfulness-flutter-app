@@ -34,6 +34,17 @@ class ApiHelper {
     }
     return responseJson;
   }
+
+  Future<dynamic> delete(String url, {Map<String, String> headers }) async {
+    var responseJson;
+    try {
+      final response = await client.delete('$baseUrl/$url', headers: headers);
+      responseJson = _response(response);
+    } on SocketException {
+      throw FetchDataException("No Internet connection");
+    }
+    return responseJson;
+  }
 }
 
 dynamic _response(http.Response response) {
