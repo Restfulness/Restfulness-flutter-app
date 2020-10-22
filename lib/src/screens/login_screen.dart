@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
+import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -20,35 +22,47 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
-        body: buildBody(bloc, context),
+        body: Builder(
+          builder: (BuildContext context) {
+            return buildBody(bloc, context);
+          },
+        ),
       ),
     );
   }
 
   buildBody(AuthBloc bloc, BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
-
     return SingleChildScrollView(
       reverse: true,
       padding: EdgeInsets.only(bottom: bottom),
-      child: Container(
-        margin: EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Container(margin: EdgeInsets.only(top: 60.0)),
-            Image.asset("assets/images/restApi.webp", width: 250),
-            Container(margin: EdgeInsets.only(top: 30.0)),
-            buildTitle(),
-            Container(margin: EdgeInsets.only(top: 20.0)),
-            usernameField(bloc),
-            Container(margin: EdgeInsets.only(top: 10.0)),
-            passwordField(bloc),
-            Container(margin: EdgeInsets.only(top: 20.0)),
-            loginAndForgotPassButtons(bloc),
-            Container(margin: EdgeInsets.only(top: 20.0)),
-            buildSignUpButton(context, bloc),
-          ],
-        ),
+      child: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Container(margin: EdgeInsets.only(top: 60.0)),
+                Image.asset("assets/images/restApi.png", width: 120),
+                Container(margin: EdgeInsets.only(top: 30.0)),
+                buildTitle(),
+                Container(margin: EdgeInsets.only(top: 20.0)),
+                usernameField(bloc),
+                Container(margin: EdgeInsets.only(top: 10.0)),
+                passwordField(bloc),
+                Container(margin: EdgeInsets.only(top: 20.0)),
+                loginAndForgotPassButtons(bloc),
+                Container(margin: EdgeInsets.only(top: 20.0)),
+                buildSignUpButton(context, bloc),
+              ],
+            ),
+          ),
+          Positioned(
+            child: createGearButton(context),
+            top: 25,
+            right: 5,
+          ),
+        ],
       ),
     );
   }
@@ -202,6 +216,26 @@ class LoginScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(5.0),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget createGearButton(BuildContext context) {
+    return ButtonTheme(
+      minWidth: 1,
+      height: 40.0,
+      child: FlatButton(
+        child: Icon(
+          MdiIcons.cogOutline,
+          color: Colors.blue,
+        ),
+        shape: CircleBorder(),
+        color: Colors.transparent,
+        onPressed: () async {
+          ServerConfigDialogWidget configDialog =
+              new ServerConfigDialogWidget();
+          configDialog.saveConfiguration(context);
+        },
       ),
     );
   }

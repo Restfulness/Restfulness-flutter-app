@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/screens/main_screen.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'auth_validator.dart';
@@ -55,13 +56,16 @@ class AuthBloc extends Object with AuthValidator {
         _redirectToPage(context, MainScreen());
       }
     } catch (e) {
-      var jsonData = json.decode(e.toString());
-      _usernameLogin.sink.addError(jsonData["msg"]);
-      _passwordLogin.sink.addError(jsonData["msg"]);
+      if(JsonUtils.isValidJSONString(e.toString())){
+        showSnackBar(context, json.decode(e.toString())["msg"] , false);
+      }else {
+        showSnackBar(context, "Unexpected server error ", false);
+      }
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
   }
+
 
   submitRegister(BuildContext context) async {
     final validUsername = _usernameSignUp.value.toLowerCase();
@@ -82,8 +86,11 @@ class AuthBloc extends Object with AuthValidator {
         }
       }
     } catch (e) {
-      var jsonData = json.decode(e.toString());
-      _usernameSignUp.sink.addError(jsonData["msg"]);
+      if(JsonUtils.isValidJSONString(e.toString())){
+        showSnackBar(context, json.decode(e.toString())["msg"] , false);
+      }else {
+        showSnackBar(context, "Unexpected server error ", false);
+      }
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
@@ -95,6 +102,18 @@ class AuthBloc extends Object with AuthValidator {
 
     await Navigator.of(context)
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/login'));
+  }
+
+  void showSnackBar(BuildContext context, String message , bool isSuccess) {
+    Scaffold.of(context).showSnackBar(new SnackBar(
+        content: Row(
+          children: [
+            isSuccess? Icon(Icons.check_circle, color: Colors.green): Icon(Icons.error, color: Colors.red),
+            SizedBox(width: 10.0),
+            Text(message),
+          ],
+        ),
+        duration: Duration(seconds: 2)));
   }
 
   dispose() {

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
 
 import 'login_screen.dart';
 import 'main_screen.dart';
@@ -26,11 +29,22 @@ class _DecisionScreenState extends State<DecisionScreen> {
         _redirectToPage(context, LoginScreen());
       } else {
         repository.clearUserCache();
-        final userLogin = await repository.login(user.username, user.password);
-        if(userLogin.accessToken.isNotEmpty){
-          final bloc = LinksProvider.of(context);
-          bloc.fetchLinks();
-          _redirectToPage(context, MainScreen());
+        try {
+          final loginResult = await repository.login(user.username, user.password);
+          if(loginResult != null){
+            final bloc = LinksProvider.of(context);
+            bloc.fetchLinks();
+            _redirectToPage(context, MainScreen());
+          }
+
+        } catch (e) {
+          if(JsonUtils.isValidJSONString(e.toString())){
+            _state =  json.decode(e.toString())["msg"];
+          }else {
+            setState(() {
+              _state =  "Unexpected server error ";
+            });
+          }
         }
       }
     });

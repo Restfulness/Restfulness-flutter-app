@@ -6,7 +6,9 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:restfulness/src/widgets/create_link_preview_widget.dart';
+import 'package:restfulness/src/widgets/drawer_widget.dart';
 import 'package:restfulness/src/widgets/refresh.dart';
 
 class MainScreen extends StatelessWidget {
@@ -21,6 +23,7 @@ class MainScreen extends StatelessWidget {
       floatingActionButton: new Builder(builder: (BuildContext context) {
         return buildFloatingActionButton(context, bloc);
       }),
+      drawer: DrawerWidget(),
       body: buildList(bloc),
     );
   }
@@ -78,21 +81,15 @@ class MainScreen extends StatelessWidget {
               LinkModel res = await repository.insertLink(
                   tags.toString().split(' ').toList(), url);
               if (res.id != null) {
-                Scaffold.of(context).showSnackBar(new SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green),
-                        SizedBox(width: 20.0),
-                        Text("Saved successfully"),
-                      ],
-                    ),
-                    duration: Duration(seconds: 2)));
+                showSnackBar(context, "Saved successfully", true);
                 bloc.fetchLinks();
               }
             } catch (e) {
-              Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text(json.decode(e.toString())["msg"]),
-                  duration: Duration(seconds: 4)));
+              if(JsonUtils.isValidJSONString(e.toString())){
+                showSnackBar(context, json.decode(e.toString())["msg"] , false);
+              }else {
+                showSnackBar(context, "Unexpected server error ", false);
+              }
             }
           }
         }),
@@ -140,7 +137,6 @@ class MainScreen extends StatelessWidget {
       controller: urlController,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          // width: 0.0 produces a thin "hairline" border
           borderSide: BorderSide(color: Colors.blue, width: 1.0),
         ),
         border: OutlineInputBorder(),
@@ -155,13 +151,26 @@ class MainScreen extends StatelessWidget {
       controller: tagsController,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          // width: 0.0 produces a thin "hairline" border
           borderSide: BorderSide(color: Colors.blue, width: 1.0),
         ),
         border: OutlineInputBorder(),
         labelText: "Categories",
-        hintText: "programming,developing",
+        hintText: "programming developing",
       ),
     );
+  }
+
+  void showSnackBar(BuildContext context, String message, bool isSuccess) {
+    Scaffold.of(context).showSnackBar(new SnackBar(
+        content: Row(
+          children: [
+            isSuccess
+                ? Icon(Icons.check_circle, color: Colors.green)
+                : Icon(Icons.error, color: Colors.red),
+            SizedBox(width: 10.0),
+            Text(message),
+          ],
+        ),
+        duration: Duration(seconds: 2)));
   }
 }

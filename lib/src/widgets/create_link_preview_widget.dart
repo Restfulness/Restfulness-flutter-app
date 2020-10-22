@@ -8,6 +8,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
 
 class CreateLinkPreviewWidget extends StatelessWidget {
   final int id;
@@ -112,11 +113,15 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                       Repository repository = new Repository();
                       final response = await repository.deleteLink(id);
                       if (response) {
-                        showSnackBar(context, "Deleted successfully");
+                        showSnackBar(context, "Deleted successfully", true);
                         bloc.fetchLinks();
                       }
                     } catch (e) {
-                      showSnackBar(context, json.decode(e.toString())["msg"]);
+                      if(JsonUtils.isValidJSONString(e.toString())){
+                        showSnackBar(context, json.decode(e.toString())["msg"] , false);
+                      }else {
+                        showSnackBar(context, "Unexpected server error ", false);
+                      }
                     }
                   },
                 ),
@@ -164,12 +169,12 @@ class CreateLinkPreviewWidget extends StatelessWidget {
     );
   }
 
-  void showSnackBar(BuildContext context, String message) {
+  void showSnackBar(BuildContext context, String message , bool isSuccess) {
     Scaffold.of(context).showSnackBar(new SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 20.0),
+            isSuccess? Icon(Icons.check_circle, color: Colors.green): Icon(Icons.error, color: Colors.red),
+            SizedBox(width: 10.0),
             Text(message),
           ],
         ),

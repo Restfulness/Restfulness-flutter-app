@@ -33,7 +33,7 @@ class RegisterScreen extends StatelessWidget {
         margin: EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Image.asset("assets/images/restApi.webp", width: 250),
+            Image.asset("assets/images/restApi.png", width: 120),
             Container(margin: EdgeInsets.only(top: 30.0)),
             buildTitle(),
             Container(margin: EdgeInsets.only(top: 20.0)),

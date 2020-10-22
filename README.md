@@ -22,6 +22,6 @@ Make sure you are implemented [Restfulness-core-api](https://github.com/Restfuln
       color: Colors.blue,
       values: AppValues(apiBaseUrl: 'http://localhost:5000'));
 ```
-
+__NOTE:__ In the Login screen you can configure your server address by taping on the __Gear__ icon :gear: on the top right.
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

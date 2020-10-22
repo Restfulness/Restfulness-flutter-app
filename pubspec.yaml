@@ -35,7 +35,8 @@ dependencies:
   mockito: ^4.1.2
   material_design_icons_flutter: 4.0.5755
   flutter_link_preview: ^1.5.6
-  flutter_tags: "^0.4.9"
+  flutter_tags: ^0.4.9
+  shared_preferences: ^0.5.12+2
 
 dev_dependencies:
   flutter_test:
@@ -54,7 +55,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/restApi.webp
+   - assets/images/restApi.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
