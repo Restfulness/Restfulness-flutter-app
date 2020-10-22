@@ -5,11 +5,20 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/exceptions/app_exceptions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final String baseUrl = AppConfig.instance.values.apiBaseUrl;
+ String baseUrl = AppConfig.instance.values.apiBaseUrl;
 
 class ApiHelper {
   http.Client client = new http.Client();
+
+  ApiHelper(){
+    _readUrl().then((value) {
+      if(value != ""){
+        baseUrl = value;
+      }
+    });
+  }
 
   Future<dynamic> get(String url, {Map<String, String> headers}) async {
     var responseJson;
@@ -17,7 +26,7 @@ class ApiHelper {
       final response = await client.get('$baseUrl/$url', headers: headers);
       responseJson = _response(response);
     } on SocketException {
-      throw FetchDataException("No Internet connection");
+      throw FetchDataException(createMessage("No Internet connection"));
     }
     return responseJson;
   }
@@ -30,22 +39,24 @@ class ApiHelper {
           headers: headers, body: jsonEncode(body));
       responseJson = _response(response);
     } on SocketException {
-      throw FetchDataException('No Internet connection');
+
+      throw FetchDataException(createMessage("No Internet connection"));
     }
     return responseJson;
   }
 
-  Future<dynamic> delete(String url, {Map<String, String> headers }) async {
+  Future<dynamic> delete(String url, {Map<String, String> headers}) async {
     var responseJson;
     try {
       final response = await client.delete('$baseUrl/$url', headers: headers);
       responseJson = _response(response);
     } on SocketException {
-      throw FetchDataException("No Internet connection");
+      throw FetchDataException(createMessage("No Internet connection"));
     }
     return responseJson;
   }
 }
+
 
 dynamic _response(http.Response response) {
   switch (response.statusCode) {
@@ -63,6 +74,20 @@ dynamic _response(http.Response response) {
     case 500:
       throw InternalServerErrorException(response.body);
     default:
-      throw FetchDataException('Error code : ${response.statusCode}');
+      throw FetchDataException(createMessage('Error code : ${response.statusCode}'));
   }
+}
+
+String createMessage(String message) {
+  Map<String, dynamic> msg = new Map<String, dynamic>();
+  msg["msg"] = message;
+  return jsonEncode(msg);
+}
+
+
+Future<String> _readUrl() async {
+  final prefs = await SharedPreferences.getInstance();
+  final key = 'urlAddress';
+  final value = prefs.getString(key) ?? '';
+  return value;
 }
