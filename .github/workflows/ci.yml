@@ -1,5 +1,8 @@
 name: CI
 on:
+  push:
+    tags:
+      - v*
   pull_request:
     branches:
       - main
@@ -33,7 +36,14 @@ jobs:
           channel: "stable"
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build ios --release --no-codesign
+      - run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
 
   build_appbundle:
     name: Build Flutter (Android)
@@ -49,4 +59,8 @@ jobs:
           channel: "stable"
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build appbundle
+      - run: flutter build apk --split-per-abi
+      - name: Release Apps
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa"
