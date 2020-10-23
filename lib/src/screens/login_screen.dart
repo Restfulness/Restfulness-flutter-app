@@ -131,8 +131,9 @@ class LoginScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        buildLoginButton(bloc),
-        buildForgotButton(),
+        Expanded(child: buildLoginButton(bloc), flex: 1),
+        SizedBox(width: 5),
+        Expanded(child: buildForgotButton(), flex: 1),
       ],
     );
   }

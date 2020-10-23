@@ -48,7 +48,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
 
   Widget buildWebInfo(WebInfo info, BuildContext context, LinksBloc bloc) {
     return SizedBox(
-      height: 250,
+      height: 280,
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -78,7 +78,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                 if (info.description != null)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text(info.description),
+                    child: Text(info.description , maxLines: 2,),
                   ),
               ],
             ),
@@ -115,7 +115,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
 
   Widget buildWebImageInfo(WebImageInfo info) {
     return SizedBox(
-      height: 250,
+      height: 280,
       child: Card(
           elevation: 6,
           shape:
@@ -133,7 +133,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
 
   Widget buildWebVideoInfo(WebVideoInfo info) {
     return SizedBox(
-      height: 250,
+      height: 280,
       child: Card(
           elevation: 6,
           shape:
