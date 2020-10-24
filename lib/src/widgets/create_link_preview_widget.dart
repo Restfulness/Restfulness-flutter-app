@@ -7,6 +7,7 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:share/share.dart';
@@ -15,7 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 class CreateLinkPreviewWidget extends StatelessWidget {
   final int id;
   final String url;
-  final List<dynamic> category;
+  final List<CategoryModel> category;
 
   CreateLinkPreviewWidget({this.id, this.url, this.category});
 
@@ -47,7 +48,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
   }
 
   Widget buildWebInfo(WebInfo info, BuildContext context, LinksBloc bloc) {
-    return SizedBox(
+    return Container(
       height: 280,
       child: Card(
         elevation: 6,
@@ -65,6 +66,12 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                     width: double.maxFinite,
                     fit: BoxFit.cover,
                   )),
+                if (info.image == null)
+                  Expanded(
+                      child: Image.asset(
+                        "assets/images/restApi.png",
+                        width: double.maxFinite,
+                      )),
                 Padding(
                   padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
                   child: Text(
@@ -87,9 +94,12 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                 itemCount: category.length,
                 itemBuilder: (int index) {
                   return Tooltip(
-                      message: category[index],
+                      message: category[index].name,
                       child: ItemTags(
-                        title: category[index],
+                        onPressed:(item){
+                          print('${category[item.index].id}');
+                        },
+                        title: category[index].name,
                         index: index,
                       ));
                 },

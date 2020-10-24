@@ -9,7 +9,7 @@ class LinkApiProvider implements LinkSource {
   ApiHelper apiHelper = ApiHelper();
 
   @override
-  Future<LinkModel> insertLink(
+  Future<int> insertLink(
       {List<String> category, String url, @required String token}) async {
     final response = await apiHelper.post(
       "links",
@@ -20,11 +20,8 @@ class LinkApiProvider implements LinkSource {
       body: <String, dynamic>{'categories': category, 'url': url},
     );
     Map<String, dynamic> toJson = new Map<String, dynamic>();
-    toJson["id"] = response["id"];
-    toJson["url"] = url;
-    toJson["categories"] = category;
 
-    return LinkModel.fromJson(toJson);
+    return response["id"];
   }
 
   @override

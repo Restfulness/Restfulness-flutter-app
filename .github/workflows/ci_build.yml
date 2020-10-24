@@ -1,11 +1,8 @@
-name: CI
+name: CI Build
 on:
   push:
     tags:
       - v*
-  pull_request:
-    branches:
-      - main
 
 jobs:
   flutter_test:
@@ -15,10 +12,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: '12.x'
       - uses: subosito/flutter-action@v1.4.0
         with:
-          channel: "stable"
+          channel: 'stable'
       - run: flutter pub get
       - run: flutter test
 
@@ -27,18 +24,16 @@ jobs:
     needs: [flutter_test]
     runs-on: macos-latest
     steps:
-      - name: Export Release Timestamp
-        run: echo "::set-env name=APP_VERSION::release_$(date +'%Y-%m-%d_%H-%m-%S')"
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Java
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: '12.x'
       - name: Set up Flutter
         uses: subosito/flutter-action@v1.4.0
         with:
-          channel: "stable"
+          channel: 'stable'
       - name: Install pub Dependencies
         run: flutter pub get
       - name: Build Android App
@@ -55,7 +50,5 @@ jobs:
       - name: Release Apps
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ env.APP_VERSION }}
-          name: ${{ env.APP_VERSION }}
-          token: ${{ secrets.TOKEN }}
-          artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: 'build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa'
