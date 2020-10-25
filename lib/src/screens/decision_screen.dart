@@ -24,25 +24,22 @@ class _DecisionScreenState extends State<DecisionScreen> {
       await repository.initializationAuth;
 
       final user = await repository.currentUser();
-
       if (user == null) {
         _redirectToPage(context, LoginScreen());
       } else {
-        repository.clearUserCache();
         try {
-          final loginResult = await repository.login(user.username, user.password);
-          if(loginResult != null){
-            final bloc = LinksProvider.of(context);
-            bloc.fetchLinks();
-            _redirectToPage(context, MainScreen());
-          }
-
+          repository.clearUserCache();
+          final loginResult =
+              await repository.login(user.username, user.password);
+          final bloc = LinksProvider.of(context);
+          bloc.fetchLinks();
+          _redirectToPage(context, MainScreen());
         } catch (e) {
-          if(JsonUtils.isValidJSONString(e.toString())){
-            _state =  json.decode(e.toString())["msg"];
-          }else {
+          if (JsonUtils.isValidJSONString(e.toString())) {
+            _state = json.decode(e.toString())["msg"];
+          } else {
             setState(() {
-              _state =  "Unexpected server error ";
+              _state = "Unexpected server error ";
             });
           }
         }
@@ -76,7 +73,8 @@ class _DecisionScreenState extends State<DecisionScreen> {
     return Text(
       _state,
       textAlign: TextAlign.left,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0,color: Colors.blue),
+      style: TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 26.0, color: Colors.blue),
     );
   }
 }

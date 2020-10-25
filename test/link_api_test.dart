@@ -15,9 +15,10 @@ const fakeLinkAddFailed500 = {"msg": "Failed to add new link"};
 
 const fakeLinkGetSuccess = [{
   "categories": [
-    "programming",
-    "developing",
-    "search"
+    {
+      "id": 1,
+      "name": "programming"
+    }
   ],
   "id": 2,
   "url": "https://stackoverflow.com"
@@ -58,9 +59,9 @@ void main() {
       return Response(json.encode(fakeLinkAddSuccess), 200);
     });
 
-    final link = await apiProvider.insertLink(
+    final id = await apiProvider.insertLink(
         category: ["programming"], url: "http://github.com", token: "token");
-    expect(link.id, 1);
+    expect(id, 1);
   });
 
   test("Test add link API if URL is not correct", () async {

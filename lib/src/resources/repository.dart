@@ -48,13 +48,12 @@ class Repository {
     await authorizationDbProvider.clear();
   }
 
-  Future<LinkModel> insertLink(List<String> category, String url) async {
-    LinkModel link;
+  Future<int> insertLink(List<String> category, String url) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    link = await linkSources[1]
+    final id = await linkSources[1]
         .insertLink(category: category, url: url, token: user.accessToken);
 
-    return link;
+    return id;
   }
 
   Future<List<LinkModel>> fetchAllLinks() async {
@@ -111,7 +110,7 @@ abstract class UserCache {
 }
 
 abstract class LinkSource {
-  Future<LinkModel> insertLink(
+  Future<int> insertLink(
       {List<String> category, String url, @required String token});
 
   Future<bool> deleteLink({@required String token, int id});

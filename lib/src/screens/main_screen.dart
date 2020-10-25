@@ -78,9 +78,9 @@ class MainScreen extends StatelessWidget {
             await repository.initializationLink;
 
             try {
-              LinkModel res = await repository.insertLink(
+              final id = await repository.insertLink(
                   tags.toString().split(' ').toList(), url);
-              if (res.id != null) {
+              if (id != null) {
                 showSnackBar(context, "Saved successfully", true);
                 bloc.fetchLinks();
               }
@@ -168,7 +168,8 @@ class MainScreen extends StatelessWidget {
                 ? Icon(Icons.check_circle, color: Colors.green)
                 : Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
-            Text(message),
+            Flexible(
+                child: Text(message)),
           ],
         ),
         duration: Duration(seconds: 2)));
