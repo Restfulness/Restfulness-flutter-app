@@ -12,7 +12,7 @@ class LinkApiProvider implements LinkSource {
   Future<LinkModel> insertLink(
       {List<String> category, String url, @required String token}) async {
     final response = await apiHelper.post(
-      "links/add",
+      "links",
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -31,7 +31,7 @@ class LinkApiProvider implements LinkSource {
   Future<List<LinkModel>> fetchAllLinks({@required String token}) async {
     List<LinkModel> links = new List<LinkModel>();
 
-    final response = await apiHelper.get("links/get", headers: <String, String>{
+    final response = await apiHelper.get("links", headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $token',
     });
@@ -45,7 +45,7 @@ class LinkApiProvider implements LinkSource {
   @override
   Future<LinkModel> fetchLink({@required int id, String token}) async {
     final response = await apiHelper.get(
-      "links/add$id",
+      "links/$id",
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -58,7 +58,7 @@ class LinkApiProvider implements LinkSource {
   @override
   Future<bool> deleteLink({String token, int id}) async {
     final response = await apiHelper.delete(
-      "links/delete/$id",
+      "links/$id",
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',

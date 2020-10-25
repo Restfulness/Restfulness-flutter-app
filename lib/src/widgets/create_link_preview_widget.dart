@@ -9,12 +9,13 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateLinkPreviewWidget extends StatelessWidget {
   final int id;
   final String url;
   final List<dynamic> category;
-
 
   CreateLinkPreviewWidget({this.id, this.url, this.category});
 
@@ -54,83 +55,62 @@ class CreateLinkPreviewWidget extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-          Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (info.image != null)
-              Expanded(
-                  child: Image.network(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (info.image != null)
+                  Expanded(
+                      child: Image.network(
                     info.image,
                     width: double.maxFinite,
                     fit: BoxFit.cover,
                   )),
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-              child: Text(
-                info.title,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if (info.description != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(info.description),
-              ),
-          ],
-        ),
-        Positioned(
-          child: Tags(
-            itemCount: category.length,
-            itemBuilder: (int index) {
-              return Tooltip(
-                  message: category[index],
-                  child: ItemTags(
-                    title: category[index],
-                    index: index,
-                  )
-              );
-            },
-          ),
-          top: 10,
-          left: 10,
-        ),
-            Positioned(
-              child: ButtonTheme(
-                minWidth: 1,
-                height: 40.0,
-                child: FlatButton(
-                  child: Icon(
-                    MdiIcons.trashCanOutline,
-                    color: Colors.red,
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                  child: Text(
+                    info.title,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  shape: CircleBorder(),
-                  color: Colors.white,
-                  onPressed: () async {
-                    try {
-                      Repository repository = new Repository();
-                      final response = await repository.deleteLink(id);
-                      if (response) {
-                        showSnackBar(context, "Deleted successfully", true);
-                        bloc.fetchLinks();
-                      }
-                    } catch (e) {
-                      if(JsonUtils.isValidJSONString(e.toString())){
-                        showSnackBar(context, json.decode(e.toString())["msg"] , false);
-                      }else {
-                        showSnackBar(context, "Unexpected server error ", false);
-                      }
-                    }
-                  },
                 ),
+                if (info.description != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(info.description),
+                  ),
+              ],
+            ),
+            Positioned(
+              child: Tags(
+                itemCount: category.length,
+                itemBuilder: (int index) {
+                  return Tooltip(
+                      message: category[index],
+                      child: ItemTags(
+                        title: category[index],
+                        index: index,
+                      ));
+                },
+              ),
+              top: 10,
+              left: 10,
+            ),
+            Positioned(
+              child: Column(
+                children: [
+                  buildDeleteButton(context, bloc),
+                  buildShareButton(context),
+                  buildOpenButton()
+                ],
               ),
               right: 1,
             ),
-        ],
+          ],
+        ),
       ),
-    ),);
+    );
   }
 
   Widget buildWebImageInfo(WebImageInfo info) {
@@ -139,7 +119,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
       child: Card(
           elevation: 6,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           clipBehavior: Clip.antiAlias,
           child: Stack(children: [
             Image.network(
@@ -157,7 +137,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
       child: Card(
           elevation: 6,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           clipBehavior: Clip.antiAlias,
           child: Stack(children: [
             Image.network(
@@ -169,15 +149,94 @@ class CreateLinkPreviewWidget extends StatelessWidget {
     );
   }
 
-  void showSnackBar(BuildContext context, String message , bool isSuccess) {
+  Widget buildDeleteButton(BuildContext context, LinksBloc bloc) {
+    return ButtonTheme(
+      minWidth: 1,
+      height: 40.0,
+      child: FlatButton(
+        child: Icon(
+          MdiIcons.trashCanOutline,
+          color: Colors.red,
+        ),
+        shape: CircleBorder(),
+        color: Colors.white,
+        onPressed: () async {
+          try {
+            Repository repository = new Repository();
+            final response = await repository.deleteLink(id);
+            if (response) {
+              _showSnackBar(context, "Deleted successfully", true);
+              bloc.fetchLinks();
+            }
+          } catch (e) {
+            if (JsonUtils.isValidJSONString(e.toString())) {
+              _showSnackBar(context, json.decode(e.toString())["msg"], false);
+            } else {
+              _showSnackBar(context, "Unexpected server error ", false);
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  Widget buildShareButton(BuildContext context) {
+    return ButtonTheme(
+      minWidth: 1,
+      height: 40.0,
+      child: FlatButton(
+        child: Icon(
+          MdiIcons.shareVariantOutline,
+          color: Colors.blue,
+        ),
+        shape: CircleBorder(),
+        color: Colors.white,
+        onPressed: () async {
+          final RenderBox box = context.findRenderObject();
+          Share.share(url,
+              sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+        },
+      ),
+    );
+  }
+
+  Widget buildOpenButton(){
+    return ButtonTheme(
+      minWidth: 1,
+      height: 40.0,
+      child: FlatButton(
+        child: Icon(
+          MdiIcons.openInApp,
+          color: Colors.orange,
+        ),
+        shape: CircleBorder(),
+        color: Colors.white,
+        onPressed: () {
+          _launchURL();
+        },
+      ),
+    );
+  }
+
+  void _showSnackBar(BuildContext context, String message, bool isSuccess) {
     Scaffold.of(context).showSnackBar(new SnackBar(
         content: Row(
           children: [
-            isSuccess? Icon(Icons.check_circle, color: Colors.green): Icon(Icons.error, color: Colors.red),
+            isSuccess
+                ? Icon(Icons.check_circle, color: Colors.green)
+                : Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
             Text(message),
           ],
         ),
         duration: Duration(seconds: 2)));
+  }
+
+  _launchURL() async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
