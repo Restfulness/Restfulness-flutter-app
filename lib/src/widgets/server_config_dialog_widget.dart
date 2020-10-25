@@ -13,7 +13,7 @@ class ServerConfigDialogWidget {
           result.then((value) {
             if (value) {
               showSnackBar(
-                  context, "Saved successfully, know you can login", true);
+                  context, "Saved successfully, now you can login", true);
             } else {
               showSnackBar(context, "Failed to save", true);
             }
@@ -96,7 +96,8 @@ class ServerConfigDialogWidget {
                 ? Icon(Icons.check_circle, color: Colors.green)
                 : Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
-            Text(message),
+            Flexible(
+                child: Text(message)),
           ],
         ),
         duration: Duration(seconds: 4)));
