@@ -113,7 +113,8 @@ class AuthBloc extends Object with AuthValidator {
           children: [
             isSuccess? Icon(Icons.check_circle, color: Colors.green): Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
-            Text(message),
+            Flexible(
+                child: Text(message)),
           ],
         ),
         duration: Duration(seconds: 2)));
