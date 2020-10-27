@@ -2,52 +2,44 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_link_preview/flutter_link_preview.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/builder/link_preview.dart';
 import 'package:restfulness/src/models/category_model.dart';
+import 'package:restfulness/src/models/preview_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CreateLinkPreviewWidget extends StatelessWidget {
-  final int id;
+class LinkPreviewWidget extends StatelessWidget {
   final String url;
+  final int id;
   final List<CategoryModel> category;
 
-  CreateLinkPreviewWidget({this.id, this.url, this.category});
+  LinkPreviewWidget({this.id, this.url, this.category});
 
   @override
   Widget build(BuildContext context) {
     final bloc = LinksProvider.of(context);
-
-    return FlutterLinkPreview(
+    return LinkPreview(
       url: url,
-      bodyStyle: TextStyle(
-        fontSize: 18.0,
-      ),
-      titleStyle: TextStyle(
-        fontSize: 20.0,
-        fontWeight: FontWeight.bold,
-      ),
       builder: (info) {
-        if (info is WebInfo) {
-          return buildWebInfo(info, context, bloc);
+        if (info != null) {
+          if (info.title == '') {
+            return buildInfoSimple(context, bloc);
+          }
+          return buildInfo(info, context, bloc);
+        } else {
+          return buildLoading();
         }
-        if (info is WebImageInfo) {
-          return buildWebImageInfo(info);
-        } else if (info is WebVideoInfo) {
-          return buildWebVideoInfo(info);
-        }
-        return Container();
       },
     );
   }
 
-  Widget buildWebInfo(WebInfo info, BuildContext context, LinksBloc bloc) {
+  Widget buildInfo(PreviewModel info, BuildContext context, LinksBloc bloc) {
     return Container(
       height: 280,
       child: Card(
@@ -59,21 +51,21 @@ class CreateLinkPreviewWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (info.image != null)
+                if (info.image != '')
                   Expanded(
                       child: Image.network(
                     info.image,
                     width: double.maxFinite,
                     fit: BoxFit.cover,
                   )),
-                if (info.image == null)
+                if (info.image == '')
                   Expanded(
                       child: Image.asset(
-                        "assets/images/restApi.png",
-                        width: double.maxFinite,
-                      )),
+                    "assets/images/restApi.png",
+                    width: double.maxFinite,
+                  )),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                  padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 10.0),
                   child: Text(
                     info.title,
                     style: TextStyle(
@@ -82,10 +74,13 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (info.description != null)
+                if (info.description != '')
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text(info.description , maxLines: 2,),
+                    child: Text(
+                      info.description,
+                      maxLines: 2,
+                    ),
                   ),
               ],
             ),
@@ -96,7 +91,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
                   return Tooltip(
                       message: category[index].name,
                       child: ItemTags(
-                        onPressed:(item){
+                        onPressed: (item) {
                           print('${category[item.index].id}');
                         },
                         title: category[index].name,
@@ -123,41 +118,85 @@ class CreateLinkPreviewWidget extends StatelessWidget {
     );
   }
 
-  Widget buildWebImageInfo(WebImageInfo info) {
-    return SizedBox(
-      height: 280,
+  Widget buildInfoSimple(BuildContext context, LinksBloc bloc) {
+    return Container(
+      height: 220,
       child: Card(
-          elevation: 6,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-          clipBehavior: Clip.antiAlias,
-          child: Stack(children: [
-            Image.network(
-              info.image,
-              fit: BoxFit.cover,
-              width: double.maxFinite,
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                    child: Image.asset(
+                  "assets/images/restApi.png",
+                  width: double.maxFinite,
+                )),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    url,
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ])),
+            Positioned(
+              child: Tags(
+                itemCount: category.length,
+                itemBuilder: (int index) {
+                  return Tooltip(
+                      message: category[index].name,
+                      child: ItemTags(
+                        onPressed: (item) {
+                          print('${category[item.index].id}');
+                        },
+                        title: category[index].name,
+                        index: index,
+                      ));
+                },
+              ),
+              top: 10,
+              left: 10,
+            ),
+            Positioned(
+              child: Column(
+                children: [
+                  buildDeleteButton(context, bloc),
+                  buildShareButton(context),
+                  buildOpenButton()
+                ],
+              ),
+              right: 1,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget buildWebVideoInfo(WebVideoInfo info) {
-    return SizedBox(
+  Widget buildLoading() {
+    return Container(
       height: 280,
       child: Card(
-          elevation: 6,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-          clipBehavior: Clip.antiAlias,
-          child: Stack(children: [
-            Image.network(
-              info.image,
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-            ),
-          ])),
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        clipBehavior: Clip.antiAlias,
+        child: SizedBox(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ),
     );
   }
+
 
   Widget buildDeleteButton(BuildContext context, LinksBloc bloc) {
     return ButtonTheme(
@@ -210,7 +249,7 @@ class CreateLinkPreviewWidget extends StatelessWidget {
     );
   }
 
-  Widget buildOpenButton(){
+  Widget buildOpenButton() {
     return ButtonTheme(
       minWidth: 1,
       height: 40.0,
