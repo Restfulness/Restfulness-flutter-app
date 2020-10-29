@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
-import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
-import 'package:restfulness/src/widgets/create_link_preview_widget.dart';
 import 'package:restfulness/src/widgets/drawer_widget.dart';
+import 'package:restfulness/src/widgets/link_preview_widget.dart';
 import 'package:restfulness/src/widgets/refresh.dart';
 
 class MainScreen extends StatelessWidget {
@@ -55,7 +54,7 @@ class MainScreen extends StatelessWidget {
               itemCount: snapshot.data.length,
               itemBuilder: (context, int index) {
                 CircularProgressIndicator(value: 0);
-                return CreateLinkPreviewWidget(
+                return LinkPreviewWidget(
                     id: snapshot.data[index].id,
                     url: snapshot.data[index].url,
                     category: snapshot.data[index].categories);
@@ -85,9 +84,9 @@ class MainScreen extends StatelessWidget {
                 bloc.fetchLinks();
               }
             } catch (e) {
-              if(JsonUtils.isValidJSONString(e.toString())){
-                showSnackBar(context, json.decode(e.toString())["msg"] , false);
-              }else {
+              if (JsonUtils.isValidJSONString(e.toString())) {
+                showSnackBar(context, json.decode(e.toString())["msg"], false);
+              } else {
                 showSnackBar(context, "Unexpected server error ", false);
               }
             }
@@ -168,8 +167,7 @@ class MainScreen extends StatelessWidget {
                 ? Icon(Icons.check_circle, color: Colors.green)
                 : Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
-            Flexible(
-                child: Text(message)),
+            Flexible(child: Text(message)),
           ],
         ),
         duration: Duration(seconds: 2)));
