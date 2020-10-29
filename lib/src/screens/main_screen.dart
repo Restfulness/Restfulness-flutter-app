@@ -6,7 +6,6 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
-import 'file:///C:/Users/Farzad/Documents/Projects/GitHub/Restfulness-flutter-app/lib/src/builder/link_preview.dart';
 import 'package:restfulness/src/widgets/drawer_widget.dart';
 import 'package:restfulness/src/widgets/link_preview_widget.dart';
 import 'package:restfulness/src/widgets/refresh.dart';
