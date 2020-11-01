@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
@@ -82,11 +83,18 @@ class Repository {
 
   Future<bool> deleteLink(int id) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links = linkSources[1].deleteLink(token: user.accessToken , id:id);
+    final links = linkSources[1].deleteLink(token: user.accessToken, id: id);
 
     return links;
   }
 
+  Future<List<SearchLinkModel>> searchLink(String word) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final links =
+        linkSources[1].searchLink(token: user.accessToken, word: word);
+
+    return links;
+  }
 
   clearLinkCache() async {
     await linkDbProvide.clear();
@@ -118,6 +126,8 @@ abstract class LinkSource {
   Future<List<LinkModel>> fetchAllLinks({@required String token});
 
   Future<LinkModel> fetchLink({@required int id, String token});
+
+  Future<List<SearchLinkModel>> searchLink({@required String token, String word}); // FIXME: refactor to LinkModel after api changed to standard model
 }
 
 abstract class LinkCache {
