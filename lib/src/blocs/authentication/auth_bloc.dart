@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/screens/main_screen.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:rxdart/rxdart.dart';
@@ -54,9 +56,7 @@ class AuthBloc extends Object with AuthValidator {
     try {
       final response = await user.login(validUsername, validPassword);
       if (response.accessToken.isNotEmpty) {
-        final bloc = LinksProvider.of(context);
-        bloc.fetchLinks();
-        _redirectToPage(context, MainScreen());
+        goToMainScreen(context);
       }
     } catch (e) {
       if(JsonUtils.isValidJSONString(e.toString())){
@@ -85,7 +85,7 @@ class AuthBloc extends Object with AuthValidator {
 
         final response = await user.login(validUsername, validPassword);
         if (response.accessToken.isNotEmpty) {
-          _redirectToPage(context, MainScreen());
+          goToMainScreen(context);
         }
       }
     } catch (e) {
@@ -97,6 +97,14 @@ class AuthBloc extends Object with AuthValidator {
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void goToMainScreen(BuildContext context){
+    final linkBloc = LinksProvider.of(context);
+    final categoriesBloc = CategoriesProvider.of(context);
+    linkBloc.fetchLinks();
+    categoriesBloc.fetchCategories();
+    _redirectToPage(context, MainScreen());
   }
 
   Future<void> _redirectToPage(BuildContext context, Widget page) async {

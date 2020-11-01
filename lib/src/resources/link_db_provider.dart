@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -66,6 +67,16 @@ class LinkDBProvider implements LinkSource, LinkCache {
 
   @override
   Future<bool> deleteLink({String token, int id}) {
+    return null;
+  }
+
+  @override
+  Future<List<SearchLinkModel>> searchLink({String token, String word}) {
+    return null;
+  }
+
+  @override
+  Future<List<SearchLinkModel>> fetchLinksByCategoryId({String token, int id}) {
     return null;
   }
 }

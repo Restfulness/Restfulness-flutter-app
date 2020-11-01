@@ -13,20 +13,17 @@ const fakeLinkAddFailed400 = {
 };
 const fakeLinkAddFailed500 = {"msg": "Failed to add new link"};
 
-const fakeLinkGetSuccess = [{
-  "categories": [
-    {
-      "id": 1,
-      "name": "programming"
-    }
-  ],
-  "id": 2,
-  "url": "https://stackoverflow.com"
-}];
+const fakeLinkGetSuccess = [
+  {
+    "categories": [
+      {"id": 1, "name": "programming"}
+    ],
+    "id": 2,
+    "url": "https://stackoverflow.com"
+  }
+];
 
-const fakeLinkGetFailed404 = {
-  "msg": "Link not found!"
-};
+const fakeLinkGetFailed404 = {"msg": "Link not found!"};
 
 const fakeLinkDeleteSuccess = {
   "link_id": "1",
@@ -37,9 +34,35 @@ const fakeLinkDelete403 = {
   "msg": "You don't have permission to remove this link"
 };
 
-const fakeLinkDelete404 = {
-  "msg": "Link doesn't exists!"
+const fakeLinkDelete404 = {"msg": "Link doesn't exists!"};
+
+const fakeSearchLink200 = {
+  "search": {
+    "links": [
+      {"id": 4, "url": "http://vim.org"},
+      {"id": 11, "url": "https://vim-love-vim.com"}
+    ],
+    "pattern": "vim"
+  }
 };
+
+const fakeSearchLink404 = {
+  "msg": "Pattern not found!"
+};
+
+const fakeFetchLinksByCategoryId200 = {
+  "category": {
+    "links": [
+      {"id": 4, "url": "http://vim.org"},
+      {"id": 11, "url": "https://vim-love-vim.com"}
+    ],
+    "name": "dev"
+  }
+};
+const fakeFetchLinksByCategoryId404 = {
+  "msg": "Category ID not found!"
+}
+;
 
 
 
@@ -120,7 +143,7 @@ void main() {
       return Response(json.encode(fakeLinkDeleteSuccess), 200);
     });
 
-    final link = await apiProvider.deleteLink(token: "token",id: 1);
+    final link = await apiProvider.deleteLink(token: "token", id: 1);
     expect(link, true);
   });
 
@@ -130,7 +153,7 @@ void main() {
     });
 
     try {
-      await apiProvider.deleteLink(token: "token1",id: 1);
+      await apiProvider.deleteLink(token: "token1", id: 1);
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "You don't have permission to remove this link");
@@ -143,10 +166,54 @@ void main() {
     });
 
     try {
-      await apiProvider.deleteLink(token: "token",id: 10);
+      await apiProvider.deleteLink(token: "token", id: 10);
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Link doesn't exists!");
+    }
+  });
+
+  test("Test search link API if found the link", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSearchLink200), 200);
+    });
+    final link = await apiProvider.searchLink(token: "token", word: 'vim');
+
+    expect(link.length, 2);
+  });
+
+  test("Test search link API if didn't found the link", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSearchLink404), 404);
+    });
+
+    try {
+      await apiProvider.searchLink(token: "token", word: 'test');
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Pattern not found!");
+    }
+  });
+
+  test("Test fetch links API by category id", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeFetchLinksByCategoryId200), 200);
+    });
+    final link = await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
+
+    expect(link.length, 2);
+  });
+
+  test("Test fetch links API by category id if didn't exist any category", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeFetchLinksByCategoryId404), 404);
+    });
+
+    try {
+      await apiProvider.fetchLinksByCategoryId(token: "token", id: 10);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Category ID not found!");
     }
   });
 }
