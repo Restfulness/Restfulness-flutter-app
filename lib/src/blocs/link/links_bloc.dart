@@ -10,6 +10,7 @@ class LinksBloc {
   final _repository = new Repository();
   final _fetchLinks = BehaviorSubject<List<LinkModel>>();
   final _searchLinks = BehaviorSubject<List<SearchLinkModel>>();
+
   final _fetchLinksByCategory = BehaviorSubject<List<SearchLinkModel>>();
 
   // Stream
@@ -27,6 +28,7 @@ class LinksBloc {
 
   Function(List<SearchLinkModel>) get addCategoryById => _fetchLinksByCategory.sink.add;
 
+
   fetchLinks() async {
     try {
       final ids = await _repository.fetchAllLinks();
@@ -40,18 +42,6 @@ class LinksBloc {
     }
   }
 
-  searchLinks(String word) async {
-    try {
-      final res = await _repository.searchLink(word);
-      _searchLinks.sink.add(res);
-    } catch (e) {
-      if (JsonUtils.isValidJSONString(e.toString())) {
-        _searchLinks.sink.addError(json.decode(e.toString())["msg"]);
-      } else {
-        _searchLinks.sink.addError("Unexpected server error");
-      }
-    }
-  }
 
   fetchLinksByCategoryId(int id) async {
     try {
@@ -66,6 +56,20 @@ class LinksBloc {
     }
   }
 
+  searchLinks(String word) async {
+    try {
+      final res = await _repository.searchLink(word);
+      _searchLinks.sink.add(res);
+    } catch (e) {
+      if(JsonUtils.isValidJSONString(e.toString())){
+        _searchLinks.sink.addError(json.decode(e.toString())["msg"]);
+      }else {
+        _searchLinks.sink.addError("Unexpected server error");
+      }
+
+    }
+  }
+
   clearCache() {
     return _repository.clearLinkCache();
   }
@@ -73,6 +77,7 @@ class LinksBloc {
   dispose() {
     _fetchLinks.close();
     _searchLinks.close();
+
     _fetchLinksByCategory.close();
   }
 

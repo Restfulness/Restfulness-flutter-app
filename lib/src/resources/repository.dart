@@ -110,7 +110,7 @@ class Repository {
   Future<List<SearchLinkModel>> fetchLinkByCategoryId(int id) async {
     UserModel user = await authorizationDbProvider.currentUser();
     final links =
-    linkSources[1].fetchLinksByCategoryId(token: user.accessToken, id: id);
+        linkSources[1].fetchLinksByCategoryId(token: user.accessToken, id: id);
 
     return links;
   }

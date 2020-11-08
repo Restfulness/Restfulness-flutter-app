@@ -66,6 +66,7 @@ class HomeScreen extends StatelessWidget {
                 if (id != null) {
                   showSnackBar(context, "Saved successfully", true);
                   bloc.fetchLinks();
+
                   // get new categories if we have new one
                   final categoriesBloc = CategoriesProvider.of(context);
                   categoriesBloc.fetchCategories();

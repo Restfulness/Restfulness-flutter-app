@@ -56,7 +56,8 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<int> insertLink({List<String> category, String url,@required String token}) {
+  Future<int> insertLink(
+      {List<String> category, String url, @required String token}) {
     return null;
   }
 

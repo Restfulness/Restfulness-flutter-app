@@ -51,13 +51,13 @@ class _SearchWidgetState extends State<SearchWidget> {
               Expanded(
                 child: MaterialButton(
                   onPressed: () async {
-                    bloc.resetSearch();
-                    bloc.searchLinks(searchController.text);
                     FocusScope.of(context).requestFocus(FocusNode());
                     if (searchController.text != '') {
-                      setState(() {
-                        _state = 1;
-                      });
+                        bloc.resetSearch();
+                        bloc.searchLinks(searchController.text);
+                        setState(() {
+                          _state = 1;
+                        });
                     }
                   },
                   elevation: 8.0,
@@ -80,6 +80,12 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   Widget _buildSearchField(BuildContext context, LinksBloc bloc) {
     return TextField(
+      onChanged: (word) {
+        bloc.resetSearch();
+        if (word != '') {
+          bloc.searchLinks(word);
+        }
+      },
       controller: searchController,
       decoration: InputDecoration(
           hintText: 'Search',
@@ -116,15 +122,19 @@ class _SearchWidgetState extends State<SearchWidget> {
         stream: bloc.search,
         builder: (context, snapshot) {
           if (snapshot.error != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) =>
-                Scaffold.of(context).showSnackBar(new SnackBar(
-                    content: new Text(snapshot.error),
-                    duration: Duration(seconds: 2))));
+            if(_state == 0){
+              WidgetsBinding.instance.addPostFrameCallback((_) =>
+                  Scaffold.of(context).showSnackBar(new SnackBar(
+                      content: new Text(snapshot.error),
+                      duration: Duration(seconds: 2))));
+            }
+
             return Container();
           }
           if (!snapshot.hasData) {
             return Container();
           }
+
           if (snapshot.data.length > 0) {
             return SearchLinkListWidget(list: snapshot.data);
           } else {

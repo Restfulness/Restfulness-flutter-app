@@ -63,6 +63,7 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<SearchLinkModel>> searchLink({String token, String word}) async {
+
     List<SearchLinkModel> links = new List<SearchLinkModel>();
 
     final response = await apiHelper.get(
@@ -72,13 +73,14 @@ class LinkApiProvider implements LinkSource {
         'Authorization': 'Bearer $token',
       },
     );
+
     final search = SearchModel.fromJson(response['search']).links;
+
     for (var link in search) {
       links.add(link);
     }
     return links;
   }
-
   @override
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {String token, int id}) async {

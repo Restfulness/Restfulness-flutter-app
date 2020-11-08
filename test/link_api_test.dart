@@ -46,10 +46,6 @@ const fakeSearchLink200 = {
   }
 };
 
-const fakeSearchLink404 = {
-  "msg": "Pattern not found!"
-};
-
 const fakeFetchLinksByCategoryId200 = {
   "category": {
     "links": [
@@ -59,12 +55,9 @@ const fakeFetchLinksByCategoryId200 = {
     "name": "dev"
   }
 };
-const fakeFetchLinksByCategoryId404 = {
-  "msg": "Category ID not found!"
-}
-;
+const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
-
+const fakeSearchLink404 = {"msg": "Pattern not found!"};
 
 void main() {
   LinkApiProvider apiProvider;
@@ -199,12 +192,14 @@ void main() {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeFetchLinksByCategoryId200), 200);
     });
-    final link = await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
+    final link =
+        await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
 
     expect(link.length, 2);
   });
 
-  test("Test fetch links API by category id if didn't exist any category", () async {
+  test("Test fetch links API by category id if didn't exist any category",
+      () async {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeFetchLinksByCategoryId404), 404);
     });

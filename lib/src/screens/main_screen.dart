@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
-import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/screens/home_screen.dart';
@@ -90,6 +89,7 @@ class _MainScreenState extends State<MainScreen> {
           break;
         case 2:
           _title = "Categories";
+
           break;
       }
     });
