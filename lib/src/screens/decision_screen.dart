@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
@@ -29,11 +30,9 @@ class _DecisionScreenState extends State<DecisionScreen> {
       } else {
         try {
           repository.clearUserCache();
-          final loginResult =
-              await repository.login(user.username, user.password);
-          final bloc = LinksProvider.of(context);
-          bloc.fetchLinks();
-          _redirectToPage(context, MainScreen());
+          await repository.login(user.username, user.password);
+
+          goToMainScreen(context);
         } catch (e) {
           if (JsonUtils.isValidJSONString(e.toString())) {
             _state = json.decode(e.toString())["msg"];
@@ -67,6 +66,14 @@ class _DecisionScreenState extends State<DecisionScreen> {
     if (nav == true) {
       //TODO: init
     }
+  }
+
+  void goToMainScreen(BuildContext context){
+    final linkBloc = LinksProvider.of(context);
+    final categoriesBloc = CategoriesProvider.of(context);
+    linkBloc.fetchLinks();
+    categoriesBloc.fetchCategories();
+    _redirectToPage(context, MainScreen());
   }
 
   Widget buildLoading() {
