@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
-import 'package:restfulness/src/widgets/link_preview_widget.dart';
+import 'package:restfulness/src/widgets/lists/link_list_widget.dart';
 import 'package:restfulness/src/widgets/refresh.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -39,21 +40,15 @@ class HomeScreen extends StatelessWidget {
           }
 
           return Refresh(
-            child: ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, int index) {
-                CircularProgressIndicator(value: 0);
-                return LinkPreviewWidget(
-                    id: snapshot.data[index].id,
-                    url: snapshot.data[index].url,
-                    category: snapshot.data[index].categories);
-              },
+            child: LinkListWidget(
+              list: snapshot.data,
             ),
           );
         });
   }
 
-  Widget buildFloatingActionButton(BuildContext context, LinksBloc bloc , bool isVisible) {
+  Widget buildFloatingActionButton(
+      BuildContext context, LinksBloc bloc, bool isVisible) {
     return Visibility(
       child: FloatingActionButton(
         child: Icon(MdiIcons.plusThick),
@@ -71,6 +66,10 @@ class HomeScreen extends StatelessWidget {
                 if (id != null) {
                   showSnackBar(context, "Saved successfully", true);
                   bloc.fetchLinks();
+
+                  // get new categories if we have new one
+                  final categoriesBloc = CategoriesProvider.of(context);
+                  categoriesBloc.fetchCategories();
                 }
               } catch (e) {
                 if (JsonUtils.isValidJSONString(e.toString())) {

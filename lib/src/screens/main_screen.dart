@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/widgets/drawer_widget.dart';
+
+import 'category_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -16,16 +19,19 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int homeIndex = 0;
   int searchIndex = 1;
+  int categoryIndex = 2;
 
   int _currentIndex = 0;
   bool _isOnHomePage = true;
   final List<Widget> _children = [
     HomeScreen(),
     SearchScreen(),
+    CategoryScreen(),
   ];
   String _title;
 
-  LinksBloc bloc;
+  LinksBloc linkBloc;
+  CategoriesBloc categoriesBloc;
 
   @override
   initState() {
@@ -35,7 +41,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bloc = LinksProvider.of(context);
+    linkBloc = LinksProvider.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_title),
@@ -55,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           new BottomNavigationBarItem(
             icon: Icon(MdiIcons.pound),
-            label: 'Group',
+            label: 'Categories',
           )
         ],
       ),
@@ -63,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: new Builder(builder: (BuildContext context) {
         HomeScreen homeScreen = new HomeScreen();
         return homeScreen.buildFloatingActionButton(
-            context, bloc, _isOnHomePage);
+            context, linkBloc, _isOnHomePage);
       }),
       drawer: DrawerWidget(),
     );
@@ -81,7 +88,8 @@ class _MainScreenState extends State<MainScreen> {
           _title = "Search";
           break;
         case 2:
-          _title = "Group";
+          _title = "Categories";
+
           break;
       }
     });
@@ -91,7 +99,7 @@ class _MainScreenState extends State<MainScreen> {
       _isOnHomePage = true;
     }
     if (index != searchIndex) {
-        bloc.resetSearch();
+      linkBloc.resetSearch();
     }
   }
 }

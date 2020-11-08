@@ -56,7 +56,8 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<int> insertLink({List<String> category, String url,@required String token}) {
+  Future<int> insertLink(
+      {List<String> category, String url, @required String token}) {
     return null;
   }
 
@@ -72,6 +73,11 @@ class LinkDBProvider implements LinkSource, LinkCache {
 
   @override
   Future<List<SearchLinkModel>> searchLink({String token, String word}) {
+    return null;
+  }
+
+  @override
+  Future<List<SearchLinkModel>> fetchLinksByCategoryId({String token, int id}) {
     return null;
   }
 }

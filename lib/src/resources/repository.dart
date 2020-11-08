@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
+import 'package:restfulness/src/resources/category_api_provider.dart';
+import 'package:restfulness/src/resources/category_db_provider.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
 
 import 'authorization_db_provider.dart';
@@ -11,9 +14,11 @@ import 'link_db_provider.dart';
 class Repository {
   Future _doneInitForAuth;
   Future _doneInitForLinks;
+  Future _doneInitForCategories;
 
   AuthorizationApiProvider authApiProvider = new AuthorizationApiProvider();
   LinkApiProvider linkApiProvider = new LinkApiProvider();
+  CategoryApiProvider categoryApiProvider = new CategoryApiProvider();
 
   List<LinkSource> linkSources = <LinkSource>[
     linkDbProvide,
@@ -21,9 +26,15 @@ class Repository {
   ];
   List<LinkCache> linkCaches = <LinkCache>[linkDbProvide];
 
+  List<CategorySource> categorySources = <CategorySource>[
+    categoryDbProvider,
+    CategoryApiProvider(),
+  ];
+
   Repository() {
     _doneInitForAuth = authorizationDbProvider.init();
     _doneInitForLinks = linkDbProvide.init();
+    _doneInitForCategories = categoryDbProvider.init();
   }
 
   Future<UserModel> login(String username, String password) async {
@@ -96,13 +107,35 @@ class Repository {
     return links;
   }
 
+  Future<List<SearchLinkModel>> fetchLinkByCategoryId(int id) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final links =
+        linkSources[1].fetchLinksByCategoryId(token: user.accessToken, id: id);
+
+    return links;
+  }
+
   clearLinkCache() async {
     await linkDbProvide.clear();
+  }
+
+  Future<List<CategoryModel>> fetchAllCategories() async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final categories =
+        categorySources[1].fetchAllCategories(token: user.accessToken);
+
+    return categories;
+  }
+
+  clearCategoryCache() async {
+    await categoryDbProvider.clear();
   }
 
   Future get initializationAuth => _doneInitForAuth;
 
   Future get initializationLink => _doneInitForLinks;
+
+  Future get initializationCategory => _doneInitForCategories;
 }
 
 abstract class UserSource {
@@ -127,11 +160,28 @@ abstract class LinkSource {
 
   Future<LinkModel> fetchLink({@required int id, String token});
 
-  Future<List<SearchLinkModel>> searchLink({@required String token, String word}); // FIXME: refactor to LinkModel after api changed to standard model
+  Future<List<SearchLinkModel>> searchLink(
+      {@required String token,
+      String
+          word}); // FIXME: refactor to LinkModel after api changed to standard model
+
+  Future<List<SearchLinkModel>> fetchLinksByCategoryId(
+      {@required String token,
+      int id}); // FIXME: refactor to LinkModel after api changed to standard model
 }
 
 abstract class LinkCache {
   Future<int> addLink(LinkModel linkModel);
+
+  Future<int> clear();
+}
+
+abstract class CategorySource {
+  Future<List<CategoryModel>> fetchAllCategories({@required String token});
+}
+
+abstract class CategoryCache {
+  Future<int> addCategory(CategoryModel categoryModel);
 
   Future<int> clear();
 }

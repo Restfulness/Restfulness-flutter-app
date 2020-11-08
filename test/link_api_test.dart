@@ -9,7 +9,7 @@ import 'package:restfulness/src/resources/link_api_provider.dart';
 const fakeLinkAddSuccess = {"id": 1};
 const fakeLinkAddFailed400 = {
   "msg":
-      "Link is not valid. Valid link looks like:http://example.com or https://example.com"
+  "Link is not valid. Valid link looks like:http://example.com or https://example.com"
 };
 const fakeLinkAddFailed500 = {"msg": "Failed to add new link"};
 
@@ -36,6 +36,7 @@ const fakeLinkDelete403 = {
 
 const fakeLinkDelete404 = {"msg": "Link doesn't exists!"};
 
+
 const fakeSearchLink200 = {
   "search": {
     "links": [
@@ -45,6 +46,21 @@ const fakeSearchLink200 = {
     "pattern": "vim"
   }
 };
+
+const fakeFetchLinksByCategoryId200 = {
+  "category": {
+
+    "links": [
+      {"id": 4, "url": "http://vim.org"},
+      {"id": 11, "url": "https://vim-love-vim.com"}
+    ],
+    "name": "dev"
+  }
+};
+const fakeFetchLinksByCategoryId404 = {
+  "msg": "Category ID not found!"
+}
+;
 
 const fakeSearchLink404 = {
   "msg": "Pattern not found!"
@@ -166,16 +182,39 @@ void main() {
     expect(link.length, 2);
   });
 
-  test("Test search link API if not found the link", () async {
-    apiProvider.apiHelper.client = MockClient((request) async {
-      return Response(json.encode(fakeSearchLink404), 404);
-    });
 
-    try {
-      await apiProvider.searchLink(token: "token", word: 'test');
-    } catch (e) {
-      var jsonData = json.decode(e.toString());
-      expect(jsonData["msg"], "Pattern not found!");
-    }
+  test("Test search link API if didn't found the link", () async {
+  apiProvider.apiHelper.client = MockClient((request) async {
+  return Response(json.encode(fakeSearchLink404), 404);
   });
-}
+
+  try {
+  await apiProvider.searchLink(token: "token", word: 'test');
+  } catch (e) {
+  var jsonData = json.decode(e.toString());
+  expect(jsonData["msg"], "Pattern not found!");
+  }
+  });
+
+  test("Test fetch links API by category id", () async {
+  apiProvider.apiHelper.client = MockClient((request) async {
+  return Response(json.encode(fakeFetchLinksByCategoryId200), 200);
+  });
+  final link = await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
+
+  expect(link.length, 2);
+  });
+
+  test("Test fetch links API by category id if didn't exist any category", () async {
+  apiProvider.apiHelper.client = MockClient((request) async {
+  return Response(json.encode(fakeFetchLinksByCategoryId404), 404);
+  });
+
+  try {
+  await apiProvider.fetchLinksByCategoryId(token: "token", id: 10);
+  } catch (e) {
+  var jsonData = json.decode(e.toString());
+  expect(jsonData["msg"], "Category ID not found!");
+  }
+  });
+  }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/link_model.dart';
@@ -75,10 +73,31 @@ class LinkApiProvider implements LinkSource {
         'Authorization': 'Bearer $token',
       },
     );
-   final search = SearchModel.fromJson(response['search']).links;
+
+    final search = SearchModel.fromJson(response['search']).links;
+
     for (var link in search) {
       links.add(link);
     }
     return links;
+  }
+  @override
+  Future<List<SearchLinkModel>> fetchLinksByCategoryId(
+      {String token, int id}) async {
+    List<SearchLinkModel> categories = new List<SearchLinkModel>();
+
+    final response = await apiHelper.get(
+      "links/category/$id",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    final category = SearchModel.fromJson(response['category']).links;
+    for (var cat in category) {
+      categories.add(cat);
+    }
+    return categories;
   }
 }

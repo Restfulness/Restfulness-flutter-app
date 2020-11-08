@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/builder/link_preview.dart';
@@ -18,8 +19,9 @@ class LinkPreviewWidget extends StatelessWidget {
   final String url;
   final int id;
   final List<CategoryModel> category;
+  final VoidCallback onDelete;
 
-  LinkPreviewWidget({this.id, this.url, this.category});
+  LinkPreviewWidget({this.id, this.url, this.category,this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class LinkPreviewWidget extends StatelessWidget {
   Widget buildInfo(PreviewModel info, BuildContext context, LinksBloc bloc) {
     return Container(
       height: 280,
+      margin: EdgeInsets.only(left: 5, right: 5 ,bottom: 5),
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -184,6 +187,7 @@ class LinkPreviewWidget extends StatelessWidget {
   Widget buildLoading() {
     return Container(
       height: 280,
+      margin: EdgeInsets.only(left: 5, right: 5 ,bottom: 5),
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -215,7 +219,11 @@ class LinkPreviewWidget extends StatelessWidget {
             final response = await repository.deleteLink(id);
             if (response) {
               _showSnackBar(context, "Deleted successfully", true);
+              onDelete();
               bloc.fetchLinks();
+              // reset category list
+              final categoryBloc = CategoriesProvider.of(context);
+              categoryBloc.fetchCategories();
             }
           } catch (e) {
             if (JsonUtils.isValidJSONString(e.toString())) {

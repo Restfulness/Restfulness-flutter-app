@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
-
-import 'link_preview_widget.dart';
+import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
 
 class SearchWidget extends StatefulWidget {
   @override
@@ -39,7 +37,7 @@ class _SearchWidgetState extends State<SearchWidget> {
             children: [
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(11,15,0,15),
+                  margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
                   child: Material(
                     elevation: 6.0,
                     borderRadius: BorderRadius.circular(30),
@@ -81,7 +79,6 @@ class _SearchWidgetState extends State<SearchWidget> {
   }
 
   Widget _buildSearchField(BuildContext context, LinksBloc bloc) {
-
     return TextField(
       controller: searchController,
       decoration: InputDecoration(
@@ -93,7 +90,8 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   Widget _buildButtonIcon() {
     if (_state == 1) {
-      Future.delayed(const Duration(milliseconds: 1500), () { //FIXME: shouldn't use delay!
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        //FIXME: shouldn't use delay!
         setState(() {
           _state = 0;
         });
@@ -127,15 +125,12 @@ class _SearchWidgetState extends State<SearchWidget> {
           if (!snapshot.hasData) {
             return Container();
           }
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, int index) {
-              return LinkPreviewWidget(
-                  id: snapshot.data[index].id,
-                  url: snapshot.data[index].url,
-                  category: []);
-            },
-          );
+
+          if (snapshot.data.length > 0) {
+            return SearchLinkListWidget(list: snapshot.data);
+          } else {
+            return Container();
+          }
         });
   }
 
@@ -148,6 +143,5 @@ class _SearchWidgetState extends State<SearchWidget> {
         });
       });
     });
-
   }
 }

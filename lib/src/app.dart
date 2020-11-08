@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 
 import 'blocs/authentication/auth_provider.dart';
 import 'blocs/link/links_provider.dart';
@@ -10,6 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
+      child:CategoriesProvider(
         child: LinksProvider(
           child: MaterialApp(
             title: 'Restfulness',
@@ -21,6 +23,7 @@ class App extends StatelessWidget {
             onGenerateRoute: routes,
           ),
         ) ,
+      )
     );
   }
 

@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
-import 'package:restfulness/src/screens/home_screen.dart';
+import 'package:restfulness/src/screens/main_screen.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -54,21 +55,18 @@ class AuthBloc extends Object with AuthValidator {
     try {
       final response = await user.login(validUsername, validPassword);
       if (response.accessToken.isNotEmpty) {
-        final bloc = LinksProvider.of(context);
-        bloc.fetchLinks();
-        _redirectToPage(context, HomeScreen());
+        goToMainScreen(context);
       }
     } catch (e) {
-      if(JsonUtils.isValidJSONString(e.toString())){
-        showSnackBar(context, json.decode(e.toString())["msg"] , false);
-      }else {
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        showSnackBar(context, json.decode(e.toString())["msg"], false);
+      } else {
         showSnackBar(context, "Unexpected server error ", false);
       }
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
   }
-
 
   submitRegister(BuildContext context) async {
     final validUsername = _usernameSignUp.value.toLowerCase();
@@ -85,18 +83,26 @@ class AuthBloc extends Object with AuthValidator {
 
         final response = await user.login(validUsername, validPassword);
         if (response.accessToken.isNotEmpty) {
-          _redirectToPage(context, HomeScreen());
+          goToMainScreen(context);
         }
       }
     } catch (e) {
-      if(JsonUtils.isValidJSONString(e.toString())){
-        showSnackBar(context, json.decode(e.toString())["msg"] , false);
-      }else {
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        showSnackBar(context, json.decode(e.toString())["msg"], false);
+      } else {
         showSnackBar(context, "Unexpected server error ", false);
       }
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void goToMainScreen(BuildContext context) {
+    final linkBloc = LinksProvider.of(context);
+    final categoriesBloc = CategoriesProvider.of(context);
+    linkBloc.fetchLinks();
+    categoriesBloc.fetchCategories();
+    _redirectToPage(context, MainScreen());
   }
 
   Future<void> _redirectToPage(BuildContext context, Widget page) async {
@@ -107,14 +113,15 @@ class AuthBloc extends Object with AuthValidator {
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/login'));
   }
 
-  void showSnackBar(BuildContext context, String message , bool isSuccess) {
+  void showSnackBar(BuildContext context, String message, bool isSuccess) {
     Scaffold.of(context).showSnackBar(new SnackBar(
         content: Row(
           children: [
-            isSuccess? Icon(Icons.check_circle, color: Colors.green): Icon(Icons.error, color: Colors.red),
+            isSuccess
+                ? Icon(Icons.check_circle, color: Colors.green)
+                : Icon(Icons.error, color: Colors.red),
             SizedBox(width: 10.0),
-            Flexible(
-                child: Text(message)),
+            Flexible(child: Text(message)),
           ],
         ),
         duration: Duration(seconds: 2)));
