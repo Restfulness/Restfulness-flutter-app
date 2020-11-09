@@ -37,7 +37,7 @@ class CategoryListScreen extends StatelessWidget {
               value: 0,
             );
           }
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.data == null) {
             return SizedBox(
               height: MediaQuery.of(context).size.height / 1.3,
               child: Center(

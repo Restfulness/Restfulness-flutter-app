@@ -34,11 +34,11 @@ class _SearchLinkListWidgetState extends State<SearchLinkListWidget> {
   Widget build(BuildContext context) {
     linksBloc = LinksProvider.of(context);
     return ListView.builder(
-      itemCount: _list.length,
+      itemCount: widget.list.length,
       itemBuilder: (context, int index) {
         return LinkPreviewWidget(
-            id: _list[index].id,
-            url: _list[index].url,
+            id: widget.list[index].id,
+            url: widget.list[index].url,
             category: [],
             onDelete: () => removeItem(index));
       },
@@ -47,6 +47,7 @@ class _SearchLinkListWidgetState extends State<SearchLinkListWidget> {
 
   void removeItem(int index) {
     setState(() {
+      _list = widget.list;
       _list = List.from(_list)..removeAt(index);
 
       linksBloc.addSearchLinks(_list);
