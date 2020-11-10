@@ -64,7 +64,7 @@ class LinkPreviewWidget extends StatelessWidget {
                 if (info.image == '')
                   Expanded(
                       child: Image.asset(
-                    "assets/images/restApi.png",
+                    "assets/icons/restApi.png",
                     width: double.maxFinite,
                   )),
                 Padding(
@@ -135,7 +135,7 @@ class LinkPreviewWidget extends StatelessWidget {
               children: [
                 Expanded(
                     child: Image.asset(
-                  "assets/images/restApi.png",
+                  "assets/icons/restApi.png",
                   width: double.maxFinite,
                 )),
                 Padding(

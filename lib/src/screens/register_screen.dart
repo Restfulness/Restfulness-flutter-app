@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
 
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   @override
@@ -33,7 +33,7 @@ class RegisterScreen extends StatelessWidget {
         margin: EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Image.asset("assets/images/restApi.png", width: 120),
+            Image.asset("assets/icons/restApi.png", width: 120),
             Container(margin: EdgeInsets.only(top: 30.0)),
             buildTitle(),
             Container(margin: EdgeInsets.only(top: 20.0)),

@@ -6,7 +6,7 @@ import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 import 'main_screen.dart';
 
 class DecisionScreen extends StatefulWidget {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 
+import '../constants.dart';
 import 'blocs/authentication/auth_provider.dart';
 import 'blocs/link/links_provider.dart';
 import 'screens/decision_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/login/login_screen.dart';
 import 'screens/register_screen.dart';
 
 class App extends StatelessWidget {
@@ -17,8 +18,9 @@ class App extends StatelessWidget {
             title: 'Restfulness',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primaryColor: primaryColor,
               visualDensity: VisualDensity.adaptivePlatformDensity,
+                scaffoldBackgroundColor:  Color(0xFFf0f0f0)
             ),
             onGenerateRoute: routes,
           ),

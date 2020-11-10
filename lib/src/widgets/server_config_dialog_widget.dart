@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerConfigDialogWidget {
@@ -34,10 +35,10 @@ class ServerConfigDialogWidget {
         builder: (context) {
           return AlertDialog(
             title: Text("Enter Your Server Address" ,style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.blue),),
+                fontWeight: FontWeight.bold, color: primaryColor),),
             content: Row(
               children: <Widget>[
-                Expanded(child: buildUrlField(urlController), flex: 3),
+                Expanded(child: buildUrlField(urlController), flex: 2),
                 SizedBox(width: 5),
                 Expanded(child: buildPortField(portController)),
               ],
@@ -45,7 +46,7 @@ class ServerConfigDialogWidget {
             actions: [
               MaterialButton(
                 elevation: 2,
-                child: Text("Save"),
+                child: Text("Save" , style: TextStyle(color: secondaryTextColor),),
                 onPressed: () {
                   Map<String, dynamic> toMap = new Map<String, dynamic>();
                   toMap["url"] = urlController.text;
@@ -64,9 +65,11 @@ class ServerConfigDialogWidget {
       controller: urlController,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue, width: 1.0),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
         ),
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(30))),
         labelText: "Url",
         hintText: "http://server.com",
       ),
@@ -79,9 +82,11 @@ class ServerConfigDialogWidget {
       controller: portController,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue, width: 1.0),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderSide: BorderSide(color: primaryColor, width: 2.0),
         ),
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(30))),
         labelText: "Port",
         hintText: "5000",
       ),
