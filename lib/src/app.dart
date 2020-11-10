@@ -6,7 +6,7 @@ import 'blocs/authentication/auth_provider.dart';
 import 'blocs/link/links_provider.dart';
 import 'screens/decision_screen.dart';
 import 'screens/login/login_screen.dart';
-import 'screens/register_screen.dart';
+import 'screens/register/register_screen.dart';
 
 class App extends StatelessWidget {
   @override
