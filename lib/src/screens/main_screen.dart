@@ -1,3 +1,4 @@
+import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
@@ -48,23 +49,18 @@ class _MainScreenState extends State<MainScreen> {
         title: Text(_title),
       ),
       body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        items: [
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.home),
-            label: 'Home',
-          ),
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.magnify),
-            label: 'Search',
-          ),
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.pound),
-            label: 'Categories',
-          )
+      bottomNavigationBar: FancyBottomNavigation(
+        tabs: [
+          TabData(iconData: MdiIcons.home, title: "Home"),
+          TabData(iconData: MdiIcons.magnify, title: "Search"),
+          TabData(iconData: MdiIcons.cog, title: "Settings")
         ],
+        onTabChangedListener: (position) {
+          setState(() {
+            onTabTapped(position);
+            _currentIndex = position;
+          });
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: new Builder(builder: (BuildContext context) {
@@ -88,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
           _title = "Search";
           break;
         case 2:
-          _title = "Categories";
+          _title = "Settings";
 
           break;
       }
