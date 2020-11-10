@@ -20,8 +20,10 @@ class CategoryCardWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => CategoryListScreen(
-                      name: name,
-                    )))
+                  name: name,
+                ))).then((context) {
+          bloc.restCategoryList();
+        })
       },
       child: Card(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),

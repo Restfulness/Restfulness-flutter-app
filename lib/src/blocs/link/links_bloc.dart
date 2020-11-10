@@ -45,7 +45,7 @@ class LinksBloc {
 
   fetchLinksByCategoryId(int id) async {
     try {
-      final res = await _repository.fetchLinkByCategoryId(id);
+      final res = await _repository.fetchLinkByCategoryId(id);// FIXME: first get from db and then if that id not exists inside db, fetch that id from api
       _fetchLinksByCategory.sink.add(res);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
