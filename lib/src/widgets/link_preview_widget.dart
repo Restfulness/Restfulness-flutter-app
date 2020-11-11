@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
@@ -21,7 +22,7 @@ class LinkPreviewWidget extends StatelessWidget {
   final List<CategoryModel> category;
   final VoidCallback onDelete;
 
-  LinkPreviewWidget({this.id, this.url, this.category,this.onDelete});
+  LinkPreviewWidget({this.id, this.url, this.category, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -42,79 +43,100 @@ class LinkPreviewWidget extends StatelessWidget {
   }
 
   Widget buildInfo(PreviewModel info, BuildContext context, LinksBloc bloc) {
+    double cWidth = MediaQuery.of(context).size.width * 0.55;
+
     return Container(
-      height: 280,
-      margin: EdgeInsets.only(left: 5, right: 5 ,bottom: 5),
+      height: 120,
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
                 if (info.image != '')
-                  Expanded(
-                      child: Image.network(
-                    info.image,
-                    width: double.maxFinite,
-                    fit: BoxFit.cover,
-                  )),
-                if (info.image == '')
-                  Expanded(
-                      child: Image.asset(
-                    "assets/icons/restApi.png",
-                    width: double.maxFinite,
-                  )),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 10.0),
-                  child: Text(
-                    info.title,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    width: 120,
+                    height: double.infinity,
+                    child: Image.network(
+                      info.image,
+                      fit: BoxFit.cover,
                     ),
+                  ),
+                if (info.image == '')
+                  Container(
+                    width: 120,
+                    height: double.infinity,
+                    child: Image.asset(
+                      "assets/images/default.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                Container(
+                  width: cWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 5.0),
+                        child: Text(
+                          info.title,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      if (info.description != '')
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(12.0, 1.0, 12.0, 6.0),
+                          child: Text(
+                            info.description,
+                            maxLines: 3,
+                          ),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
+                        child: Tags(
+                          heightHorizontalScroll: 30,
+                          horizontalScroll: true,
+                          itemCount: category.length,
+                          itemBuilder: (int index) {
+                            return Tooltip(
+                              message: category[index].name,
+                              child: ItemTags(
+                                onPressed: (item) {
+                                  print('${category[item.index].id}');
+                                },
+                                title: category[index].name,
+                                index: index,
+                                activeColor: primaryLightColor,
+                                textStyle: TextStyle(fontSize: 12),
+                                elevation: 1,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                if (info.description != '')
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      info.description,
-                      maxLines: 2,
-                    ),
-                  ),
               ],
             ),
-            Positioned(
-              child: Tags(
-                itemCount: category.length,
-                itemBuilder: (int index) {
-                  return Tooltip(
-                      message: category[index].name,
-                      child: ItemTags(
-                        onPressed: (item) {
-                          print('${category[item.index].id}');
-                        },
-                        title: category[index].name,
-                        index: index,
-                      ));
-                },
-              ),
-              top: 10,
-              left: 10,
-            ),
-            Positioned(
-              child: Column(
-                children: [
-                  buildDeleteButton(context, bloc),
-                  buildShareButton(context),
-                  buildOpenButton()
-                ],
-              ),
-              right: 1,
-            ),
+
+            // Positioned(
+            //   child: Column(
+            //     children: [
+            //       buildDeleteButton(context, bloc),
+            //       buildShareButton(context),
+            //       buildOpenButton()
+            //     ],
+            //   ),
+            //   right: 1,
+            // ),
           ],
         ),
       ),
@@ -122,72 +144,76 @@ class LinkPreviewWidget extends StatelessWidget {
   }
 
   Widget buildInfoSimple(BuildContext context, LinksBloc bloc) {
+    double cWidth = MediaQuery.of(context).size.width * 0.55;
+
     return Container(
-      height: 220,
+      height: 120,
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: Image.asset(
-                  "assets/icons/restApi.png",
-                  width: double.maxFinite,
-                )),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    url,
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+        child: Stack(children: [
+          Row(
+            children: [
+              Container(
+                width: 120,
+                height: double.infinity,
+                child: Image.asset(
+                  "assets/images/default.png",
+                  fit: BoxFit.cover,
                 ),
-              ],
-            ),
-            Positioned(
-              child: Tags(
-                itemCount: category.length,
-                itemBuilder: (int index) {
-                  return Tooltip(
-                      message: category[index].name,
-                      child: ItemTags(
-                        onPressed: (item) {
-                          print('${category[item.index].id}');
-                        },
-                        title: category[index].name,
-                        index: index,
-                      ));
-                },
               ),
-              top: 10,
-              left: 10,
-            ),
-            Positioned(
+            ],
+          ),
+          Container(
+              width: cWidth,
               child: Column(
                 children: [
-                  buildDeleteButton(context, bloc),
-                  buildShareButton(context),
-                  buildOpenButton()
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 5.0),
+                    child: Text(
+                      url,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
+                    child: Tags(
+                      heightHorizontalScroll: 30,
+                      horizontalScroll: true,
+                      itemCount: category.length,
+                      itemBuilder: (int index) {
+                        return Tooltip(
+                          message: category[index].name,
+                          child: ItemTags(
+                            onPressed: (item) {
+                              print('${category[item.index].id}');
+                            },
+                            title: category[index].name,
+                            index: index,
+                            activeColor: primaryLightColor,
+                            textStyle: TextStyle(fontSize: 12),
+                            elevation: 1,
+                          ),
+                        );
+                      },
+                    ),
+                  )
                 ],
-              ),
-              right: 1,
-            ),
-          ],
-        ),
+              )),
+        ]),
       ),
     );
   }
 
   Widget buildLoading() {
     return Container(
-      height: 280,
-      margin: EdgeInsets.only(left: 5, right: 5 ,bottom: 5),
+      height: 120,
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -200,7 +226,6 @@ class LinkPreviewWidget extends StatelessWidget {
       ),
     );
   }
-
 
   Widget buildDeleteButton(BuildContext context, LinksBloc bloc) {
     return ButtonTheme(

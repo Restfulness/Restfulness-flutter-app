@@ -12,21 +12,22 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
-      child:CategoriesProvider(
-        child: LinksProvider(
-          child: MaterialApp(
-            title: 'Restfulness',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
+        child: CategoriesProvider(
+      child: LinksProvider(
+        child: MaterialApp(
+          title: 'Restfulness',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
               primaryColor: primaryColor,
               visualDensity: VisualDensity.adaptivePlatformDensity,
-                scaffoldBackgroundColor:  Color(0xFFf0f0f0)
-            ),
-            onGenerateRoute: routes,
-          ),
-        ) ,
-      )
-    );
+              scaffoldBackgroundColor: scaffoldBackgroundColor,
+              primaryTextTheme: TextTheme(
+                headline6: TextStyle(color: Colors.white),
+              )),
+          onGenerateRoute: routes,
+        ),
+      ),
+    ));
   }
 
   Route routes(RouteSettings settings) {
