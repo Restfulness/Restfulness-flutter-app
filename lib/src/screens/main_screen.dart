@@ -11,6 +11,7 @@ import 'package:restfulness/src/widgets/drawer_widget.dart';
 
 import '../../constants.dart';
 import 'category_screen.dart';
+import 'new_home_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -25,9 +26,9 @@ class _MainScreenState extends State<MainScreen> {
   int categoryIndex = 2;
 
   int _currentIndex = 0;
-  bool _isOnHomePage = true;
+
   final List<Widget> _children = [
-    HomeScreen(),
+    NewHomeScreen(),
     SearchScreen(),
     CategoryScreen(),
   ];
@@ -80,13 +81,6 @@ class _MainScreenState extends State<MainScreen> {
             });
           },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: new Builder(builder: (BuildContext context) {
-          HomeScreen homeScreen = new HomeScreen();
-          return homeScreen.buildFloatingActionButton(
-              context, linkBloc, _isOnHomePage);
-        }),
-        drawer: DrawerWidget(),
       ),
     );
   }
@@ -108,11 +102,7 @@ class _MainScreenState extends State<MainScreen> {
           break;
       }
     });
-    if (index != homeIndex) {
-      _isOnHomePage = false;
-    } else {
-      _isOnHomePage = true;
-    }
+
     if (index != searchIndex) {
       linkBloc.resetSearch();
     }

@@ -1,20 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/constants.dart';
-import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/builder/link_preview.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/preview_model.dart';
-import 'package:restfulness/src/resources/repository.dart';
-import 'package:restfulness/src/utils/json_utils.dart';
-import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LinkPreviewWidget extends StatelessWidget {
   final String url;
@@ -126,17 +119,23 @@ class LinkPreviewWidget extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Positioned(
-            //   child: Column(
-            //     children: [
-            //       buildDeleteButton(context, bloc),
-            //       buildShareButton(context),
-            //       buildOpenButton()
-            //     ],
-            //   ),
-            //   right: 1,
-            // ),
+            Positioned(
+              child: ButtonTheme(
+                minWidth: 0.5,
+                height: 0.5,
+                child: MaterialButton(
+                    onPressed: () {},
+                    elevation: 1,
+                    color: primaryLightColor,
+                    child: Icon(
+                      MdiIcons.plus,
+                      color: Colors.white,
+                    ),
+                    shape: CircleBorder()),
+              ),
+              bottom: -4,
+              right: -8,
+            )
           ],
         ),
       ),
@@ -225,100 +224,5 @@ class LinkPreviewWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget buildDeleteButton(BuildContext context, LinksBloc bloc) {
-    return ButtonTheme(
-      minWidth: 1,
-      height: 40.0,
-      child: FlatButton(
-        child: Icon(
-          MdiIcons.trashCanOutline,
-          color: Colors.red,
-        ),
-        shape: CircleBorder(),
-        color: Colors.white,
-        onPressed: () async {
-          try {
-            Repository repository = new Repository();
-            final response = await repository.deleteLink(id);
-            if (response) {
-              _showSnackBar(context, "Deleted successfully", true);
-              onDelete();
-              bloc.fetchLinks();
-              // reset category list
-              final categoryBloc = CategoriesProvider.of(context);
-              categoryBloc.fetchCategories();
-            }
-          } catch (e) {
-            if (JsonUtils.isValidJSONString(e.toString())) {
-              _showSnackBar(context, json.decode(e.toString())["msg"], false);
-            } else {
-              _showSnackBar(context, "Unexpected server error ", false);
-            }
-          }
-        },
-      ),
-    );
-  }
-
-  Widget buildShareButton(BuildContext context) {
-    return ButtonTheme(
-      minWidth: 1,
-      height: 40.0,
-      child: FlatButton(
-        child: Icon(
-          MdiIcons.shareVariantOutline,
-          color: Colors.blue,
-        ),
-        shape: CircleBorder(),
-        color: Colors.white,
-        onPressed: () async {
-          final RenderBox box = context.findRenderObject();
-          Share.share(url,
-              sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-        },
-      ),
-    );
-  }
-
-  Widget buildOpenButton() {
-    return ButtonTheme(
-      minWidth: 1,
-      height: 40.0,
-      child: FlatButton(
-        child: Icon(
-          MdiIcons.openInApp,
-          color: Colors.orange,
-        ),
-        shape: CircleBorder(),
-        color: Colors.white,
-        onPressed: () {
-          _launchURL();
-        },
-      ),
-    );
-  }
-
-  void _showSnackBar(BuildContext context, String message, bool isSuccess) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-        content: Row(
-          children: [
-            isSuccess
-                ? Icon(Icons.check_circle, color: Colors.green)
-                : Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 10.0),
-            Text(message),
-          ],
-        ),
-        duration: Duration(seconds: 2)));
-  }
-
-  _launchURL() async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }
