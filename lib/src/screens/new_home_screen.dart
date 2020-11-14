@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/constants.dart';
+import 'package:restfulness/src/blocs/category/categories_provider.dart';
+import 'package:restfulness/src/blocs/link/links_bloc.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
@@ -21,6 +26,9 @@ class _NewHomeScreenState extends State<NewHomeScreen>
   double iconsTopPositionData;
 
   Repository _repository = new Repository();
+
+  TextEditingController addLinkController;
+  int _state = 0;
 
   // Icon Animation Bool
   bool rightPositionData,
@@ -54,6 +62,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
     getCardList();
+    addLinkController = new TextEditingController();
   }
 
   // Card List
@@ -224,19 +233,92 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    var bloc = LinksProvider.of(context);
+
     double _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
-    return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
-      child: _list == null
-          ? SizedBox(
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
+                  child: Material(
+                    elevation: 6.0,
+                    borderRadius: BorderRadius.circular(30),
+                    child: _buildAddField(context, bloc),
+                  ),
+                  height: 50,
+                  width: double.infinity,
+                ),
+                flex: 4,
+              ),
+              Expanded(
+                child: MaterialButton(
+                  onPressed: () async {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    if (addLinkController.text != '') {
+                      setState(() {
+                        _state = 1;
+                      });
+                      // temp tag list FIXME: after have separated api for adding tags
+                      List<String> tags = new List<String>();
+                      tags.add("not tagged");
+
+                      Repository repository = new Repository();
+                      await repository.initializationLink;
+                      try {
+                        final id = await repository.insertLink(
+                            tags, addLinkController.text);
+                        if (id != null) {
+                          // TODO show successes message
+                          setState(() {
+                            topPosition = 26;
+                          });
+                          getCardList();
+                          // get new categories if we have new one
+                          final categoriesBloc = CategoriesProvider.of(context);
+                          categoriesBloc.fetchCategories();
+                        }
+                      } catch (e) {
+                        // TODO show failed message
+                        // if (JsonUtils.isValidJSONString(e.toString())) {
+                        //   showSnackBar(
+                        //       context, json.decode(e.toString())["msg"], false);
+                        // } else {
+                        //   showSnackBar(context, "Unexpected server error ", false);
+                        // }
+                      }
+                    }
+                  },
+                  elevation: 8.0,
+                  color: primaryColor,
+                  child: _buildButtonIcon(),
+                  padding: EdgeInsets.all(14.0),
+                  shape: CircleBorder(),
+                ),
+                flex: 1,
+              ),
+            ],
+          ),
+        ),
+
+        Expanded(
+          child:  SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: _list == null
+                ? SizedBox(
               height: MediaQuery.of(context).size.height / 1.3,
               child: Center(
                 child: CircularProgressIndicator(),
               ),
             )
-          : Container(
-              height: _totalHeight < (MediaQuery.of(context).size.height - 190)
+                : Container(
+              height: _totalHeight <
+                  (MediaQuery.of(context).size.height - 190)
                   ? (MediaQuery.of(context).size.height - 190)
                   : _totalHeight,
               child: Stack(
@@ -248,13 +330,19 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                     leftPosition: -27.0,
                     topPosition: (iconsTopPositionData - 100.0),
                     rightAnimationStart: rightPositionData,
-                    firstIconAnimationStart: firstIconAnimationStartData,
-                    secondIconAnimationStart: secondIconAnimationStartData,
-                    thirdIconAnimationStart: thirdIconAnimationStartData,
+                    firstIconAnimationStart:
+                    firstIconAnimationStartData,
+                    secondIconAnimationStart:
+                    secondIconAnimationStartData,
+                    thirdIconAnimationStart:
+                    thirdIconAnimationStartData,
                   ),
                 ],
               ),
             ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -299,5 +387,38 @@ class _NewHomeScreenState extends State<NewHomeScreen>
         ),
       ),
     );
+  }
+
+  Widget _buildAddField(BuildContext context, LinksBloc bloc) {
+    return TextField(
+      controller: addLinkController,
+      decoration: InputDecoration(
+          hintText: 'Add link',
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
+    );
+  }
+
+  Widget _buildButtonIcon() {
+    if (_state == 1) {
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        //FIXME: shouldn't use delay!
+        setState(() {
+          _state = 0;
+        });
+      });
+      return SizedBox(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ),
+        height: 25.0,
+        width: 25.0,
+      );
+    } else {
+      return Icon(
+        MdiIcons.plus,
+        color: Colors.white,
+      );
+    }
   }
 }
