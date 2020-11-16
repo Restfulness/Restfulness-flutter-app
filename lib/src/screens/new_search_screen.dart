@@ -1,22 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:restfulness/constants.dart';
-import 'package:restfulness/src/blocs/category/categories_provider.dart';
-import 'package:restfulness/src/blocs/link/links_bloc.dart';
-import 'package:restfulness/src/blocs/link/links_provider.dart';
-import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
-class NewHomeScreen extends StatefulWidget {
+import '../../constants.dart';
+import '../widgets/category_widget.dart';
+
+class NewSearchScreen extends StatefulWidget {
   @override
-  _NewHomeScreenState createState() => _NewHomeScreenState();
+  _NewSearchScreen createState() => _NewSearchScreen();
 }
 
-class _NewHomeScreenState extends State<NewHomeScreen>
+class _NewSearchScreen extends State<NewSearchScreen>
     with SingleTickerProviderStateMixin {
-  List<LinkModel> listCardMessage;
+  List<SearchLinkModel> listCardMessage;
   double _headingBarHeight = 4.0;
   double _buttonBarHeight = 0.0;
   double cardHeight = 120;
@@ -27,7 +27,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   Repository _repository = new Repository();
 
-  TextEditingController addLinkController;
+  TextEditingController searchController;
   int _state = 0;
 
   // Icon Animation Bool
@@ -44,8 +44,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
   bool removeAnimation = false;
   Map selectState = {};
 
-  Future<List<LinkModel>> cardList() async {
-    List<LinkModel> listCard = await _repository.fetchAllLinks();
+  Future<List<SearchLinkModel>> cardList(String word) async {
+    List<SearchLinkModel> listCard = await _repository.searchLink(word);
 
     return listCard;
   }
@@ -55,20 +55,20 @@ class _NewHomeScreenState extends State<NewHomeScreen>
   @override
   void initState() {
     super.initState();
+
+    _list = [];
     render = false;
     rightPositionData = false;
     firstIconAnimationStartData = false;
     secondIconAnimationStartData = false;
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
-    getCardList();
-    addLinkController = new TextEditingController();
-    print('----> $_list');
+    searchController = new TextEditingController();
   }
 
   // Card List
-  void getCardList() {
-    cardList().then(
+  void getCardList(String word) {
+    cardList(word).then(
       (futureResultList) {
         _list = futureResultList.map((card) {
           topPosition = futureResultList.indexOf(card) == 0
@@ -79,7 +79,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
             key: GlobalKey(),
             urlId: card.id,
             url: card.url,
-            category: card.categories,
+            category: [],
             index: futureResultList.indexOf(card),
             topPosition: topPosition,
             iconsTopPosition: iconsTopPosition,
@@ -259,38 +259,12 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                 child: MaterialButton(
                   onPressed: () async {
                     FocusScope.of(context).requestFocus(FocusNode());
-                    if (addLinkController.text != '') {
+                    if (searchController.text != '') {
                       setState(() {
+                        topPosition = 26;
                         _state = 1;
                       });
-                      // temp tag list FIXME: after have separated api for adding tags
-                      List<String> tags = new List<String>();
-                      tags.add("not tagged");
-
-                      Repository repository = new Repository();
-                      await repository.initializationLink;
-                      try {
-                        final id = await repository.insertLink(
-                            tags, addLinkController.text);
-                        if (id != null) {
-                          // TODO show successes message
-                          setState(() {
-                            topPosition = 26;
-                          });
-                          getCardList();
-                          // get new categories if we have new one
-                          final categoriesBloc = CategoriesProvider.of(context);
-                          categoriesBloc.fetchCategories();
-                        }
-                      } catch (e) {
-                        // TODO show failed message
-                        // if (JsonUtils.isValidJSONString(e.toString())) {
-                        //   showSnackBar(
-                        //       context, json.decode(e.toString())["msg"], false);
-                        // } else {
-                        //   showSnackBar(context, "Unexpected server error ", false);
-                        // }
-                      }
+                      getCardList(searchController.text);
                     }
                   },
                   elevation: 8.0,
@@ -304,20 +278,11 @@ class _NewHomeScreenState extends State<NewHomeScreen>
             ],
           ),
         ),
-
         Expanded(
-          child:  SingleChildScrollView(
+          child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
-            child: _list == null
-                ? SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-                : Container(
-              height: _totalHeight <
-                  (MediaQuery.of(context).size.height - 190)
+            child: Container(
+              height: _totalHeight < (MediaQuery.of(context).size.height - 190)
                   ? (MediaQuery.of(context).size.height - 190)
                   : _totalHeight,
               child: Stack(
@@ -329,12 +294,9 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                     leftPosition: -27.0,
                     topPosition: (iconsTopPositionData - 100.0),
                     rightAnimationStart: rightPositionData,
-                    firstIconAnimationStart:
-                    firstIconAnimationStartData,
-                    secondIconAnimationStart:
-                    secondIconAnimationStartData,
-                    thirdIconAnimationStart:
-                    thirdIconAnimationStartData,
+                    firstIconAnimationStart: firstIconAnimationStartData,
+                    secondIconAnimationStart: secondIconAnimationStartData,
+                    thirdIconAnimationStart: thirdIconAnimationStartData,
                   ),
                 ],
               ),
@@ -347,7 +309,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   Container buildCardList(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 0.0),
+      margin: EdgeInsets.only(top: 0.0 ,bottom: 30),
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: EdgeInsets.only(
@@ -361,22 +323,9 @@ class _NewHomeScreenState extends State<NewHomeScreen>
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: Stack(
-                  children: _list.length == 2
+                  children: _list.length == 0
                       ? [
-                          CardTileWidget(
-                            index: 0,
-                            blankCard: true,
-                            topPosition: 0,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'No Item',
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          )
+                          CategoryWidget(),
                         ]
                       : _list,
                 ),
@@ -390,9 +339,23 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   Widget _buildAddField(BuildContext context) {
     return TextField(
-      controller: addLinkController,
+      onChanged: (word) {
+        if (word != '') {
+          setState(() {
+            topPosition = 26;
+            _state = 1;
+          });
+          getCardList(word);
+        } else {
+          setState(() {
+            topPosition = 26;
+            _list = [];
+          });
+        }
+      },
+      controller: searchController,
       decoration: InputDecoration(
-          hintText: 'Add link',
+          hintText: 'Search links',
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
     );
@@ -415,7 +378,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
       );
     } else {
       return Icon(
-        MdiIcons.plus,
+        MdiIcons.magnify,
         color: Colors.white,
       );
     }

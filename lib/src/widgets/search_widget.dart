@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
@@ -14,6 +15,8 @@ class _SearchWidgetState extends State<SearchWidget> {
   int _state = 0;
   TextEditingController searchController;
 
+  bool isHaveSearchResult ;
+
   @override
   void dispose() {
     super.dispose();
@@ -23,6 +26,8 @@ class _SearchWidgetState extends State<SearchWidget> {
   initState() {
     super.initState();
     searchController = new TextEditingController();
+
+    isHaveSearchResult = false ;
   }
 
   @override
@@ -61,7 +66,7 @@ class _SearchWidgetState extends State<SearchWidget> {
                     }
                   },
                   elevation: 8.0,
-                  color: Colors.blue,
+                  color: primaryColor,
                   child: _buildButtonIcon(),
                   padding: EdgeInsets.all(14.0),
                   shape: CircleBorder(),
@@ -88,7 +93,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       },
       controller: searchController,
       decoration: InputDecoration(
-          hintText: 'Search',
+          hintText: 'Search links',
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
     );

@@ -3,7 +3,7 @@ import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/widgets/category_card_widget.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = CategoriesProvider.of(context);
@@ -25,39 +25,27 @@ class CategoryScreen extends StatelessWidget {
         }
         if (!snapshot.hasData) {
           return SizedBox(
-            height: MediaQuery
-                .of(context)
-                .size
-                .height / 1.3,
+            height: MediaQuery.of(context).size.height / 1.3,
             child: Center(
               child: CircularProgressIndicator(),
             ),
           );
         }
 
-        return ListView.builder(
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: MediaQuery.of(context).size.width /
+                (MediaQuery.of(context).size.height / 5.5),
+          ),
           itemCount: snapshot.data.length,
-          itemBuilder: (context, int index) {
-            CircularProgressIndicator(value: 0);
+          itemBuilder: (context, index) {
             return CategoryCardWidget(
                 id: snapshot.data[index].id, name: snapshot.data[index].name);
           },
-        );
+        )
+        ;
       },
     );
-  }
-
-  void showSnackBar(BuildContext context, String message, bool isSuccess) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-        content: Row(
-          children: [
-            isSuccess
-                ? Icon(Icons.check_circle, color: Colors.green)
-                : Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 10.0),
-            Flexible(child: Text(message)),
-          ],
-        ),
-        duration: Duration(seconds: 2)));
   }
 }
