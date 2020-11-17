@@ -5,9 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
-import 'package:restfulness/src/screens/home_screen.dart';
-import 'package:restfulness/src/screens/search_screen.dart';
-import 'package:restfulness/src/widgets/drawer_widget.dart';
+import 'package:restfulness/src/screens/settings_screen.dart';
 
 import '../../constants.dart';
 import '../widgets/category_widget.dart';
@@ -31,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _children = [
     NewHomeScreen(),
     NewSearchScreen(),
-    CategoryWidget(),
+    SettingsScreen(),
   ];
   String _title;
 

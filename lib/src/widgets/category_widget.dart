@@ -36,7 +36,7 @@ class CategoryWidget extends StatelessWidget {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: MediaQuery.of(context).size.width /
-                (MediaQuery.of(context).size.height / 5.5),
+                (MediaQuery.of(context).size.height / 6),
           ),
           itemCount: snapshot.data.length,
           itemBuilder: (context, index) {

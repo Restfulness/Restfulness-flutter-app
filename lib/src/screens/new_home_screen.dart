@@ -63,7 +63,6 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     iconsTopPositionData = 0.0;
     getCardList();
     addLinkController = new TextEditingController();
-    print('----> $_list');
   }
 
   // Card List
