@@ -6,6 +6,7 @@ import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/extensions/string_extension.dart';
 import 'package:restfulness/src/widgets/lists/link_list_widget.dart';
 import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 
 import '../../constants.dart';
 
@@ -49,10 +50,7 @@ class CategoryListScreen extends StatelessWidget {
         stream: bloc.fetchByCategory,
         builder: (context, snapshot) {
           if (snapshot.error != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) =>
-                Scaffold.of(context).showSnackBar(new SnackBar(
-                    content: new Text(snapshot.error),
-                    duration: Duration(seconds: 2))));
+            ToastContext(context,snapshot.error, false);
             return CircularProgressIndicator(
               value: 0,
             );
@@ -62,7 +60,7 @@ class CategoryListScreen extends StatelessWidget {
           }
 
           _key.currentState.serCardList(snapshot.data);
-          return LinkListWidget(key: _key); //FIXME: refactor to LinkListWidget after api changed to standard model
+          return LinkListWidget(key: _key);
         });
   }
 }

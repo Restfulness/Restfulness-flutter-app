@@ -41,6 +41,7 @@ dependencies:
   fancy_bottom_navigation: ^0.3.2
   dotted_border: ^1.0.4
   flutter_sequence_animation: ^3.0.1
+  fluttertoast: ^7.1.1
 
 dev_dependencies:
   flutter_test:

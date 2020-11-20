@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -365,16 +369,14 @@ class _CardTileWidgetState extends State<CardTileWidget>
             setState(() {
               if (remove) {
                 deleteLink().then((response) {
-                  print('delete $response');
                   if (response) {
                     opacityVisible = false;
                     opacityController.forward();
 
-
                     final bloc = LinksProvider.of(context);
                     bloc.resetLinks();
                     bloc.fetchLinks();
-                    // _showSnackBar(context, "Deleted successfully", true);// TODO: show message
+                    ToastContext(context, "Deleted successfully", true);
                     // reset category list
                     final categoryBloc = CategoriesProvider.of(context);
                     categoryBloc.fetchCategories();
@@ -430,18 +432,17 @@ class _CardTileWidgetState extends State<CardTileWidget>
   }
 
   Future<bool> deleteLink() async {
-
     try {
       Repository repository = new Repository();
       final response = await repository.deleteLink(widget.urlId);
 
       return response;
     } catch (e) {
-      // if (JsonUtils.isValidJSONString(e.toString())) {
-      //   _showSnackBar(context, json.decode(e.toString())["msg"], false);
-      // } else {
-      //   _showSnackBar(context, "Unexpected server error ", false);
-      // }
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        ToastContext(context, json.decode(e.toString())["msg"], false);
+      } else {
+        ToastContext(context, "Unexpected server error", false);
+      }
     }
     return false;
   }

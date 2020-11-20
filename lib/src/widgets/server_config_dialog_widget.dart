@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerConfigDialogWidget {
@@ -13,14 +14,14 @@ class ServerConfigDialogWidget {
               _saveUrl('${url.replaceAll(new RegExp(r"\s+"), "")}:$port');
           result.then((value) {
             if (value) {
-              showSnackBar(
+              ToastContext(
                   context, "Saved successfully, now you can login", true);
             } else {
-              showSnackBar(context, "Failed to save", true);
+              ToastContext(context, "Failed to save", false);
             }
           });
         } else {
-          showSnackBar(
+          ToastContext(
               context, "Enter valid url like: http://address.com", false);
         }
       }
@@ -34,8 +35,11 @@ class ServerConfigDialogWidget {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Enter Your Server Address" ,style: TextStyle(
-                fontWeight: FontWeight.bold, color: primaryColor),),
+            title: Text(
+              "Enter Your Server Address",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+            ),
             content: Row(
               children: <Widget>[
                 Expanded(child: buildUrlField(urlController), flex: 2),
@@ -46,7 +50,10 @@ class ServerConfigDialogWidget {
             actions: [
               MaterialButton(
                 elevation: 2,
-                child: Text("Save" , style: TextStyle(color: secondaryTextColor),),
+                child: Text(
+                  "Save",
+                  style: TextStyle(color: secondaryTextColor),
+                ),
                 onPressed: () {
                   Map<String, dynamic> toMap = new Map<String, dynamic>();
                   toMap["url"] = urlController.text;
@@ -91,21 +98,6 @@ class ServerConfigDialogWidget {
         hintText: "5000",
       ),
     );
-  }
-
-  void showSnackBar(BuildContext context, String message, bool isSuccess) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-        content: Row(
-          children: [
-            isSuccess
-                ? Icon(Icons.check_circle, color: Colors.green)
-                : Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 10.0),
-            Flexible(
-                child: Text(message)),
-          ],
-        ),
-        duration: Duration(seconds: 4)));
   }
 
   Future<bool> _saveUrl(String url) async {

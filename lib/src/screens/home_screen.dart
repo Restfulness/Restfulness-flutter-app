@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 
 import '../../constants.dart';
 import '../widgets/lists/link_list_widget.dart';
@@ -83,13 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       categoriesBloc.fetchCategories();
                     }
                   } catch (e) {
-                    // TODO show failed message
-                    // if (JsonUtils.isValidJSONString(e.toString())) {
-                    //   showSnackBar(
-                    //       context, json.decode(e.toString())["msg"], false);
-                    // } else {
-                    //   showSnackBar(context, "Unexpected server error ", false);
-                    // }
+                    if (JsonUtils.isValidJSONString(e.toString())) {
+                      ToastContext(context, json.decode(e.toString())["msg"], false);
+                    } else {
+                      ToastContext(context, "Unexpected server error", false);
+                    }
                   }
                 }
               },

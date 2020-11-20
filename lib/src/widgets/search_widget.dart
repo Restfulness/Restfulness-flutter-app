@@ -4,6 +4,7 @@ import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 
 class SearchWidget extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   int _state = 0;
   TextEditingController searchController;
 
-  bool isHaveSearchResult ;
+  bool isHaveSearchResult;
 
   @override
   void dispose() {
@@ -27,7 +28,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     super.initState();
     searchController = new TextEditingController();
 
-    isHaveSearchResult = false ;
+    isHaveSearchResult = false;
   }
 
   @override
@@ -58,11 +59,11 @@ class _SearchWidgetState extends State<SearchWidget> {
                   onPressed: () async {
                     FocusScope.of(context).requestFocus(FocusNode());
                     if (searchController.text != '') {
-                        bloc.resetSearch();
-                        bloc.searchLinks(searchController.text);
-                        setState(() {
-                          _state = 1;
-                        });
+                      bloc.resetSearch();
+                      bloc.searchLinks(searchController.text);
+                      setState(() {
+                        _state = 1;
+                      });
                     }
                   },
                   elevation: 8.0,
@@ -127,13 +128,9 @@ class _SearchWidgetState extends State<SearchWidget> {
         stream: bloc.search,
         builder: (context, snapshot) {
           if (snapshot.error != null) {
-            if(_state == 0){
-              WidgetsBinding.instance.addPostFrameCallback((_) =>
-                  Scaffold.of(context).showSnackBar(new SnackBar(
-                      content: new Text(snapshot.error),
-                      duration: Duration(seconds: 2))));
+            if (_state == 0) {
+              ToastContext(context, snapshot.error, false);
             }
-
             return Container();
           }
           if (!snapshot.hasData) {

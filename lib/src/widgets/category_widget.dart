@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/widgets/category_card_widget.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 
 class CategoryWidget extends StatelessWidget {
   @override
@@ -15,10 +16,7 @@ class CategoryWidget extends StatelessWidget {
       stream: bloc.category,
       builder: (context, snapshot) {
         if (snapshot.error != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) =>
-              Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text(snapshot.error),
-                  duration: Duration(seconds: 2))));
+          ToastContext(context, snapshot.error, false);
           return CircularProgressIndicator(
             value: 0,
           );
@@ -43,8 +41,7 @@ class CategoryWidget extends StatelessWidget {
             return CategoryCardWidget(
                 id: snapshot.data[index].id, name: snapshot.data[index].name);
           },
-        )
-        ;
+        );
       },
     );
   }
