@@ -1,3 +1,5 @@
+import 'category_model.dart';
+
 class SearchModel{
   List<SearchLinkModel> links ;
 
@@ -17,9 +19,11 @@ class SearchModel{
 class SearchLinkModel {
   int id ;
   String url;
+  List<CategoryModel> categories;
 
   SearchLinkModel.fromJson(Map<String, dynamic> parsedJson){
     id = parsedJson['id'];
     url = parsedJson['url'];
+    categories = [];
   }
 }

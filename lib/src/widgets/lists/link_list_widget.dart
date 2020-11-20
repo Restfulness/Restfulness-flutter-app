@@ -27,8 +27,6 @@ class LinkListWidgetState extends State<LinkListWidget>
   double iconsTopPositionData;
   double _totalHeight;
 
-  TextEditingController addLinkController;
-  int _state = 0;
 
   // Icon Animation Bool
   bool rightPositionData,
@@ -55,7 +53,6 @@ class LinkListWidgetState extends State<LinkListWidget>
     secondIconAnimationStartData = false;
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
-    addLinkController = new TextEditingController();
   }
 
   // Card List
@@ -230,11 +227,7 @@ class LinkListWidgetState extends State<LinkListWidget>
   Widget build(BuildContext context) {
     _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
-    return Column(
-      children: [
-        buildAddBar(),
-        Expanded(
-          child: SingleChildScrollView(
+    return  SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: _list == null
                 ? SizedBox(
@@ -265,82 +258,10 @@ class LinkListWidgetState extends State<LinkListWidget>
                       ],
                     ),
                   ),
-          ),
-        ),
-      ],
-    );
+          );
   }
 
-  Widget buildAddBar() {
-    final bloc = LinksProvider.of(context);
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
-              child: Material(
-                elevation: 6.0,
-                borderRadius: BorderRadius.circular(30),
-                child: _buildAddField(context),
-              ),
-              height: 50,
-              width: double.infinity,
-            ),
-            flex: 4,
-          ),
-          Expanded(
-            child: MaterialButton(
-              onPressed: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                if (addLinkController.text != '') {
-                  setState(() {
-                    _state = 1;
-                  });
-                  // temp tag list FIXME: after have separated api for adding tags
-                  List<String> tags = new List<String>();
-                  tags.add("not tagged");
-
-                  Repository repository = new Repository();
-                  await repository.initializationLink;
-                  try {
-                    final id = await repository.insertLink(
-                        tags, addLinkController.text);
-                    if (id != null) {
-                      // TODO show successes message
-                      bloc.resetLinks();
-                      bloc.fetchLinks();
-
-                      topPosition = (topPosition + 120);
-                      // get new categories if we have new one
-                      final categoriesBloc = CategoriesProvider.of(context);
-                      categoriesBloc.fetchCategories();
-                    }
-                  } catch (e) {
-                    // TODO show failed message
-                    // if (JsonUtils.isValidJSONString(e.toString())) {
-                    //   showSnackBar(
-                    //       context, json.decode(e.toString())["msg"], false);
-                    // } else {
-                    //   showSnackBar(context, "Unexpected server error ", false);
-                    // }
-                  }
-                }
-              },
-              elevation: 8.0,
-              color: primaryColor,
-              child: _buildButtonIcon(),
-              padding: EdgeInsets.all(14.0),
-              shape: CircleBorder(),
-            ),
-            flex: 1,
-          ),
-        ],
-      ),
-    );
-  }
 
   Container buildCardList(BuildContext context) {
     return Container(
@@ -385,36 +306,4 @@ class LinkListWidgetState extends State<LinkListWidget>
     );
   }
 
-  Widget _buildAddField(BuildContext context) {
-    return TextField(
-      controller: addLinkController,
-      decoration: InputDecoration(
-          hintText: 'Add link',
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
-    );
-  }
-
-  Widget _buildButtonIcon() {
-    if (_state == 1) {
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        //FIXME: shouldn't use delay!
-        setState(() {
-          _state = 0;
-        });
-      });
-      return SizedBox(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-        ),
-        height: 25.0,
-        width: 25.0,
-      );
-    } else {
-      return Icon(
-        MdiIcons.plus,
-        color: Colors.white,
-      );
-    }
-  }
 }
