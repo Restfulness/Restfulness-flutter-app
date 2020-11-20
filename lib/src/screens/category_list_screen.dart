@@ -4,21 +4,20 @@ import 'package:flutter/services.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/extensions/string_extension.dart';
+import 'package:restfulness/src/widgets/lists/link_list_widget.dart';
 import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
 
 import '../../constants.dart';
 
-
-
 class CategoryListScreen extends StatelessWidget {
   final String name;
+  final GlobalKey<LinkListWidgetState> _key = GlobalKey();
 
   CategoryListScreen({this.name});
 
   @override
   Widget build(BuildContext context) {
     final bloc = LinksProvider.of(context);
-
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -59,16 +58,11 @@ class CategoryListScreen extends StatelessWidget {
             );
           }
           if (!snapshot.hasData || snapshot.data == null) {
-            return SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return LinkListWidget(key: _key);
           }
-          CircularProgressIndicator(value: 0);
-          return SearchLinkListWidget(list: snapshot.data,); //FIXME: refactor to LinkListWidget after api changed to standard model
 
+          _key.currentState.serCardList(snapshot.data);
+          return LinkListWidget(key: _key); //FIXME: refactor to LinkListWidget after api changed to standard model
         });
   }
 }

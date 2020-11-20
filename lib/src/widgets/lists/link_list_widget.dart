@@ -9,7 +9,7 @@ import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
 class LinkListWidget extends StatefulWidget {
-  const LinkListWidget({Key key}) : super(key: key);
+  const LinkListWidget({Key key }) : super(key: key);
 
   @override
   LinkListWidgetState createState() => LinkListWidgetState();
@@ -56,7 +56,7 @@ class LinkListWidgetState extends State<LinkListWidget>
   }
 
   // Card List
-  void serCardList(List<LinkModel> listCard) {
+  void serCardList(List<dynamic> listCard) {
 
     if (listCard.length > 0) {
       topPosition = 26;
