@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:share/share.dart';
@@ -12,7 +13,6 @@ class CardTileWidget extends StatefulWidget {
   final String url;
   final int urlId;
   final List<CategoryModel> category;
-  final VoidCallback onDelete;
 
   final bool press;
   final int index;
@@ -31,7 +31,6 @@ class CardTileWidget extends StatefulWidget {
   CardTileWidget(
       {this.url,
       this.urlId,
-      this.onDelete,
       this.category,
       this.key,
       this.press,
@@ -185,7 +184,7 @@ class _CardTileWidgetState extends State<CardTileWidget>
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: 25,
-          color: Colors.white,
+          color: Colors.transparent,
         ),
       );
     }
@@ -371,6 +370,10 @@ class _CardTileWidgetState extends State<CardTileWidget>
                     opacityVisible = false;
                     opacityController.forward();
 
+
+                    final bloc = LinksProvider.of(context);
+                    bloc.resetLinks();
+                    bloc.fetchLinks();
                     // _showSnackBar(context, "Deleted successfully", true);// TODO: show message
                     // reset category list
                     final categoryBloc = CategoriesProvider.of(context);

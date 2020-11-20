@@ -9,7 +9,8 @@ import 'package:restfulness/src/screens/settings_screen.dart';
 
 import '../../constants.dart';
 import '../widgets/category_widget.dart';
-import 'new_home_screen.dart';
+import 'home_screen.dart';
+import '../widgets/lists/link_list_widget.dart';
 import 'new_search_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [
-    NewHomeScreen(),
+    HomeScreen(),
     NewSearchScreen(),
     SettingsScreen(),
   ];
