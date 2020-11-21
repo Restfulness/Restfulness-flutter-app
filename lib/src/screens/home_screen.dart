@@ -7,7 +7,9 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:restfulness/src/widgets/lists/link_list_simple_widget.dart';
 import 'package:restfulness/src/widgets/toast_context.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import '../widgets/lists/link_list_widget.dart';
@@ -21,10 +23,16 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController addLinkController;
   int _state = 0;
 
+  bool isShowPreview = true;
+
   @override
   void initState() {
     super.initState();
     addLinkController = new TextEditingController();
+
+    _readPreviewSwitch().then((value) {
+      isShowPreview = value;
+    });
   }
 
   @override
@@ -88,7 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   } catch (e) {
                     if (JsonUtils.isValidJSONString(e.toString())) {
-                      ToastContext(context, json.decode(e.toString())["msg"], false);
+                      ToastContext(
+                          context, json.decode(e.toString())["msg"], false);
                     } else {
                       ToastContext(context, "Unexpected server error", false);
                     }
@@ -143,13 +152,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildList(LinksBloc bloc) {
     return StreamBuilder(
-        stream: bloc.links,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+      stream: bloc.links,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          if (isShowPreview) {
             return LinkListWidget(key: _key);
+          } else {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height / 1.3,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
-          _key.currentState.serCardList(snapshot.data);
+        }
+        if (isShowPreview) {
+          _key.currentState.setCardList(snapshot.data);
           return LinkListWidget(key: _key);
-        });
+        } else {
+          return LinkListSimpleWidget(list: snapshot.data);
+        }
+      },
+    );
+  }
+
+  Future<bool> _readPreviewSwitch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'preview';
+    final value = prefs.getBool(key) ?? true;
+    return value;
   }
 }

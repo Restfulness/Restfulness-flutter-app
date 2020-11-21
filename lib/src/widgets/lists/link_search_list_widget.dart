@@ -1,18 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
-class LinkListWidget extends StatefulWidget {
-  const LinkListWidget({Key key}) : super(key: key);
+import '../category_widget.dart';
 
+class LinkSearchListWidget extends StatefulWidget {
+  const LinkSearchListWidget({Key key}) : super(key: key);
   @override
-  LinkListWidgetState createState() => LinkListWidgetState();
+  LinkSearchListWidgetScreen createState() => LinkSearchListWidgetScreen();
 }
 
-class LinkListWidgetState extends State<LinkListWidget>
+class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     with SingleTickerProviderStateMixin {
-  List<LinkModel> listCardMessage;
+  List<SearchLinkModel> listCardMessage;
   double _headingBarHeight = 4.0;
   double _buttonBarHeight = 0.0;
   double cardHeight = 120;
@@ -20,7 +22,9 @@ class LinkListWidgetState extends State<LinkListWidget>
   List<CardTileWidget> brintToTapCardList;
   double topPosition = 26;
   double iconsTopPositionData;
-  double _totalHeight;
+
+  TextEditingController searchController;
+  int _state = 0;
 
   // Icon Animation Bool
   bool rightPositionData,
@@ -47,6 +51,7 @@ class LinkListWidgetState extends State<LinkListWidget>
     secondIconAnimationStartData = false;
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
+    searchController = new TextEditingController();
   }
 
   // Card List
@@ -97,6 +102,8 @@ class LinkListWidgetState extends State<LinkListWidget>
       );
 
       setState(() {});
+    }else {
+      _list.clear();
     }
   }
 
@@ -217,43 +224,36 @@ class LinkListWidgetState extends State<LinkListWidget>
 
   @override
   Widget build(BuildContext context) {
-    _totalHeight =
+    double _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      child: _list == null
-          ? SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          : Container(
-              height: _totalHeight < (MediaQuery.of(context).size.height - 190)
-                  ? (MediaQuery.of(context).size.height - 190)
-                  : _totalHeight,
-              child: Stack(
-                children: <Widget>[
-                  // Card List
-                  buildCardList(context),
-                  // Animation Icons
-                  IconAnimation(
-                    leftPosition: -27.0,
-                    topPosition: (iconsTopPositionData - 100.0),
-                    rightAnimationStart: rightPositionData,
-                    firstIconAnimationStart: firstIconAnimationStartData,
-                    secondIconAnimationStart: secondIconAnimationStartData,
-                    thirdIconAnimationStart: thirdIconAnimationStartData,
-                  ),
-                ],
-              ),
+      child: Container(
+        height: _totalHeight < (MediaQuery.of(context).size.height - 190)
+            ? (MediaQuery.of(context).size.height - 190)
+            : _totalHeight,
+        child: Stack(
+          children: <Widget>[
+            //Person Card List
+            buildCardList(context),
+            // Animation Icons
+            IconAnimation(
+              leftPosition: -27.0,
+              topPosition: (iconsTopPositionData - 100.0),
+              rightAnimationStart: rightPositionData,
+              firstIconAnimationStart: firstIconAnimationStartData,
+              secondIconAnimationStart: secondIconAnimationStartData,
+              thirdIconAnimationStart: thirdIconAnimationStartData,
             ),
+          ],
+        ),
+      ),
     );
   }
 
   Container buildCardList(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 0.0),
+      margin: EdgeInsets.only(top: 0.0, bottom: 30),
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: EdgeInsets.only(
@@ -267,22 +267,9 @@ class LinkListWidgetState extends State<LinkListWidget>
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: Stack(
-                  children: _list.length == 2
+                  children: _list.length == 0
                       ? [
-                          CardTileWidget(
-                            index: 0,
-                            blankCard: true,
-                            topPosition: 0,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'No Item',
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          )
+                          CategoryWidget(),
                         ]
                       : _list,
                 ),

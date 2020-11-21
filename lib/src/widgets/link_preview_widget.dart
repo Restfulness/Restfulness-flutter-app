@@ -72,46 +72,53 @@ class LinkPreviewWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 5.0),
-                        child: Text(
-                          info.title,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(12.0, 14.0, 12.0, 0.0),
+                          child: Text(
+                            info.title,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                       if (info.description != '')
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(12.0, 1.0, 12.0, 6.0),
-                          child: Text(
-                            info.description,
-                            maxLines: 3,
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                            child: Text(
+                              info.description,
+                              maxLines: 3,
+
+                            ),
                           ),
                         ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
-                        child: Tags(
-                          heightHorizontalScroll: 30,
-                          horizontalScroll: true,
-                          itemCount: category.length,
-                          itemBuilder: (int index) {
-                            return Tooltip(
-                              message: category[index].name,
-                              child: ItemTags(
-                                onPressed: (item) {
-                                  print('${category[item.index].id}');
-                                },
-                                title: category[index].name,
-                                index: index,
-                                activeColor: primaryLightColor,
-                                textStyle: TextStyle(fontSize: 12),
-                                elevation: 1,
-                              ),
-                            );
-                          },
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
+                          child: Tags(
+                            heightHorizontalScroll: 30,
+                            horizontalScroll: true,
+                            itemCount: category.length,
+                            itemBuilder: (int index) {
+                              return Tooltip(
+                                message: category[index].name,
+                                child: ItemTags(
+                                  onPressed: (item) {
+                                    print('${category[item.index].id}');
+                                  },
+                                  title: category[index].name,
+                                  index: index,
+                                  activeColor: primaryLightColor,
+                                  textStyle: TextStyle(fontSize: 12),
+                                  elevation: 1,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       )
                     ],

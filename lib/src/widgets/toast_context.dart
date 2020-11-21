@@ -10,7 +10,7 @@ class ToastContext {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: isSuccesses ? Colors.greenAccent : Colors.redAccent,
+          color: Colors.black ,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -18,9 +18,9 @@ class ToastContext {
             isSuccesses
                 ? Icon(
                     Icons.check,
-                    color: Colors.white,
+                    color: Colors.green,
                   )
-                : Icon(Icons.error, color: Colors.white),
+                : Icon(Icons.error, color: Colors.red),
             SizedBox(
               width: 12.0,
             ),
@@ -32,7 +32,7 @@ class ToastContext {
         ),
       ),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 2),
+      toastDuration: Duration(seconds: 4),
     );
   }
 }

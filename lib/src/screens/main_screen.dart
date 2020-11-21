@@ -5,13 +5,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/screens/settings_screen.dart';
 
 import '../../constants.dart';
-import '../widgets/category_widget.dart';
 import 'home_screen.dart';
-import '../widgets/lists/link_list_widget.dart';
-import 'new_search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -29,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _children = [
     HomeScreen(),
-    NewSearchScreen(),
+    SearchScreen(),
     SettingsScreen(),
   ];
   String _title;
