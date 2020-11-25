@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await repository.initializationLink;
                   try {
                     final id = await repository.insertLink(
-                        tags, addLinkController.text);
+                        tags, _validateUrl(addLinkController.text));
                     if (id != null) {
                       ToastContext(context, "Link successfully added ", true);
                       bloc.resetLinks();
@@ -181,5 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final key = 'preview';
     final value = prefs.getBool(key) ?? true;
     return value;
+  }
+
+  _validateUrl(String url) {
+    if (url?.startsWith('http://') == true ||
+        url?.startsWith('https://') == true) {
+      return url;
+    } else {
+      return 'http://$url';
+    }
   }
 }

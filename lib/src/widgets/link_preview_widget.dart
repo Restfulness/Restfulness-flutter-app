@@ -8,6 +8,7 @@ import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/builder/link_preview.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/preview_model.dart';
+import 'package:restfulness/src/screens/category_list_screen.dart';
 
 class LinkPreviewWidget extends StatelessWidget {
   final String url;
@@ -92,7 +93,6 @@ class LinkPreviewWidget extends StatelessWidget {
                             child: Text(
                               info.description,
                               maxLines: 3,
-
                             ),
                           ),
                         ),
@@ -108,11 +108,14 @@ class LinkPreviewWidget extends StatelessWidget {
                                 message: category[index].name,
                                 child: ItemTags(
                                   onPressed: (item) {
-                                    print('${category[item.index].id}');
+                                    _openOnTagPressed(
+                                        context, item.index, bloc);
                                   },
                                   title: category[index].name,
                                   index: index,
                                   activeColor: primaryLightColor,
+                                  color: primaryLightColor,
+                                  textColor: Colors.white,
                                   textStyle: TextStyle(fontSize: 12),
                                   elevation: 1,
                                 ),
@@ -154,66 +157,107 @@ class LinkPreviewWidget extends StatelessWidget {
 
     return Container(
       height: 120,
+      margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         clipBehavior: Clip.antiAlias,
-        child: Stack(children: [
-          Row(
-            children: [
-              Container(
-                width: 120,
-                height: double.infinity,
-                child: Image.asset(
-                  "assets/images/default.png",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-          Container(
-              width: cWidth,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 5.0),
-                    child: Text(
-                      url,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: Stack(
+          children: [
+            Row(
+              children: [
+                  Container(
+                    width: 120,
+                    height: double.infinity,
+                    child: Image.asset(
+                      "assets/images/default.png",
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
-                    child: Tags(
-                      heightHorizontalScroll: 30,
-                      horizontalScroll: true,
-                      itemCount: category.length,
-                      itemBuilder: (int index) {
-                        return Tooltip(
-                          message: category[index].name,
-                          child: ItemTags(
-                            onPressed: (item) {
-                              print('${category[item.index].id}');
-                            },
-                            title: category[index].name,
-                            index: index,
-                            activeColor: primaryLightColor,
-                            textStyle: TextStyle(fontSize: 12),
-                            elevation: 1,
+                Container(
+                  width: cWidth,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(12.0, 14.0, 12.0, 0.0),
+                          child: Text(
+                            url,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(8.0, 1.0, 12.0, 1.0),
+                          child: Tags(
+                            heightHorizontalScroll: 30,
+                            horizontalScroll: true,
+                            itemCount: category.length,
+                            itemBuilder: (int index) {
+                              return Tooltip(
+                                message: category[index].name,
+                                child: ItemTags(
+                                  onPressed: (item) {
+                                    _openOnTagPressed(
+                                        context, item.index, bloc);
+                                  },
+                                  title: category[index].name,
+                                  index: index,
+                                  activeColor: primaryLightColor,
+                                  color: primaryLightColor,
+                                  textColor: Colors.white,
+                                  textStyle: TextStyle(fontSize: 12),
+                                  elevation: 1,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              child: ButtonTheme(
+                minWidth: 0.5,
+                height: 0.5,
+                child: MaterialButton(
+                    onPressed: () {},
+                    elevation: 1,
+                    color: primaryLightColor,
+                    child: Icon(
+                      MdiIcons.plus,
+                      color: Colors.white,
                     ),
-                  )
-                ],
-              )),
-        ]),
+                    shape: CircleBorder()),
+              ),
+              bottom: -4,
+              right: -8,
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  _openOnTagPressed(BuildContext context, int index, LinksBloc bloc) {
+    bloc.fetchLinksByCategoryId(category[index].id);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CategoryListScreen(
+                  name: category[index].name,
+                ))).then((context) {
+      bloc.restCategoryList();
+    });
   }
 
   Widget buildLoading() {

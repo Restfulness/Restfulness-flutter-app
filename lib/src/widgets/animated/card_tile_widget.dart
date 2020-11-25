@@ -368,20 +368,8 @@ class _CardTileWidgetState extends State<CardTileWidget>
             controller3.reset();
             setState(() {
               if (remove) {
-                deleteLink().then((response) {
-                  if (response) {
-                    opacityVisible = false;
-                    opacityController.forward();
+                _showDeleteDialog(context);
 
-                    final bloc = LinksProvider.of(context);
-                    bloc.resetLinks();
-                    bloc.fetchLinks();
-                    ToastContext(context, "Deleted successfully", true);
-                    // reset category list
-                    final categoryBloc = CategoriesProvider.of(context);
-                    categoryBloc.fetchCategories();
-                  }
-                });
               }
               if (openUrl) {
                 _launchURL();
@@ -428,6 +416,53 @@ class _CardTileWidgetState extends State<CardTileWidget>
           ),
         ),
       ),
+    );
+  }
+
+  _showDeleteDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text(
+        "Delete",
+        style: TextStyle(color: Colors.red),
+      ),
+      onPressed: () {
+        deleteLink().then((response) {
+          if (response) {
+            opacityVisible = false;
+            opacityController.forward();
+
+            final bloc = LinksProvider.of(context);
+            bloc.resetLinks();
+            bloc.fetchLinks();
+            ToastContext(context, "Deleted successfully", true);
+            // reset category list
+            final categoryBloc = CategoriesProvider.of(context);
+            categoryBloc.fetchCategories();
+          }
+        });
+        Navigator.of(context).pop();
+      },
+    ); // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete"),
+      content: Text("Are you sure you want to delete this url?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    ); // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

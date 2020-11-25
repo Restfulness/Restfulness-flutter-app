@@ -68,9 +68,9 @@ class _SearchWidgetState extends State<SearchWidget> {
               Expanded(
                 child: MaterialButton(
                   onPressed: () async {
+                    bloc.resetSearch();
                     FocusScope.of(context).requestFocus(FocusNode());
                     if (searchController.text != '') {
-                      bloc.resetSearch();
                       bloc.searchLinks(searchController.text);
                       setState(() {
                         _state = 1;
@@ -99,10 +99,13 @@ class _SearchWidgetState extends State<SearchWidget> {
     return TextField(
       onChanged: (word) {
         bloc.resetSearch();
-        print("reset");
-        if (word != '') {
+        if(word != ''){
           bloc.searchLinks(word);
+          setState(() {
+            _state = 1;
+          });
         }
+
       },
       controller: searchController,
       decoration: InputDecoration(
@@ -151,9 +154,19 @@ class _SearchWidgetState extends State<SearchWidget> {
               );
             }
           }
+
+          if (searchController.text.isEmpty) {
+            bloc.resetSearch();
+            return CategoryWidget();
+          }
           if (isShowPreview) {
-            _key.currentState.setCardList(snapshot.data);
-            return LinkSearchListWidget(key: _key);
+            if (snapshot.data.length <= 0) {
+              return LinkSearchListWidget(key: _key);
+            } else {
+              _key.currentState.setCardList(snapshot.data);
+              return LinkSearchListWidget(key: _key);
+            }
+
           } else {
             if (snapshot.data.length <= 0) {
               return CategoryWidget();

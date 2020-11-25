@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
-import 'package:restfulness/src/utils/arrow_clipper.dart';
 
 class SimpleMenu extends StatefulWidget {
   final List<Icon> icons;
@@ -8,6 +7,7 @@ class SimpleMenu extends StatefulWidget {
   final Color backgroundColor;
   final Color iconColor;
   final ValueChanged<int> onChange;
+  final  OverlayState overlayState;
 
   const SimpleMenu({
     Key key,
@@ -16,6 +16,7 @@ class SimpleMenu extends StatefulWidget {
     this.backgroundColor = primaryColor,
     this.iconColor = Colors.black,
     this.onChange,
+    this.overlayState,
   })  : assert(icons != null),
         super(key: key);
 
@@ -46,7 +47,9 @@ class _SimpleMenuState extends State<SimpleMenu>
 
   @override
   void dispose() {
+    closeMenu();
     _animationController.dispose();
+
     super.dispose();
   }
 
@@ -57,7 +60,9 @@ class _SimpleMenuState extends State<SimpleMenu>
   }
 
   void closeMenu() {
-    _overlayEntry.remove();
+    if(_overlayEntry != null){
+      WidgetsBinding.instance.addPostFrameCallback((_) => _overlayEntry.remove());
+    }
     _animationController.reverse();
     isMenuOpen = !isMenuOpen;
   }
@@ -66,7 +71,7 @@ class _SimpleMenuState extends State<SimpleMenu>
     findButton();
     _animationController.forward();
     _overlayEntry = _overlayEntryBuilder();
-    Overlay.of(context).insert(_overlayEntry);
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.overlayState.insert(_overlayEntry));
     isMenuOpen = !isMenuOpen;
   }
 

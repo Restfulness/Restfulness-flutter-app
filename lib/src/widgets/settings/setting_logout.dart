@@ -28,6 +28,7 @@ class SettingLogout extends StatelessWidget {
           onPressed: () {
             Repository repository = new Repository() ;
             repository.clearUserCache();
+            repository.clearLinkCache();
             _redirectToPage(context, LoginScreen());
           },
           shape: RoundedRectangleBorder(
