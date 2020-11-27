@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/resources/repository.dart';
-import 'file:///C:/Users/Farzad/Documents/Projects/GitHub/Restfulness-flutter-app/lib/src/screens/login/login_screen.dart';
+import 'package:restfulness/src/screens/login/login_screen.dart';
 import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
 
 class DrawerWidget extends StatelessWidget{
