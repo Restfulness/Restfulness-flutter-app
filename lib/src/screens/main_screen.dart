@@ -1,13 +1,15 @@
+import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
-import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
-import 'package:restfulness/src/widgets/drawer_widget.dart';
+import 'package:restfulness/src/screens/settings_screen.dart';
 
-import 'category_screen.dart';
+import '../../constants.dart';
+import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -22,11 +24,11 @@ class _MainScreenState extends State<MainScreen> {
   int categoryIndex = 2;
 
   int _currentIndex = 0;
-  bool _isOnHomePage = true;
+
   final List<Widget> _children = [
     HomeScreen(),
     SearchScreen(),
-    CategoryScreen(),
+    SettingsScreen(),
   ];
   String _title;
 
@@ -43,36 +45,41 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     linkBloc = LinksProvider.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_title),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: appBarColor,
+        // For Android.
+        // Use [light] for white status bar and [dark] for black status bar.
+        statusBarIconBrightness: Brightness.light,
+        // For iOS.
+        // Use [dark] for white status bar and [light] for black status bar.
+        statusBarBrightness: Brightness.dark,
       ),
-      body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        items: [
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.home),
-            label: 'Home',
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: appBarColor,
+          centerTitle: true,
+          title: Text(
+            _title,
+            style: TextStyle(color: Colors.black),
           ),
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.magnify),
-            label: 'Search',
-          ),
-          new BottomNavigationBarItem(
-            icon: Icon(MdiIcons.pound),
-            label: 'Categories',
-          )
-        ],
+          brightness: Brightness.light,
+        ),
+        body: _children[_currentIndex],
+        bottomNavigationBar: FancyBottomNavigation(
+          tabs: [
+            TabData(iconData: MdiIcons.home, title: "Home"),
+            TabData(iconData: MdiIcons.magnify, title: "Search"),
+            TabData(iconData: MdiIcons.cog, title: "Settings")
+          ],
+          onTabChangedListener: (position) {
+            setState(() {
+              onTabTapped(position);
+              _currentIndex = position;
+            });
+          },
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: new Builder(builder: (BuildContext context) {
-        HomeScreen homeScreen = new HomeScreen();
-        return homeScreen.buildFloatingActionButton(
-            context, linkBloc, _isOnHomePage);
-      }),
-      drawer: DrawerWidget(),
     );
   }
 
@@ -88,16 +95,12 @@ class _MainScreenState extends State<MainScreen> {
           _title = "Search";
           break;
         case 2:
-          _title = "Categories";
+          _title = "Settings";
 
           break;
       }
     });
-    if (index != homeIndex) {
-      _isOnHomePage = false;
-    } else {
-      _isOnHomePage = true;
-    }
+
     if (index != searchIndex) {
       linkBloc.resetSearch();
     }

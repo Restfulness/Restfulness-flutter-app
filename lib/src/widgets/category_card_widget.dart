@@ -37,7 +37,7 @@ class CategoryCardWidget extends StatelessWidget {
               child: Text(
                 name,
                 style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 15.0,
                 ),
               ),
             ),

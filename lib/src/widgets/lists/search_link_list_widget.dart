@@ -53,5 +53,4 @@ class _SearchLinkListWidgetState extends State<SearchLinkListWidget> {
       linksBloc.addSearchLinks(_list);
     });
   }
-
 }

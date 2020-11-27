@@ -7,6 +7,7 @@ import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/screens/main_screen.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'auth_validator.dart';
@@ -59,9 +60,9 @@ class AuthBloc extends Object with AuthValidator {
       }
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
-        showSnackBar(context, json.decode(e.toString())["msg"], false);
+        ToastContext(context, json.decode(e.toString())["msg"], false);
       } else {
-        showSnackBar(context, "Unexpected server error ", false);
+        ToastContext(context, "Unexpected server error ", false);
       }
     }
 
@@ -88,9 +89,9 @@ class AuthBloc extends Object with AuthValidator {
       }
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
-        showSnackBar(context, json.decode(e.toString())["msg"], false);
+        ToastContext(context, json.decode(e.toString())["msg"], false);
       } else {
-        showSnackBar(context, "Unexpected server error ", false);
+        ToastContext(context, "Unexpected server error ", false);
       }
     }
 
@@ -113,19 +114,6 @@ class AuthBloc extends Object with AuthValidator {
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/login'));
   }
 
-  void showSnackBar(BuildContext context, String message, bool isSuccess) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-        content: Row(
-          children: [
-            isSuccess
-                ? Icon(Icons.check_circle, color: Colors.green)
-                : Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 10.0),
-            Flexible(child: Text(message)),
-          ],
-        ),
-        duration: Duration(seconds: 2)));
-  }
 
   dispose() {
     _usernameLogin.close();

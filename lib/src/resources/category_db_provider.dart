@@ -20,7 +20,7 @@ class CategoryDBProvider implements CategoryCache,CategorySource {
         CREATE TABLE Categories
         (
          id INTEGER PRIMARY KEY,
-         name TEXT,
+         name TEXT
         )
         """);
     });

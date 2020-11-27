@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 
+import '../constants.dart';
 import 'blocs/authentication/auth_provider.dart';
 import 'blocs/link/links_provider.dart';
 import 'screens/decision_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
+import 'screens/login/login_screen.dart';
+import 'screens/register/register_screen.dart';
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
-      child:CategoriesProvider(
-        child: LinksProvider(
-          child: MaterialApp(
-            title: 'Restfulness',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
+        child: CategoriesProvider(
+      child: LinksProvider(
+        child: MaterialApp(
+          title: 'Restfulness',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+              primaryColor: primaryColor,
               visualDensity: VisualDensity.adaptivePlatformDensity,
-            ),
-            onGenerateRoute: routes,
-          ),
-        ) ,
-      )
-    );
+              scaffoldBackgroundColor: scaffoldBackgroundColor,
+              primaryTextTheme: TextTheme(
+                headline6: TextStyle(color: Colors.white),
+              )),
+          onGenerateRoute: routes,
+        ),
+      ),
+    ));
   }
 
   Route routes(RouteSettings settings) {

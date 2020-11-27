@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
-import 'package:restfulness/src/widgets/lists/search_link_list_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'category_widget.dart';
+import 'lists/link_list_simple_widget.dart';
+import 'lists/link_search_list_widget.dart';
 
 class SearchWidget extends StatefulWidget {
   @override
@@ -10,9 +15,15 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
+  final GlobalKey<LinkSearchListWidgetScreen> _key = GlobalKey();
+
   LinksBloc bloc;
   int _state = 0;
   TextEditingController searchController;
+
+  bool isHaveSearchResult;
+
+  bool isShowPreview = true;
 
   @override
   void dispose() {
@@ -23,6 +34,12 @@ class _SearchWidgetState extends State<SearchWidget> {
   initState() {
     super.initState();
     searchController = new TextEditingController();
+
+    isHaveSearchResult = false;
+
+    _readPreviewSwitch().then((value) {
+      isShowPreview = value;
+    });
   }
 
   @override
@@ -51,17 +68,17 @@ class _SearchWidgetState extends State<SearchWidget> {
               Expanded(
                 child: MaterialButton(
                   onPressed: () async {
+                    bloc.resetSearch();
                     FocusScope.of(context).requestFocus(FocusNode());
                     if (searchController.text != '') {
-                        bloc.resetSearch();
-                        bloc.searchLinks(searchController.text);
-                        setState(() {
-                          _state = 1;
-                        });
+                      bloc.searchLinks(searchController.text);
+                      setState(() {
+                        _state = 1;
+                      });
                     }
                   },
                   elevation: 8.0,
-                  color: Colors.blue,
+                  color: primaryColor,
                   child: _buildButtonIcon(),
                   padding: EdgeInsets.all(14.0),
                   shape: CircleBorder(),
@@ -82,13 +99,17 @@ class _SearchWidgetState extends State<SearchWidget> {
     return TextField(
       onChanged: (word) {
         bloc.resetSearch();
-        if (word != '') {
+        if(word != ''){
           bloc.searchLinks(word);
+          setState(() {
+            _state = 1;
+          });
         }
+
       },
       controller: searchController,
       decoration: InputDecoration(
-          hintText: 'Search',
+          hintText: 'Search links',
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
     );
@@ -121,24 +142,37 @@ class _SearchWidgetState extends State<SearchWidget> {
     return StreamBuilder(
         stream: bloc.search,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            if(_state == 0){
-              WidgetsBinding.instance.addPostFrameCallback((_) =>
-                  Scaffold.of(context).showSnackBar(new SnackBar(
-                      content: new Text(snapshot.error),
-                      duration: Duration(seconds: 2))));
+          if (!snapshot.hasData) {
+            if (isShowPreview) {
+              return LinkSearchListWidget(key: _key);
+            } else {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height / 1.3,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+          }
+
+          if (searchController.text.isEmpty) {
+            bloc.resetSearch();
+            return CategoryWidget();
+          }
+          if (isShowPreview) {
+            if (snapshot.data.length <= 0) {
+              return LinkSearchListWidget(key: _key);
+            } else {
+              _key.currentState.setCardList(snapshot.data);
+              return LinkSearchListWidget(key: _key);
             }
 
-            return Container();
-          }
-          if (!snapshot.hasData) {
-            return Container();
-          }
-
-          if (snapshot.data.length > 0) {
-            return SearchLinkListWidget(list: snapshot.data);
           } else {
-            return Container();
+            if (snapshot.data.length <= 0) {
+              return CategoryWidget();
+            } else {
+              return LinkListSimpleWidget(list: snapshot.data);
+            }
           }
         });
   }
@@ -152,5 +186,12 @@ class _SearchWidgetState extends State<SearchWidget> {
         });
       });
     });
+  }
+
+  Future<bool> _readPreviewSwitch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'preview';
+    final value = prefs.getBool(key) ?? true;
+    return value;
   }
 }

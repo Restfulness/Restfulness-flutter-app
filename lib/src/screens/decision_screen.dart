@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 
-import 'login_screen.dart';
+import 'login/login_screen.dart';
 import 'main_screen.dart';
 
 class DecisionScreen extends StatefulWidget {
@@ -81,7 +82,7 @@ class _DecisionScreenState extends State<DecisionScreen> {
       _state,
       textAlign: TextAlign.left,
       style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 26.0, color: Colors.blue),
+          fontWeight: FontWeight.bold, fontSize: 26.0, color: primaryColor),
     );
   }
 }

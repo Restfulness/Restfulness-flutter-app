@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
+import 'package:restfulness/src/screens/login/login_background.dart';
 import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
+
+import '../../../constants.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -11,13 +14,9 @@ class LoginScreen extends StatelessWidget {
     final bloc = AuthProvider.of(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.blue,
-        // For Android.
-        // Use [light] for white status bar and [dark] for black status bar.
-        statusBarIconBrightness: Brightness.light,
-        // For iOS.
-        // Use [dark] for white status bar and [light] for black status bar.
-        statusBarBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -33,38 +32,39 @@ class LoginScreen extends StatelessWidget {
 
   buildBody(AuthBloc bloc, BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
-    return SingleChildScrollView(
+    return LoginBackground(
+        child: SingleChildScrollView(
       reverse: true,
       padding: EdgeInsets.only(bottom: bottom),
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.all(20.0),
+            margin: EdgeInsets.fromLTRB(30.0,0,30,30),
             child: Column(
               children: [
                 Container(margin: EdgeInsets.only(top: 60.0)),
-                Image.asset("assets/images/restApi.png", width: 120),
+                Image.asset("assets/icons/restApi.png", width: 100),
                 Container(margin: EdgeInsets.only(top: 30.0)),
                 buildTitle(),
-                Container(margin: EdgeInsets.only(top: 20.0)),
+                Container(margin: EdgeInsets.only(top: 30.0)),
                 usernameField(bloc),
                 Container(margin: EdgeInsets.only(top: 10.0)),
                 passwordField(bloc),
+                Container(margin: EdgeInsets.only(top: 10.0)),
+                buildLoginButton(bloc),
                 Container(margin: EdgeInsets.only(top: 20.0)),
-                loginAndForgotPassButtons(bloc),
-                Container(margin: EdgeInsets.only(top: 20.0)),
-                buildSignUpButton(context, bloc),
+                signUpAndForgotPassButtons(context, bloc),
               ],
             ),
           ),
           Positioned(
             child: createGearButton(context),
-            top: 25,
+            top: 0,
             right: 5,
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget buildTitle() {
@@ -74,7 +74,7 @@ class LoginScreen extends StatelessWidget {
         "Welcome To Restfulness",
         textAlign: TextAlign.left,
         style: TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 26.0, color: Colors.blue),
+            fontWeight: FontWeight.bold, fontSize: 20.0, color: primaryColor),
       ),
     );
   }
@@ -90,10 +90,11 @@ class LoginScreen extends StatelessWidget {
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
-              // width: 0.0 produces a thin "hairline" border
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderSide: BorderSide(color: primaryColor, width: 2.0),
             ),
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
             labelText: "Username",
             hintText: "example",
             errorText: snapshot.error,
@@ -113,10 +114,11 @@ class LoginScreen extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
-              // width: 0.0 produces a thin "hairline" border
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderSide: BorderSide(color: primaryColor, width: 2.0),
             ),
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
             labelText: "Password",
             hintText: "password",
             errorText: snapshot.error,
@@ -126,27 +128,14 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget loginAndForgotPassButtons(AuthBloc bloc) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(child: buildLoginButton(bloc), flex: 1),
-        SizedBox(width: 5),
-        Expanded(child: buildForgotButton(), flex: 1),
-      ],
-    );
-  }
 
   Widget buildLoginButton(AuthBloc bloc) {
     return StreamBuilder(
         stream: bloc.submitButtonLogin,
         builder: (context, AsyncSnapshot<bool> snapshot) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ButtonTheme(
-              minWidth: 140.0,
-              height: 45.0,
+          return  ButtonTheme(
+              minWidth: double.infinity,
+              height: 50.0,
               child: RaisedButton(
                 elevation: 5.0,
                 child: Text(
@@ -156,8 +145,8 @@ class LoginScreen extends StatelessWidget {
                     fontSize: 15.0,
                   ),
                 ),
-                color: Colors.blue,
-                disabledColor: Colors.blueAccent,
+                color: primaryColor,
+                disabledColor: primaryLightColor,
                 textColor: Colors.white,
                 disabledTextColor: Colors.white,
                 onPressed: snapshot.hasData
@@ -166,18 +155,26 @@ class LoginScreen extends StatelessWidget {
                       }
                     : null,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-            ),
-          );
+            );
         });
   }
 
+  Widget signUpAndForgotPassButtons(BuildContext context ,AuthBloc bloc) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        buildSignUpButton(context,bloc),
+        buildForgotButton()
+      ],
+    );
+  }
+
   Widget buildForgotButton() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ButtonTheme(
+    return ButtonTheme(
         minWidth: 140.0,
         height: 45.0,
         child: FlatButton(
@@ -187,29 +184,38 @@ class LoginScreen extends StatelessWidget {
                 fontSize: 15.0,
               )),
           color: Colors.transparent,
-          textColor: Colors.blue,
+          textColor: textColor,
           onPressed: () {},
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget buildSignUpButton(BuildContext context, AuthBloc bloc) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ButtonTheme(
+    return  ButtonTheme(
         height: 45.0,
         child: FlatButton(
-          child: Text("Not a member? Sign up now.",
+          child: RichText(
+            text: TextSpan(
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15.0,
-              )),
+                fontSize: 12.0,
+                color: textColor,
+              ),
+              children: <TextSpan>[
+                TextSpan(text: 'Not a member? ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: 'Sign up now.',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: secondaryTextColor)),
+              ],
+            ),
+          ),
           color: Colors.transparent,
-          textColor: Colors.blue,
+          textColor: textColor,
           onPressed: () {
             Navigator.pushNamed(context, "/register");
           },
@@ -217,8 +223,7 @@ class LoginScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(5.0),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget createGearButton(BuildContext context) {
@@ -228,7 +233,7 @@ class LoginScreen extends StatelessWidget {
       child: FlatButton(
         child: Icon(
           MdiIcons.cogOutline,
-          color: Colors.blue,
+          color: primaryColor,
         ),
         shape: CircleBorder(),
         color: Colors.transparent,
