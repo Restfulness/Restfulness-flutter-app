@@ -13,6 +13,7 @@ import 'package:restfulness/src/screens/category_list_screen.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:restfulness/src/widgets/menu/simple_menu.dart';
 import 'package:restfulness/src/widgets/toast_context.dart';
+import 'package:restfulness/src/widgets/update_category_widget.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -53,6 +54,10 @@ class LinkSimpleWidget extends StatelessWidget {
                     MdiIcons.earth,
                     size: 15,
                   ),
+                  Icon(
+                    MdiIcons.pound,
+                    size: 15,
+                  ),
                 ],
                 overlayState: Overlay.of(context),
                 backgroundColor: primaryColor,
@@ -63,9 +68,10 @@ class LinkSimpleWidget extends StatelessWidget {
                     _shareLink(context);
                   } else if (index == 1) {
                     _showDeleteDialog(context);
-
-                  } else {
+                  } else if (index == 2) {
                     _launchURL();
+                  } else {
+                    _updateCategory(context);
                   }
                 },
               )),
@@ -153,7 +159,7 @@ class LinkSimpleWidget extends StatelessWidget {
         style: TextStyle(color: Colors.red),
       ),
       onPressed: () {
-        deleteLink(context).then((response) {
+        _deleteLink(context).then((response) {
           if (response) {
             final bloc = LinksProvider.of(context);
             bloc.resetLinks();
@@ -201,7 +207,20 @@ class LinkSimpleWidget extends StatelessWidget {
     });
   }
 
-  Future<bool> deleteLink(BuildContext context) async {
+  _launchURL() async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _updateCategory(BuildContext context) {
+    UpdateCategoryWidget update = new UpdateCategoryWidget();
+    update.updateCategory(context, id);
+  }
+
+  Future<bool> _deleteLink(BuildContext context) async {
     try {
       Repository repository = new Repository();
       final response = await repository.deleteLink(id);
@@ -217,11 +236,5 @@ class LinkSimpleWidget extends StatelessWidget {
     return false;
   }
 
-  _launchURL() async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 }

@@ -63,7 +63,6 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<SearchLinkModel>> searchLink({String token, String word}) async {
-
     List<SearchLinkModel> links = new List<SearchLinkModel>();
 
     final response = await apiHelper.get(
@@ -81,6 +80,7 @@ class LinkApiProvider implements LinkSource {
     }
     return links;
   }
+
   @override
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {String token, int id}) async {
@@ -99,5 +99,21 @@ class LinkApiProvider implements LinkSource {
       categories.add(cat);
     }
     return categories;
+  }
+
+  @override
+  Future<String> updateLinksCategory(
+      {List<String> category, int id, @required String token}) async {
+    final response = await apiHelper.put(
+      "links/$id/category",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: <String, dynamic>{"new_categories": category},
+    );
+    print('->>>>> $response');
+    print('->>>>> $category');
+    return response["msg"];
   }
 }

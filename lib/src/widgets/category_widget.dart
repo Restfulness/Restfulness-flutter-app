@@ -22,14 +22,8 @@ class CategoryWidget extends StatelessWidget {
           );
         }
         if (!snapshot.hasData) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height / 1.3,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return Container();
         }
-
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,

@@ -59,6 +59,13 @@ const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
 const fakeSearchLink404 = {"msg": "Pattern not found!"};
 
+const fakeUpdateCategorySuccess = {
+  "msg": "Categories updated."
+};
+const fakeUpdateCategory404 = {
+  "msg": "Link ID not found!"
+};
+
 void main() {
   LinkApiProvider apiProvider;
 
@@ -209,6 +216,28 @@ void main() {
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Category ID not found!");
+    }
+  });
+
+  test("Test update category", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeUpdateCategorySuccess), 200);
+    });
+
+    final msg =  await apiProvider.updateLinksCategory(token: "token", id: 1 , category: ['dev']);
+    expect(msg, "Categories updated.");
+  });
+
+  test("Test update category not found id", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeUpdateCategory404), 404);
+    });
+
+    try {
+      await apiProvider.updateLinksCategory(token: "token", id: 10 , category: ['dev']);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Link ID not found!");
     }
   });
 }

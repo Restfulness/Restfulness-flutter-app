@@ -80,6 +80,11 @@ class LinkDBProvider implements LinkSource, LinkCache {
   Future<List<SearchLinkModel>> fetchLinksByCategoryId({String token, int id}) {
     return null;
   }
+
+  @override
+  Future<String> updateLinksCategory({List<String> category, int id, @required String token}) {
+    return null;
+  }
 }
 
 final linkDbProvide = new LinkDBProvider();

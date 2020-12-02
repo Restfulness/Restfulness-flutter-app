@@ -25,7 +25,7 @@ class SettingShowUsername extends StatelessWidget {
             ),
             Positioned(
               child: buildUsername(),
-              right: 40,
+              right: 15,
               top: 18,
             ),
           ],
