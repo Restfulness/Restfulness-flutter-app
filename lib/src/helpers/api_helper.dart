@@ -7,14 +7,14 @@ import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/exceptions/app_exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
- String baseUrl = AppConfig.instance.values.apiBaseUrl;
+String baseUrl = AppConfig.instance.values.apiBaseUrl;
 
 class ApiHelper {
   http.Client client = new http.Client();
 
-  ApiHelper(){
+  ApiHelper() {
     _readUrl().then((value) {
-      if(value != ""){
+      if (value != "") {
         baseUrl = value;
       }
     });
@@ -39,7 +39,6 @@ class ApiHelper {
           headers: headers, body: jsonEncode(body));
       responseJson = _response(response);
     } on SocketException {
-
       throw FetchDataException(createMessage("No Internet connection"));
     }
     return responseJson;
@@ -57,7 +56,6 @@ class ApiHelper {
   }
 }
 
-
 dynamic _response(http.Response response) {
   switch (response.statusCode) {
     case 200:
@@ -74,7 +72,8 @@ dynamic _response(http.Response response) {
     case 500:
       throw InternalServerErrorException(response.body);
     default:
-      throw FetchDataException(createMessage('Error code : ${response.statusCode}'));
+      throw FetchDataException(
+          createMessage('Error code : ${response.statusCode}'));
   }
 }
 
@@ -83,7 +82,6 @@ String createMessage(String message) {
   msg["msg"] = message;
   return jsonEncode(msg);
 }
-
 
 Future<String> _readUrl() async {
   final prefs = await SharedPreferences.getInstance();

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
+import 'package:restfulness/src/blocs/reset_password/reset_password_provider.dart';
+import 'package:restfulness/src/screens/reset_password/forgot_password_screen.dart';
 
 import '../constants.dart';
 import 'blocs/authentication/auth_provider.dart';
@@ -12,19 +14,21 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
-        child: CategoriesProvider(
+        child: ResetPasswordProvider(
       child: LinksProvider(
-        child: MaterialApp(
-          title: 'Restfulness',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-              primaryColor: primaryColor,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              scaffoldBackgroundColor: scaffoldBackgroundColor,
-              primaryTextTheme: TextTheme(
-                headline6: TextStyle(color: Colors.white),
-              )),
-          onGenerateRoute: routes,
+        child: CategoriesProvider(
+          child: MaterialApp(
+            title: 'Restfulness',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+                primaryColor: primaryColor,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                scaffoldBackgroundColor: scaffoldBackgroundColor,
+                primaryTextTheme: TextTheme(
+                  headline6: TextStyle(color: Colors.white),
+                )),
+            onGenerateRoute: routes,
+          ),
         ),
       ),
     ));
@@ -44,6 +48,10 @@ class App extends StatelessWidget {
     } else if (settings.name == "/login") {
       return MaterialPageRoute(builder: (context) {
         return LoginScreen();
+      });
+    } else if (settings.name == "/forgot_password") {
+      return MaterialPageRoute(builder: (context) {
+        return ForgotPasswordScreen();
       });
     }
   }

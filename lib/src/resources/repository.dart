@@ -7,6 +7,7 @@ import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/category_api_provider.dart';
 import 'package:restfulness/src/resources/category_db_provider.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
+import 'package:restfulness/src/resources/reset_password_api_provider.dart';
 
 import 'authorization_db_provider.dart';
 import 'link_db_provider.dart';
@@ -19,6 +20,8 @@ class Repository {
   AuthorizationApiProvider authApiProvider = new AuthorizationApiProvider();
   LinkApiProvider linkApiProvider = new LinkApiProvider();
   CategoryApiProvider categoryApiProvider = new CategoryApiProvider();
+  ResetPasswordApiProvider resetPasswordApiProvider =
+      new ResetPasswordApiProvider();
 
   List<LinkSource> linkSources = <LinkSource>[
     linkDbProvide,
@@ -129,6 +132,26 @@ class Repository {
 
   clearCategoryCache() async {
     await categoryDbProvider.clear();
+  }
+
+  Future<String> forgotPass(String email) async {
+    String hash = await resetPasswordApiProvider.forgotPass(email: email);
+
+    return hash;
+  }
+
+  Future<String> verifyCode(String hashData, int code) async {
+    String hash =
+        await resetPasswordApiProvider.verifyCode(hash: hashData, code: code);
+
+    return hash;
+  }
+
+  Future<String> resetPass(String token, String newPass) async {
+    String msg =
+    await resetPasswordApiProvider.resetPass(token: token, newPass: newPass);
+
+    return msg;
   }
 
   Future get initializationAuth => _doneInitForAuth;

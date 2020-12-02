@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           onChanged: (newValue) {
             bloc.changeUsernameSignUp(newValue);
           },
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -132,29 +132,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget confirmPasswordField(AuthBloc bloc) {
-    return StreamBuilder(
-      stream: bloc.passwordSignUp,
-      builder: (context, snapshot) {
-        return TextField(
-          onChanged: bloc.changePasswordSignUp,
-          obscureText: true,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
-              borderSide: BorderSide(color: primaryColor, width: 2.0),
-            ),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(30))),
-            labelText: "Confirm Password",
-            hintText: "strong password",
-            errorText: snapshot.error,
-          ),
-        );
-      },
-    );
-  }
-
   Widget buildSignUpButton(AuthBloc bloc) {
     return StreamBuilder(
         stream: bloc.submitButtonSignUp,
@@ -177,6 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               disabledTextColor: Colors.white,
               onPressed: snapshot.hasData
                   ? () {
+                      FocusScope.of(context).unfocus();
                       bloc.submitRegister(context);
                     }
                   : null,
