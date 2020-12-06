@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
+import 'package:restfulness/src/blocs/reset_password/reset_password_provider.dart';
 import 'package:restfulness/src/screens/login/login_background.dart';
 import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
 
@@ -39,7 +40,7 @@ class LoginScreen extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.fromLTRB(30.0,0,30,30),
+            margin: EdgeInsets.fromLTRB(30.0, 0, 30, 30),
             child: Column(
               children: [
                 Container(margin: EdgeInsets.only(top: 60.0)),
@@ -87,7 +88,7 @@ class LoginScreen extends StatelessWidget {
           onChanged: (newValue) {
             bloc.changeUsernameLogin(newValue);
           },
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -128,102 +129,103 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-
   Widget buildLoginButton(AuthBloc bloc) {
     return StreamBuilder(
         stream: bloc.submitButtonLogin,
         builder: (context, AsyncSnapshot<bool> snapshot) {
-          return  ButtonTheme(
-              minWidth: double.infinity,
-              height: 50.0,
-              child: RaisedButton(
-                elevation: 5.0,
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.0,
-                  ),
-                ),
-                color: primaryColor,
-                disabledColor: primaryLightColor,
-                textColor: Colors.white,
-                disabledTextColor: Colors.white,
-                onPressed: snapshot.hasData
-                    ? () {
-                        bloc.submitLogin(context);
-                      }
-                    : null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+          return ButtonTheme(
+            minWidth: double.infinity,
+            height: 50.0,
+            child: RaisedButton(
+              elevation: 5.0,
+              child: Text(
+                "Login",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
                 ),
               ),
-            );
+              color: primaryColor,
+              disabledColor: primaryLightColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: snapshot.hasData
+                  ? () {
+                      FocusScope.of(context).unfocus();
+                      bloc.submitLogin(context);
+                    }
+                  : null,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+          );
         });
   }
 
-  Widget signUpAndForgotPassButtons(BuildContext context ,AuthBloc bloc) {
+  Widget signUpAndForgotPassButtons(BuildContext context, AuthBloc bloc) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        buildSignUpButton(context,bloc),
-        buildForgotButton()
-      ],
+      children: [buildSignUpButton(context), buildForgotButton(context)],
     );
   }
 
-  Widget buildForgotButton() {
+  Widget buildSignUpButton(BuildContext context) {
     return ButtonTheme(
-        minWidth: 140.0,
-        height: 45.0,
-        child: FlatButton(
-          child: Text("Forgot Password?",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15.0,
-              )),
-          color: Colors.transparent,
-          textColor: textColor,
-          onPressed: () {},
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
+      height: 45.0,
+      child: FlatButton(
+        child: RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 12.0,
+              color: textColor,
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                  text: 'Not a member? ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(
+                  text: 'Sign up now.',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: secondaryTextColor)),
+            ],
           ),
         ),
-      );
+        color: Colors.transparent,
+        textColor: textColor,
+        onPressed: () {
+          Navigator.pushNamed(context, "/register");
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    );
   }
 
-  Widget buildSignUpButton(BuildContext context, AuthBloc bloc) {
-    return  ButtonTheme(
-        height: 45.0,
-        child: FlatButton(
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 12.0,
-                color: textColor,
-              ),
-              children: <TextSpan>[
-                TextSpan(text: 'Not a member? ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text: 'Sign up now.',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: secondaryTextColor)),
-              ],
-            ),
-          ),
-          color: Colors.transparent,
-          textColor: textColor,
-          onPressed: () {
-            Navigator.pushNamed(context, "/register");
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
+  Widget buildForgotButton(BuildContext context) {
+    return ButtonTheme(
+      minWidth: 140.0,
+      height: 45.0,
+      child: FlatButton(
+        child: Text("Forgot Password?",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15.0,
+            )),
+        color: Colors.transparent,
+        textColor: textColor,
+        onPressed: () {
+          final resetBloc = ResetPasswordProvider.of(context);
+          resetBloc.resetFVR();
+          Navigator.pushNamed(context, "/forgot_password");
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
         ),
-      );
+      ),
+    );
   }
 
   Widget createGearButton(BuildContext context) {

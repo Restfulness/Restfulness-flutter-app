@@ -69,7 +69,7 @@ class _SearchWidgetState extends State<SearchWidget> {
                 child: MaterialButton(
                   onPressed: () async {
                     bloc.resetSearch();
-                    FocusScope.of(context).requestFocus(FocusNode());
+                    FocusScope.of(context).unfocus();
                     if (searchController.text != '') {
                       bloc.searchLinks(searchController.text);
                       setState(() {

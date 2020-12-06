@@ -65,8 +65,6 @@ class AuthBloc extends Object with AuthValidator {
         ToastContext(context, "Unexpected server error ", false);
       }
     }
-
-    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   submitRegister(BuildContext context) async {
@@ -94,8 +92,6 @@ class AuthBloc extends Object with AuthValidator {
         ToastContext(context, "Unexpected server error ", false);
       }
     }
-
-    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   void goToMainScreen(BuildContext context) {
@@ -113,7 +109,6 @@ class AuthBloc extends Object with AuthValidator {
     await Navigator.of(context)
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/login'));
   }
-
 
   dispose() {
     _usernameLogin.close();

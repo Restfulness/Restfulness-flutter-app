@@ -42,6 +42,7 @@ dependencies:
   dotted_border: ^1.0.4
   flutter_sequence_animation: ^3.0.1
   fluttertoast: ^7.1.1
+  jwt_decoder: ^1.0.3
 
 dev_dependencies:
   flutter_test:

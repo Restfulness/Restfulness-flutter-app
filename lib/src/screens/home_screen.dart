@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: MaterialButton(
               onPressed: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
+                FocusScope.of(context).unfocus();
                 if (addLinkController.text != '') {
                   setState(() {
                     _state = 1;
