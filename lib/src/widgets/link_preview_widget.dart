@@ -137,7 +137,7 @@ class LinkPreviewWidget extends StatelessWidget {
                 child: MaterialButton(
                     onPressed: () {
                       UpdateCategoryWidget update = new UpdateCategoryWidget();
-                      update.updateCategory(context, id);
+                      update.updateCategory(context, id,category);
                     },
                     elevation: 1,
                     color: primaryLightColor,

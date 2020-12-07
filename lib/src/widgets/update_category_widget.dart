@@ -4,22 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:restfulness/src/widgets/toast_context.dart';
 
 class UpdateCategoryWidget {
-  void updateCategory(BuildContext context, int id) {
-    _showAlertDialog(context).then((value) async {
+  void updateCategory(
+      BuildContext context, int id, List<CategoryModel> category) {
+    _showAlertDialog(context, category).then((value) async {
       if (value != null) {
         final categories = value["category"];
-
+      //.split(RegExp(r"/[ ,]+/")).toString().replaceAll(',', '')
         Repository repository = new Repository();
         repository.initializationLink;
 
-        List<String> catToList = categories.split(' ').toList();
-        try {
+        var removeComma = categories.replaceAll(',' , '');
+        List<String> catToList =  removeComma.split(' ').toList();
 
+        catToList.removeWhere((value) => value == ' ' || value == '');
+
+        print(catToList);
+        try {
           await repository.updateCategory(catToList, id);
           ToastContext(context, "Category updated successfully", true);
           final linkBloc = LinksProvider.of(context);
@@ -40,8 +46,14 @@ class UpdateCategoryWidget {
     });
   }
 
-  Future<Map<String, dynamic>> _showAlertDialog(BuildContext context) {
-    TextEditingController categoryController = new TextEditingController();
+  Future<Map<String, dynamic>> _showAlertDialog(
+      BuildContext context, List<CategoryModel> category) {
+    String cat = "";
+    category.forEach((element) {
+      cat += " ${element.name}";
+    });
+    TextEditingController categoryController =
+        new TextEditingController(text: cat);
     return showDialog(
         context: context,
         builder: (context) {

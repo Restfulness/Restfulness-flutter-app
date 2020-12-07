@@ -217,7 +217,7 @@ class LinkSimpleWidget extends StatelessWidget {
 
   _updateCategory(BuildContext context) {
     UpdateCategoryWidget update = new UpdateCategoryWidget();
-    update.updateCategory(context, id);
+    update.updateCategory(context, id,category);
   }
 
   Future<bool> _deleteLink(BuildContext context) async {
