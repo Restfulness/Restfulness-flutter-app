@@ -126,6 +126,7 @@ bool isValidToken(String header) {
   return validToken;
 }
 
+
 dynamic _response(http.Response response) {
   switch (response.statusCode) {
     case 200:
@@ -158,6 +159,7 @@ Future<String> _readUrl() async {
   final key = 'urlAddress';
   final value = prefs.getString(key) ?? '';
   return value;
+
 }
 
 Future<bool> reNewUser() async {
@@ -173,3 +175,4 @@ Future<bool> reNewUser() async {
   }
   return false;
 }
+
