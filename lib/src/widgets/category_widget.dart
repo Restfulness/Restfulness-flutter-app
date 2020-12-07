@@ -15,22 +15,18 @@ class CategoryWidget extends StatelessWidget {
     return StreamBuilder(
       stream: bloc.category,
       builder: (context, snapshot) {
-        if (snapshot.error != null) {
-          ToastContext(context, snapshot.error, false);
-          return CircularProgressIndicator(
-            value: 0,
-          );
+
+        if (!snapshot.hasData || snapshot.data == null) {
+            return Container();
         }
-        if (!snapshot.hasData) {
-          return Container();
-        }
+
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: MediaQuery.of(context).size.width /
                 (MediaQuery.of(context).size.height / 6),
           ),
-          itemCount: snapshot.data.length,
+          itemCount: snapshot.data.length ,
           itemBuilder: (context, index) {
             return CategoryCardWidget(
                 id: snapshot.data[index].id, name: snapshot.data[index].name);

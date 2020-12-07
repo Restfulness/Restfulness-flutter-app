@@ -86,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final id = await repository.insertLink(
                         tags, _validateUrl(addLinkController.text));
                     if (id != null) {
+                      addLinkController.clear();
                       ToastContext(context, "Link successfully added ", true);
                       bloc.resetLinks();
                       bloc.fetchLinks();

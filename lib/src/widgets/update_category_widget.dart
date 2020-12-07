@@ -19,7 +19,7 @@ class UpdateCategoryWidget {
         Repository repository = new Repository();
         repository.initializationLink;
 
-        var removeComma = categories.replaceAll(',' , '');
+        var removeComma = categories.replaceAll(',' , ' ');
         List<String> catToList =  removeComma.split(' ').toList();
 
         catToList.removeWhere((value) => value == ' ' || value == '');
