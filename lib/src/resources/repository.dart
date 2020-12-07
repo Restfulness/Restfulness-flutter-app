@@ -158,7 +158,6 @@ class Repository {
   Future<String> resetPass(String token, String newPass) async {
     String msg = await resetPasswordApiProvider.resetPass(
         token: token, newPass: newPass);
-
     return msg;
   }
 

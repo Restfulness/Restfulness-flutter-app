@@ -268,7 +268,7 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: Stack(
-                  children: _list.length == 0
+                  children: _list.length == 2
                       ? [
                           CategoryWidget(),
                         ]
