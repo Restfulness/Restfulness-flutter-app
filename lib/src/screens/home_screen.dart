@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
@@ -24,7 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _state = 0;
 
   bool isShowPreview = true;
-
+  // receive sharing
+  StreamSubscription _intentDataStreamSubscription;
+  List<SharedMediaFile> _sharedFiles;
+  String _sharedText = '';
   @override
   void initState() {
     super.initState();
@@ -33,11 +38,37 @@ class _HomeScreenState extends State<HomeScreen> {
     _readPreviewSwitch().then((value) {
       isShowPreview = value;
     });
+
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((String value) {
+          setState(() {
+            _sharedText = value;
+          });
+        }, onError: (err) {
+          print("getLinkStream error: $err");
+        });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String value) {
+      setState(() {
+        _sharedText = value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _intentDataStreamSubscription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final bloc = LinksProvider.of(context);
+    if(_sharedText != ''){
+      addLinkController.text = _sharedText;
+    }
     return Column(
       children: [
         buildAddBar(),
@@ -76,9 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     _state = 1;
                   });
-                  // temp tag list FIXME: after have separated api for adding tags
+
                   List<String> tags = new List<String>();
-                  tags.add("not tagged");
+                  tags.add("untagged");
 
                   Repository repository = new Repository();
                   await repository.initializationLink;
@@ -87,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         tags, _validateUrl(addLinkController.text));
                     if (id != null) {
                       addLinkController.clear();
+                      _sharedText = '';
                       ToastContext(context, "Link successfully added ", true);
                       bloc.resetLinks();
                       bloc.fetchLinks();

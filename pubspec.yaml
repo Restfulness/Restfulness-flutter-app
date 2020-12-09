@@ -43,6 +43,7 @@ dependencies:
   flutter_sequence_animation: ^3.0.1
   fluttertoast: ^7.1.1
   jwt_decoder: ^1.0.3
+  receive_sharing_intent: ^1.4.2
 
 dev_dependencies:
   flutter_test:
