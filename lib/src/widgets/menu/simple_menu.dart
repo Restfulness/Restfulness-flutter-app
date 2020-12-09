@@ -21,10 +21,10 @@ class SimpleMenu extends StatefulWidget {
         super(key: key);
 
   @override
-  _SimpleMenuState createState() => _SimpleMenuState();
+  SimpleMenuState createState() => SimpleMenuState();
 }
 
-class _SimpleMenuState extends State<SimpleMenu>
+class SimpleMenuState extends State<SimpleMenu>
     with SingleTickerProviderStateMixin {
   GlobalKey _key;
   bool isMenuOpen = false;
