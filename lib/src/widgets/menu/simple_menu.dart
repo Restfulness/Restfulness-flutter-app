@@ -105,7 +105,7 @@ class _SimpleMenuState extends State<SimpleMenu>
       builder: (context) {
         return Positioned(
           top: buttonPosition.dy - buttonSize.height / 6,
-          left: buttonPosition.dx - buttonSize.width * 1.5,
+          left: buttonPosition.dx - buttonSize.width * 2.25,
           height: buttonSize.height,
           child: Material(
             color: Colors.transparent,

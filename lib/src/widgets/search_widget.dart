@@ -89,11 +89,13 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
         Expanded(
-          child: _buildList(bloc),
+          child:  searchController.text.isEmpty ? CategoryWidget() :_buildList(bloc),
         ),
       ],
     );
   }
+
+
 
   Widget _buildSearchField(BuildContext context, LinksBloc bloc) {
     return TextField(
@@ -154,11 +156,11 @@ class _SearchWidgetState extends State<SearchWidget> {
               );
             }
           }
-
-          if (searchController.text.isEmpty) {
-            bloc.resetSearch();
+          print('call');
+          if ( searchController.text.isEmpty ) {
             return CategoryWidget();
           }
+
           if (isShowPreview) {
             if (snapshot.data.length <= 0) {
               return LinkSearchListWidget(key: _key);

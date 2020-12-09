@@ -45,6 +45,7 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
   @override
   void initState() {
     super.initState();
+    _list = [];
     render = false;
     rightPositionData = false;
     firstIconAnimationStartData = false;

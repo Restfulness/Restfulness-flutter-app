@@ -15,19 +15,9 @@ class CategoryWidget extends StatelessWidget {
     return StreamBuilder(
       stream: bloc.category,
       builder: (context, snapshot) {
-        if (snapshot.error != null) {
-          ToastContext(context, snapshot.error, false);
-          return CircularProgressIndicator(
-            value: 0,
-          );
-        }
-        if (!snapshot.hasData) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height / 1.3,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+
+        if (!snapshot.hasData || snapshot.data == null) {
+            return Container();
         }
 
         return GridView.builder(
@@ -36,7 +26,7 @@ class CategoryWidget extends StatelessWidget {
             childAspectRatio: MediaQuery.of(context).size.width /
                 (MediaQuery.of(context).size.height / 6),
           ),
-          itemCount: snapshot.data.length,
+          itemCount: snapshot.data.length ,
           itemBuilder: (context, index) {
             return CategoryCardWidget(
                 id: snapshot.data[index].id, name: snapshot.data[index].name);

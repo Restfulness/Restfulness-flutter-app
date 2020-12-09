@@ -130,6 +130,14 @@ class Repository {
     return categories;
   }
 
+  Future<String> updateCategory(List<String> category, int id) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final categories = linkSources[1].updateLinksCategory(
+        token: user.accessToken, id: id, category: category);
+
+    return categories;
+  }
+
   clearCategoryCache() async {
     await categoryDbProvider.clear();
   }
@@ -148,9 +156,8 @@ class Repository {
   }
 
   Future<String> resetPass(String token, String newPass) async {
-    String msg =
-    await resetPasswordApiProvider.resetPass(token: token, newPass: newPass);
-
+    String msg = await resetPasswordApiProvider.resetPass(
+        token: token, newPass: newPass);
     return msg;
   }
 
@@ -191,6 +198,9 @@ abstract class LinkSource {
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {@required String token,
       int id}); // FIXME: refactor to LinkModel after api changed to standard model
+
+  Future<String> updateLinksCategory(
+      {List<String> category, int id, @required String token});
 }
 
 abstract class LinkCache {

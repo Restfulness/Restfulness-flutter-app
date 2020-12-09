@@ -9,6 +9,7 @@ import 'package:restfulness/src/builder/link_preview.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/preview_model.dart';
 import 'package:restfulness/src/screens/category_list_screen.dart';
+import 'package:restfulness/src/widgets/update_category_widget.dart';
 
 class LinkPreviewWidget extends StatelessWidget {
   final String url;
@@ -134,7 +135,10 @@ class LinkPreviewWidget extends StatelessWidget {
                 minWidth: 0.5,
                 height: 0.5,
                 child: MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      UpdateCategoryWidget update = new UpdateCategoryWidget();
+                      update.updateCategory(context, id,category);
+                    },
                     elevation: 1,
                     color: primaryLightColor,
                     child: Icon(

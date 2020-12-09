@@ -7,13 +7,19 @@ import 'package:restfulness/src/widgets/settings/setting_show_username.dart';
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final bottom = MediaQuery
+        .of(context)
+        .viewInsets
+        .bottom;
+    return SingleChildScrollView(
+      reverse: true,
+      padding: EdgeInsets.only(bottom: bottom), child: Column(
       children: [
         SettingShowUsername(),
         SettingConfigAddress(),
         SettingPreviewSwitch(),
         SettingLogout(),
       ],
-    );
+    ),);
   }
 }
