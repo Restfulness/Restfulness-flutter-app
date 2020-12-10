@@ -18,6 +18,8 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LinkSimpleWidget extends StatelessWidget {
+  final GlobalKey<SimpleMenuState> globalKeySimpleMenu = GlobalKey();
+
   final String url;
   final int id;
   final List<CategoryModel> category;
@@ -41,6 +43,7 @@ class LinkSimpleWidget extends StatelessWidget {
             Positioned(
               child: Container(
                   child: SimpleMenu(
+                    key: globalKeySimpleMenu,
                 icons: [
                   Icon(
                     MdiIcons.shareVariantOutline,
@@ -196,6 +199,7 @@ class LinkSimpleWidget extends StatelessWidget {
   }
 
   _openOnTagPressed(BuildContext context, int index, LinksBloc bloc) {
+    globalKeySimpleMenu.currentState.closeMenu();
     bloc.fetchLinksByCategoryId(category[index].id);
     Navigator.push(
         context,
