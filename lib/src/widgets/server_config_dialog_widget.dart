@@ -71,12 +71,14 @@ class ServerConfigDialogWidget {
           return urlField(urlController , "http://server.com");
         }
         String address =  snapshot.data;
+        urlController.text = address.split(":")[1];
         return  urlField(urlController ,address.split(":")[1]);
       },
     );
   }
 
   Widget urlField(TextEditingController urlController , String hint){
+
     return TextField(
       controller: urlController,
       decoration: InputDecoration(
@@ -100,6 +102,7 @@ class ServerConfigDialogWidget {
           return portField(portController , "5000");
         }
         String address =  snapshot.data;
+        portController.text = address.split(":")[2];
         return  portField(portController ,address.split(":")[2]);
       },
     );

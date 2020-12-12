@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildAddBar() {
-    final bloc = LinksProvider.of(context);
+
 
     return Align(
       alignment: Alignment.topCenter,
@@ -102,40 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: MaterialButton(
               onPressed: () async {
-                FocusScope.of(context).unfocus();
-                if (addLinkController.text != '') {
-                  setState(() {
-                    _state = 1;
-                  });
-
-                  List<String> tags = new List<String>();
-                  tags.add("untagged");
-
-                  Repository repository = new Repository();
-                  await repository.initializationLink;
-                  try {
-                    final id = await repository.insertLink(
-                        tags, _validateUrl(addLinkController.text));
-                    if (id != null) {
-                      addLinkController.clear();
-                      _sharedText = '';
-                      ToastContext(context, "Link successfully added ", true);
-                      bloc.resetLinks();
-                      bloc.fetchLinks();
-
-                      // get new categories if we have new one
-                      final categoriesBloc = CategoriesProvider.of(context);
-                      categoriesBloc.fetchCategories();
-                    }
-                  } catch (e) {
-                    if (JsonUtils.isValidJSONString(e.toString())) {
-                      ToastContext(
-                          context, json.decode(e.toString())["msg"], false);
-                    } else {
-                      ToastContext(context, "Unexpected server error", false);
-                    }
-                  }
-                }
+                addLink();
               },
               elevation: 8.0,
               color: primaryColor,
@@ -150,14 +117,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+
   Widget _buildAddField(BuildContext context) {
     return TextField(
       controller: addLinkController,
+      textInputAction: TextInputAction.done,
+      onSubmitted: (value) {
+
+        addLink();
+      },
       decoration: InputDecoration(
           hintText: 'Add link',
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
     );
+  }
+
+  void addLink() async{
+    final bloc = LinksProvider.of(context);
+
+    FocusScope.of(context).unfocus();
+    if (addLinkController.text != '') {
+      setState(() {
+        _state = 1;
+      });
+
+      List<String> tags = new List<String>();
+      tags.add("untagged");
+
+      Repository repository = new Repository();
+      await repository.initializationLink;
+      try {
+        final id = await repository.insertLink(
+            tags, _validateUrl(addLinkController.text));
+        if (id != null) {
+          addLinkController.clear();
+          _sharedText = '';
+          ToastContext(context, "Link successfully added ", true);
+          bloc.resetLinks();
+          bloc.fetchLinks();
+
+          // get new categories if we have new one
+          final categoriesBloc = CategoriesProvider.of(context);
+          categoriesBloc.fetchCategories();
+        }
+      } catch (e) {
+        if (JsonUtils.isValidJSONString(e.toString())) {
+          ToastContext(
+              context, json.decode(e.toString())["msg"], false);
+        } else {
+          ToastContext(context, "Unexpected server error", false);
+        }
+      }
+    }
   }
 
   Widget _buildButtonIcon() {
