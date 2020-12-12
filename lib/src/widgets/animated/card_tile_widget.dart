@@ -369,7 +369,6 @@ class _CardTileWidgetState extends State<CardTileWidget>
             setState(() {
               if (remove) {
                 _showDeleteDialog(context);
-
               }
               if (openUrl) {
                 _launchURL();

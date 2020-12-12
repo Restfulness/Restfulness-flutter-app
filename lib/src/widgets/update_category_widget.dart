@@ -65,7 +65,7 @@ class UpdateCategoryWidget {
             ),
             content: Row(
               children: <Widget>[
-                Expanded(child: _buildCategoryField(categoryController)),
+                Expanded(child: _buildCategoryField(context,categoryController)),
               ],
             ),
             actions: [
@@ -86,8 +86,19 @@ class UpdateCategoryWidget {
         });
   }
 
-  Widget _buildCategoryField(TextEditingController urlController) {
+  Widget _buildCategoryField(BuildContext context,TextEditingController urlController) {
+    if(urlController.text.contains("untagged")){
+      urlController.selection = TextSelection(baseOffset:0, extentOffset:urlController.text.length);
+    }
+
     return TextField(
+      autofocus: true,
+      textInputAction: TextInputAction.done,
+      onSubmitted: (value) {
+        Map<String, dynamic> toMap = new Map<String, dynamic>();
+        toMap["category"] = urlController.text;
+        Navigator.of(context).pop(toMap);
+      },
       controller: urlController,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
@@ -97,7 +108,7 @@ class UpdateCategoryWidget {
         border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(30))),
         labelText: "Category",
-        hintText: "development programing",
+        hintText: "enter category",
       ),
     );
   }
