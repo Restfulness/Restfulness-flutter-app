@@ -7,6 +7,7 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/screens/settings_screen.dart';
+import 'package:restfulness/src/screens/social_screen.dart';
 
 import '../../constants.dart';
 import 'home_screen.dart';
@@ -20,13 +21,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int homeIndex = 0;
-  int searchIndex = 1;
-  int categoryIndex = 2;
+  int searchIndex = 2;
 
   int _currentIndex = 0;
 
   final List<Widget> _children = [
     HomeScreen(),
+    SocialScreen(),
     SearchScreen(),
     SettingsScreen(),
   ];
@@ -69,6 +70,7 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: FancyBottomNavigation(
           tabs: [
             TabData(iconData: MdiIcons.home, title: "Home"),
+            TabData(iconData: MdiIcons.earth, title: "Social"),
             TabData(iconData: MdiIcons.magnify, title: "Search"),
             TabData(iconData: MdiIcons.cog, title: "Settings")
           ],
@@ -95,6 +97,9 @@ class _MainScreenState extends State<MainScreen> {
           _title = "Search";
           break;
         case 2:
+          _title = "Social";
+          break;
+        case 3:
           _title = "Settings";
 
           break;

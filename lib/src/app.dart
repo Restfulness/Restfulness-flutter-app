@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/reset_password/reset_password_provider.dart';
+import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:restfulness/src/screens/reset_password/forgot_password_screen.dart';
 
 import '../constants.dart';
@@ -16,18 +17,20 @@ class App extends StatelessWidget {
     return AuthProvider(
         child: ResetPasswordProvider(
       child: LinksProvider(
-        child: CategoriesProvider(
-          child: MaterialApp(
-            title: 'Restfulness',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-                primaryColor: primaryColor,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-                scaffoldBackgroundColor: scaffoldBackgroundColor,
-                primaryTextTheme: TextTheme(
-                  headline6: TextStyle(color: Colors.white),
-                )),
-            onGenerateRoute: routes,
+        child: SocialProvider(
+          child: CategoriesProvider(
+            child: MaterialApp(
+              title: 'Restfulness',
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                  primaryColor: primaryColor,
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                  scaffoldBackgroundColor: scaffoldBackgroundColor,
+                  primaryTextTheme: TextTheme(
+                    headline6: TextStyle(color: Colors.white),
+                  )),
+              onGenerateRoute: routes,
+            ),
           ),
         ),
       ),

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login/login_screen.dart';
 import 'main_screen.dart';
@@ -69,12 +71,31 @@ class _DecisionScreenState extends State<DecisionScreen> {
     }
   }
 
-  void goToMainScreen(BuildContext context){
+  void goToMainScreen(BuildContext context) {
     final linkBloc = LinksProvider.of(context);
     final categoriesBloc = CategoriesProvider.of(context);
+    final socialBloc = SocialProvider.of(context);
+
     linkBloc.fetchLinks();
     categoriesBloc.fetchCategories();
+    _readTime().then((value) {
+      if (value.isEmpty) {
+        socialBloc.fetchSocial(
+            DateTime.now().subtract(Duration(days: 7))); // last weak
+      } else {
+        DateTime date = DateTime.parse(value);
+        socialBloc.fetchSocial(date);
+      }
+    });
+
     _redirectToPage(context, MainScreen());
+  }
+
+  Future<String> _readTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'lastSeen';
+    final value = prefs.getString(key) ?? '';
+    return value;
   }
 
   Widget buildLoading() {

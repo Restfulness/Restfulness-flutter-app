@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/search_model.dart';
+import 'package:restfulness/src/models/social_model.dart';
 import 'package:restfulness/src/models/user_model.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/category_api_provider.dart';
 import 'package:restfulness/src/resources/category_db_provider.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
 import 'package:restfulness/src/resources/reset_password_api_provider.dart';
+import 'package:restfulness/src/resources/social_api_provider.dart';
 
 import 'authorization_db_provider.dart';
 import 'link_db_provider.dart';
@@ -22,6 +24,7 @@ class Repository {
   CategoryApiProvider categoryApiProvider = new CategoryApiProvider();
   ResetPasswordApiProvider resetPasswordApiProvider =
       new ResetPasswordApiProvider();
+  SocialApiProvider socialApiProvider = new SocialApiProvider();
 
   List<LinkSource> linkSources = <LinkSource>[
     linkDbProvide,
@@ -159,6 +162,13 @@ class Repository {
     String msg = await resetPasswordApiProvider.resetPass(
         token: token, newPass: newPass);
     return msg;
+  }
+
+  Future<List<SocialModel>> social(DateTime date) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    List<SocialModel> otherUserLinks = await socialApiProvider.fetchSocial(
+        token: user.accessToken, date: date);
+    return otherUserLinks;
   }
 
   Future get initializationAuth => _doneInitForAuth;
