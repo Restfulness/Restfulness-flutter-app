@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/search_model.dart';
@@ -18,7 +19,6 @@ class LinkApiProvider implements LinkSource {
       },
       body: <String, dynamic>{'categories': category, 'url': url},
     );
-    Map<String, dynamic> toJson = new Map<String, dynamic>();
 
     return response["id"];
   }
@@ -112,8 +112,30 @@ class LinkApiProvider implements LinkSource {
       },
       body: <String, dynamic>{"new_categories": category},
     );
-    print('->>>>> $response');
-    print('->>>>> $category');
+
     return response["msg"];
+  }
+
+  @override
+  Future<List<LinkModel>> fetchSocialUsersLinks(
+      {@required String token, int id, DateTime date}) async {
+    List<LinkModel> links = new List<LinkModel>();
+
+    final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
+    final String formatted = formatter.format(date);
+
+    final response = await apiHelper.post(
+      "user/$id/links",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: <String, dynamic>{'date_from': formatted},
+    );
+
+    for (var link in response) {
+      links.add(LinkModel.fromJson(link));
+    }
+    return links;
   }
 }

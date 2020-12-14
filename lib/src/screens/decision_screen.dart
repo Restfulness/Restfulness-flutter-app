@@ -84,7 +84,7 @@ class _DecisionScreenState extends State<DecisionScreen> {
             DateTime.now().subtract(Duration(days: 7))); // last week
       } else {
         DateTime date = DateTime.parse(value);
-        socialBloc.fetchSocial(date);
+        socialBloc.fetchSocial(DateTime.now().subtract(Duration(days: 7)));
       }
     });
 

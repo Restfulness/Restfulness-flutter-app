@@ -94,10 +94,10 @@ class _MainScreenState extends State<MainScreen> {
           _title = "Home";
           break;
         case 1:
-          _title = "Search";
+          _title = "Social";
           break;
         case 2:
-          _title = "Social";
+          _title = "Search";
           break;
         case 3:
           _title = "Settings";

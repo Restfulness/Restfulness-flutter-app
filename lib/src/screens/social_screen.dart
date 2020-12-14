@@ -24,7 +24,7 @@ class _SocialScreenState extends State<SocialScreen> {
         if (!snapshot.hasData) {
           return Container();
         }
-        print(snapshot.data[0].username);
+
         return ListView.builder(
           itemCount: snapshot.data.length,
           itemBuilder: (context, int index) {

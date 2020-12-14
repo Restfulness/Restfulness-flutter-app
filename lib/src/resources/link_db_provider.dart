@@ -82,7 +82,13 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<String> updateLinksCategory({List<String> category, int id, @required String token}) {
+  Future<String> updateLinksCategory(
+      {List<String> category, int id, @required String token}) {
+    return null;
+  }
+
+  @override
+  Future<List<LinkModel>> fetchSocialUsersLinks({int id, String token ,DateTime date}) {
     return null;
   }
 }
