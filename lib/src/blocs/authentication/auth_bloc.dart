@@ -3,16 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/category/categories_provider.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/screens/main_screen.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'auth_validator.dart';
 
 class AuthBloc extends Object with AuthValidator {
+  final _repository = new Repository();
+
   final _usernameLogin = BehaviorSubject<String>();
   final _passwordLogin = BehaviorSubject<String>();
 
@@ -71,7 +75,7 @@ class AuthBloc extends Object with AuthValidator {
     final validUsername = _usernameSignUp.value.toLowerCase();
     final validPassword = _passwordSignUp.value;
 
-    /// Sign-up  TODO refactor signUp after Restfulness api changed
+    /// Sign-up  TODO refactor signUp after Restfulness api changed. because we need first register and then use login method
     AuthorizationApiProvider userSignUp = new AuthorizationApiProvider();
 
     try {
@@ -95,11 +99,45 @@ class AuthBloc extends Object with AuthValidator {
   }
 
   void goToMainScreen(BuildContext context) {
+    // TODO goToMainScreen need a separate class we use this method here a and in decision_screen
     final linkBloc = LinksProvider.of(context);
     final categoriesBloc = CategoriesProvider.of(context);
+    final socialBloc = SocialProvider.of(context);
+
+
     linkBloc.fetchLinks();
     categoriesBloc.fetchCategories();
+
+    _readTime().then((value) {
+      if (value.isEmpty) {
+        socialBloc.fetchSocial(
+            DateTime.now().subtract(Duration(days: 7))); // last week
+      } else {
+        DateTime date = DateTime.parse(value);
+        socialBloc.fetchSocial(DateTime.now().subtract(Duration(days: 7)));
+      }
+    });
+
+    // TODO refactor after we have all users profile info in login response
+    _repository.fetchPublicLinksSetting().then((value) {
+      _savePublicSwitch(value);
+    });
+
     _redirectToPage(context, MainScreen());
+  }
+
+  Future<String> _readTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'lastSeen';
+    final value = prefs.getString(key) ?? '';
+    return value;
+  }
+
+  Future<bool> _savePublicSwitch(bool preview) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'publicLinks';
+    final isSaved = prefs.setBool(key, preview);
+    return isSaved;
   }
 
   Future<void> _redirectToPage(BuildContext context, Widget page) async {

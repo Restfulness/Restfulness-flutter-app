@@ -8,6 +8,7 @@ import 'package:restfulness/src/resources/authorization_api_provider.dart';
 import 'package:restfulness/src/resources/category_api_provider.dart';
 import 'package:restfulness/src/resources/category_db_provider.dart';
 import 'package:restfulness/src/resources/link_api_provider.dart';
+import 'package:restfulness/src/resources/profile_api_provider.dart';
 import 'package:restfulness/src/resources/reset_password_api_provider.dart';
 import 'package:restfulness/src/resources/social_api_provider.dart';
 
@@ -25,6 +26,7 @@ class Repository {
   ResetPasswordApiProvider resetPasswordApiProvider =
       new ResetPasswordApiProvider();
   SocialApiProvider socialApiProvider = new SocialApiProvider();
+  ProfileApiProvider profileApiProvider = new ProfileApiProvider();
 
   List<LinkSource> linkSources = <LinkSource>[
     linkDbProvide,
@@ -52,6 +54,22 @@ class Repository {
     }
 
     return user;
+  }
+
+  Future<bool> fetchPublicLinksSetting() async {
+    UserModel user = await authorizationDbProvider.currentUser();
+
+    final public =
+        await profileApiProvider.fetchPublicLinksSetting(token: user.accessToken);
+
+    return public;
+  }
+
+  Future<String> updatePublicLinksSetting(bool public) async {
+    UserModel user = await authorizationDbProvider.currentUser();
+    final msg = await profileApiProvider.updatePublicLinksSetting(
+        token: user.accessToken, public: public);
+    return msg;
   }
 
   Future<UserModel> currentUser() async {
@@ -98,12 +116,13 @@ class Repository {
     return link;
   }
 
-  Future<List<LinkModel>> fetchSocialUsersLinks({@required int id , DateTime date}) async {
+  Future<List<LinkModel>> fetchSocialUsersLinks(
+      {@required int id, DateTime date}) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links = linkSources[1].fetchSocialUsersLinks(token: user.accessToken , id:id ,date: date );
+    final links = linkSources[1]
+        .fetchSocialUsersLinks(token: user.accessToken, id: id, date: date);
 
     return links;
-
   }
 
   Future<bool> deleteLink(int id) async {
@@ -190,6 +209,13 @@ abstract class UserSource {
   Future<UserModel> login(String username, String password);
 }
 
+abstract class ProfileSource {
+
+  Future<bool> fetchPublicLinksSetting({@required String token});
+
+  Future<String> updatePublicLinksSetting({@required String token , bool public });
+}
+
 abstract class UserCache {
   Future<UserModel> currentUser();
 
@@ -220,7 +246,8 @@ abstract class LinkSource {
   Future<String> updateLinksCategory(
       {List<String> category, int id, @required String token});
 
-  Future<List<LinkModel>> fetchSocialUsersLinks({@required int id, @required String token , DateTime date});
+  Future<List<LinkModel>> fetchSocialUsersLinks(
+      {@required int id, @required String token, DateTime date});
 }
 
 abstract class LinkCache {

@@ -19,12 +19,13 @@ class DecisionScreen extends StatefulWidget {
 
 class _DecisionScreenState extends State<DecisionScreen> {
   String _state = 'Welcome';
+  final repository = new Repository();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final repository = new Repository();
+
       await repository.initializationAuth;
 
       final user = await repository.currentUser();
@@ -72,12 +73,16 @@ class _DecisionScreenState extends State<DecisionScreen> {
   }
 
   void goToMainScreen(BuildContext context) {
+    // TODO goToMainScreen need a separate class we use this method here a and in decision_screen
+
     final linkBloc = LinksProvider.of(context);
     final categoriesBloc = CategoriesProvider.of(context);
     final socialBloc = SocialProvider.of(context);
 
+
     linkBloc.fetchLinks();
     categoriesBloc.fetchCategories();
+
     _readTime().then((value) {
       if (value.isEmpty) {
         socialBloc.fetchSocial(
@@ -88,6 +93,11 @@ class _DecisionScreenState extends State<DecisionScreen> {
       }
     });
 
+    // // TODO refactor after we have all users profile info in login response
+    repository.fetchPublicLinksSetting().then((value) {
+      _savePublicSwitch(value);
+    });
+
     _redirectToPage(context, MainScreen());
   }
 
@@ -96,6 +106,13 @@ class _DecisionScreenState extends State<DecisionScreen> {
     final key = 'lastSeen';
     final value = prefs.getString(key) ?? '';
     return value;
+  }
+
+  Future<bool> _savePublicSwitch(bool preview) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'publicLinks';
+    final isSaved = prefs.setBool(key, preview);
+    return isSaved;
   }
 
   Widget buildLoading() {
