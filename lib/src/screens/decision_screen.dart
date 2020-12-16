@@ -85,11 +85,10 @@ class _DecisionScreenState extends State<DecisionScreen> {
 
     _readTime().then((value) {
       if (value.isEmpty) {
-        socialBloc.fetchSocial(
-            DateTime.now().subtract(Duration(days: 7))); // last week
+        socialBloc.fetchSocial(null);
       } else {
         DateTime date = DateTime.parse(value);
-        socialBloc.fetchSocial(DateTime.now().subtract(Duration(days: 7)));
+        socialBloc.fetchSocial(date);
       }
     });
 

@@ -7,7 +7,7 @@ class SocialApiProvider{
 
   ApiHelper apiHelper = ApiHelper();
 
-  Future<List<SocialModel>> fetchSocial({@required String token ,@required DateTime date}) async {
+  Future<List<SocialModel>> fetchSocial({@required String token , DateTime date}) async {
     List<SocialModel> socialUsers = new List<SocialModel>();
 
     final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
