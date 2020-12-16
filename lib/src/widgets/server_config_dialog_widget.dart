@@ -71,8 +71,9 @@ class ServerConfigDialogWidget {
           return urlField(urlController , "http://server.com");
         }
         String address =  snapshot.data;
-        urlController.text = address.split(":")[1];
-        return  urlField(urlController ,address.split(":")[1]);
+        Uri myUri = Uri.parse(address);
+        urlController.text = myUri.host;
+        return  urlField(urlController ,myUri.host);
       },
     );
   }
@@ -102,8 +103,9 @@ class ServerConfigDialogWidget {
           return portField(portController , "5000");
         }
         String address =  snapshot.data;
-        portController.text = address.split(":")[2];
-        return  portField(portController ,address.split(":")[2]);
+        Uri myUri = Uri.parse(address);
+        portController.text = myUri.port.toString();
+        return  portField(portController ,myUri.port.toString());
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/models/category_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SocialLinkSimpleWidget extends StatelessWidget {
 
@@ -16,7 +17,11 @@ class SocialLinkSimpleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      child: Card(
+      child:InkWell(
+        onTap: () => {
+          _launchURL()
+        },
+        child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         clipBehavior: Clip.antiAlias,
@@ -25,7 +30,7 @@ class SocialLinkSimpleWidget extends StatelessWidget {
             buildInfo(context),
           ],
         ),
-      ),
+      ),),
     );
   }
 
@@ -86,5 +91,11 @@ class SocialLinkSimpleWidget extends StatelessWidget {
     );
   }
 
-
+  _launchURL() async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

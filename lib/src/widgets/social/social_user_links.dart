@@ -51,7 +51,12 @@ class SocialUserLinks extends StatelessWidget {
       stream: bloc.socialLinks,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Container();
+          return SizedBox(
+            height: MediaQuery.of(context).size.height / 1.3,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
         return ListView.builder(
           itemCount: snapshot.data.length,

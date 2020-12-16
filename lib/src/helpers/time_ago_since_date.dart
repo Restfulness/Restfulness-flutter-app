@@ -16,7 +16,7 @@ class TimeAgoSinceDate {
       return '${difference.inMinutes} minutes ago';
     } else if (difference.inHours <= 1) {
       return (numericDates) ? '1 hour ago' : 'An hour ago';
-    } else if (difference.inHours < 60) {
+    } else if (difference.inHours < 24) {
       return '${difference.inHours} hours ago';
     } else if (difference.inDays <= 1) {
       return (numericDates) ? '1 day ago' : 'Yesterday';

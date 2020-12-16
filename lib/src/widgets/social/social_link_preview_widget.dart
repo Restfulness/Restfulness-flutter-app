@@ -7,6 +7,7 @@ import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/builder/link_preview.dart';
 import 'package:restfulness/src/models/category_model.dart';
 import 'package:restfulness/src/models/preview_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SocialLinkPreviewWidget extends StatelessWidget {
   final String url;
@@ -40,7 +41,11 @@ class SocialLinkPreviewWidget extends StatelessWidget {
     return Container(
       height: 120,
       margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
-      child: Card(
+      child:InkWell(
+        onTap: () => {
+          _launchURL()
+        },
+        child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         clipBehavior: Clip.antiAlias,
@@ -125,7 +130,7 @@ class SocialLinkPreviewWidget extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ),),
     );
   }
 
@@ -219,5 +224,14 @@ class SocialLinkPreviewWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+
+  _launchURL() async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
