@@ -1,10 +1,12 @@
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/helpers/social_date_picker.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/screens/settings_screen.dart';
 import 'package:restfulness/src/screens/social_screen.dart';
@@ -21,9 +23,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int homeIndex = 0;
+  int socialIndex = 1;
   int searchIndex = 2;
 
   int _currentIndex = 0;
+
+  bool isSocial = false;
 
   final List<Widget> _children = [
     HomeScreen(),
@@ -65,6 +70,18 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.black),
           ),
           brightness: Brightness.light,
+          actions: <Widget>[
+            if(_currentIndex == socialIndex)
+              IconButton(
+                icon: Icon(
+                  MdiIcons.calendar,
+                  color: primaryColor,
+                ),
+                onPressed: () {
+                  SocialDatePicker.pickTime(context);
+                },
+              )
+          ],
         ),
         body: _children[_currentIndex],
         bottomNavigationBar: FancyBottomNavigation(
