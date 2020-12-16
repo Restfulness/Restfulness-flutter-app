@@ -7,11 +7,18 @@ class ServerConfigDialogWidget {
   void saveConfiguration(BuildContext context) {
     showAlertDialog(context).then((value) async {
       if (value != null) {
-        final url = value["url"];
+        String url = value["url"];
         final port = value["port"];
-
-          final result =
-          _saveUrl('${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}:$port');
+        print(url);
+        if (url.isNotEmpty) {
+          Future<bool> result;
+          if (url.contains("https")) {
+            result = _saveUrl(
+                '${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}');
+          } else {
+            result = _saveUrl(
+                '${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}:$port');
+          }
           result.then((value) {
             if (value) {
               ToastContext(
@@ -20,6 +27,9 @@ class ServerConfigDialogWidget {
               ToastContext(context, "Failed to save", false);
             }
           });
+        } else {
+          ToastContext(context, "URL can not be empty", false);
+        }
       }
     });
   }
@@ -34,7 +44,7 @@ class ServerConfigDialogWidget {
             title: Text(
               "Enter Your Server Address",
               style:
-              TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+                  TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
             ),
             content: Row(
               children: <Widget>[
@@ -54,7 +64,7 @@ class ServerConfigDialogWidget {
                   Map<String, dynamic> toMap = new Map<String, dynamic>();
                   toMap["url"] = urlController.text;
                   toMap["port"] =
-                  portController.text.isNotEmpty ? portController.text : 80;
+                      portController.text.isNotEmpty ? portController.text : 80;
                   Navigator.of(context).pop(toMap);
                 },
               )
@@ -68,18 +78,17 @@ class ServerConfigDialogWidget {
       future: _readUrl(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == '') {
-          return urlField(urlController , "http://server.com");
+          return urlField(urlController, "http://server.com");
         }
-        String address =  snapshot.data;
+        String address = snapshot.data;
         Uri myUri = Uri.parse(address);
         urlController.text = myUri.host;
-        return  urlField(urlController ,myUri.host);
+        return urlField(urlController, myUri.host);
       },
     );
   }
 
-  Widget urlField(TextEditingController urlController , String hint){
-
+  Widget urlField(TextEditingController urlController, String hint) {
     return TextField(
       controller: urlController,
       decoration: InputDecoration(
@@ -100,17 +109,17 @@ class ServerConfigDialogWidget {
       future: _readUrl(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == '') {
-          return portField(portController , "5000");
+          return portField(portController, "5000");
         }
-        String address =  snapshot.data;
+        String address = snapshot.data;
         Uri myUri = Uri.parse(address);
         portController.text = myUri.port.toString();
-        return  portField(portController ,myUri.port.toString());
+        return portField(portController, myUri.port.toString());
       },
     );
   }
 
-  Widget portField(TextEditingController portController , String hint ){
+  Widget portField(TextEditingController portController, String hint) {
     return TextField(
       keyboardType: TextInputType.number,
       controller: portController,
