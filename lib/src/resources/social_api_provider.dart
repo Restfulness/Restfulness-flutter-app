@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/social_model.dart';
 
-class SocialApiProvider{
-
+class SocialApiProvider {
   ApiHelper apiHelper = ApiHelper();
 
-  Future<List<SocialModel>> fetchSocial({@required String token , DateTime date}) async {
+  Future<List<SocialModel>> fetchSocial(
+      {@required String token, DateTime date}) async {
     List<SocialModel> socialUsers = new List<SocialModel>();
-
-    final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
-    final String formatted = formatter.format(date);
-
+    String formatted;
+    if (date != null) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
+      formatted = formatter.format(date);
+    } else {
+      formatted = null;
+    }
 
     final response = await apiHelper.post(
       "user/activity",
@@ -23,7 +26,7 @@ class SocialApiProvider{
       body: <String, dynamic>{'date_from': formatted},
     );
 
-    for (var users in response){
+    for (var users in response) {
       socialUsers.add(SocialModel.fromJson(users));
     }
 
