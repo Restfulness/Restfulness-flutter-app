@@ -11,6 +11,7 @@ import 'package:restfulness/src/helpers/social_date_picker.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/screens/settings_screen.dart';
 import 'package:restfulness/src/screens/social_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import 'home_screen.dart';
@@ -23,13 +24,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool isDemo = false;
+
   int homeIndex = 0;
   int socialIndex = 1;
   int searchIndex = 2;
 
   int _currentIndex = 0;
 
-  bool isDataPicker = false;
+  bool isDataPicked = false;
 
   final List<Widget> _children = [
     HomeScreen(),
@@ -48,6 +51,11 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _title = "Home";
 
+    _readDemo().then((value) {
+      setState(() {
+        isDemo = value;
+      });
+    });
   }
 
   @override
@@ -73,9 +81,26 @@ class _MainScreenState extends State<MainScreen> {
             _title,
             style: TextStyle(color: Colors.black),
           ),
+          leading: Stack(
+            children: [
+              Positioned(
+                child: InkWell(
+                  onTap: () => {
+                    showAlertDialog(context)
+                  },
+                  child: Text(
+                    "Demo",
+                    style: TextStyle(color: primaryColor),
+                  ),
+                ),
+                top: 23,
+                left: 20,
+              ),
+            ],
+          ),
           brightness: Brightness.light,
           actions: <Widget>[
-            if (isDataPicker && _currentIndex == socialIndex)
+            if (isDataPicked && _currentIndex == socialIndex)
               IconButton(
                 icon: Icon(
                   MdiIcons.restart,
@@ -84,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
                 onPressed: () {
                   socialBloc.fetchSocial(null);
                   setState(() {
-                    isDataPicker = false;
+                    isDataPicked = false;
                   });
                 },
               ),
@@ -98,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
                   SocialDatePicker socialDatePicker =
                       new SocialDatePicker(onDateSelect: (value) {
                     setState(() {
-                      isDataPicker = value;
+                      isDataPicked = value;
                     });
                   });
                   socialDatePicker.pickTime(context);
@@ -126,8 +151,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void onTabTapped(int index) {
-
-
     setState(() {
       _currentIndex = index;
 
@@ -153,6 +176,55 @@ class _MainScreenState extends State<MainScreen> {
     }
     if (index == socialIndex) {
       socialBloc.fetchSocial(null);
+    } else {
+      isDataPicked = false;
     }
+  }
+
+  Future<bool> _readDemo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'demo';
+    final isSaved = prefs.getBool(key) ?? '';
+    return isSaved;
+  }
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () { Navigator.of(context).pop(); },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Demo"),
+      content:  RichText(
+        text: new TextSpan(
+          // Note: Styles for TextSpans must be explicitly defined.
+          // Child text spans will inherit styles from parent
+          style: new TextStyle(
+            fontSize: 14.0,
+            color: Colors.black,
+          ),
+          children: <TextSpan>[
+             TextSpan(text: 'You are using the demo URL which is '),
+             TextSpan(text: 'api.restfulness.app, ', style: new TextStyle(fontWeight: FontWeight.bold)),
+             TextSpan(text: 'if you want to set a new URL please go to the settings'),
+          ],
+        ),
+      ),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
