@@ -9,12 +9,15 @@ import 'package:rxdart/rxdart.dart';
 class LinksBloc {
   final _repository = new Repository();
   final _fetchLinks = BehaviorSubject<List<LinkModel>>();
+  final _fetchSocialUsersLinks = BehaviorSubject<List<LinkModel>>();
   final _searchLinks = BehaviorSubject<List<SearchLinkModel>>();
 
   final _fetchLinksByCategory = BehaviorSubject<List<SearchLinkModel>>();
 
   // Stream
   Observable<List<LinkModel>> get links => _fetchLinks.stream;
+
+  Observable<List<LinkModel>> get socialLinks => _fetchSocialUsersLinks.stream;
 
   Observable<List<SearchLinkModel>> get search => _searchLinks.stream;
 
@@ -38,6 +41,19 @@ class LinksBloc {
         _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
         _fetchLinks.sink.addError("Unexpected server error");
+      }
+    }
+  }
+
+  fetchSocialUserLinks(int id , DateTime date) async {
+    try {
+      final ids = await _repository.fetchSocialUsersLinks(id: id ,date: date);
+      _fetchSocialUsersLinks.sink.add(ids);
+    } catch (e) {
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        _fetchSocialUsersLinks.sink.addError(json.decode(e.toString())["msg"]);
+      } else {
+        _fetchSocialUsersLinks.sink.addError("Unexpected server error");
       }
     }
   }
@@ -76,6 +92,7 @@ class LinksBloc {
 
   dispose() {
     _fetchLinks.close();
+    _fetchSocialUsersLinks.close();
     _searchLinks.close();
 
     _fetchLinksByCategory.close();
@@ -91,5 +108,9 @@ class LinksBloc {
 
   restCategoryList() {
     _fetchLinksByCategory.add([]);
+  }
+
+  restSocialList() {
+    _fetchSocialUsersLinks.add([]);
   }
 }

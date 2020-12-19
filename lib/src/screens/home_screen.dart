@@ -26,10 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
   int _state = 0;
 
   bool isShowPreview = true;
+
   // receive sharing
   StreamSubscription _intentDataStreamSubscription;
   List<SharedMediaFile> _sharedFiles;
   String _sharedText = '';
+
   @override
   void initState() {
     super.initState();
@@ -42,12 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
-          setState(() {
-            _sharedText = value;
-          });
-        }, onError: (err) {
-          print("getLinkStream error: $err");
-        });
+      setState(() {
+        _sharedText = value;
+      });
+    }, onError: (err) {
+      print("getLinkStream error: $err");
+    });
 
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String value) {
@@ -55,19 +57,23 @@ class _HomeScreenState extends State<HomeScreen> {
         _sharedText = value;
       });
     });
+
+
   }
 
   @override
   void dispose() {
     _intentDataStreamSubscription.cancel();
+    ReceiveSharingIntent.reset();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final bloc = LinksProvider.of(context);
-    if(_sharedText != ''){
-      addLinkController.text = _sharedText;
+    if (_sharedText != '') {
+      addLinkController.text = _getUrlFromString(_sharedText);
     }
     return Column(
       children: [
@@ -80,8 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildAddBar() {
-
-
     return Align(
       alignment: Alignment.topCenter,
       child: Row(
@@ -117,14 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-
   Widget _buildAddField(BuildContext context) {
     return TextField(
+      onChanged: (value) {
+        _sharedText = '';
+      },
       controller: addLinkController,
       textInputAction: TextInputAction.done,
       onSubmitted: (value) {
-
         addLink();
       },
       decoration: InputDecoration(
@@ -134,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void addLink() async{
+  void addLink() async {
     final bloc = LinksProvider.of(context);
 
     FocusScope.of(context).unfocus();
@@ -152,8 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
         final id = await repository.insertLink(
             tags, _validateUrl(addLinkController.text));
         if (id != null) {
-          addLinkController.clear();
-          _sharedText = '';
+          setState(() {
+            addLinkController.clear();
+            _sharedText = '';
+          });
           ToastContext(context, "Link successfully added ", true);
           bloc.resetLinks();
           bloc.fetchLinks();
@@ -164,8 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       } catch (e) {
         if (JsonUtils.isValidJSONString(e.toString())) {
-          ToastContext(
-              context, json.decode(e.toString())["msg"], false);
+          ToastContext(context, json.decode(e.toString())["msg"], false);
         } else {
           ToastContext(context, "Unexpected server error", false);
         }
@@ -236,5 +241,19 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return 'http://$url';
     }
+  }
+
+  String _getUrlFromString(String text) {
+    if (text != null) {
+      final urlRegExp = new RegExp(
+          r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+      final urlMatches = urlRegExp.allMatches(text);
+      List<String> urls = urlMatches
+          .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+          .toList();
+
+      return urls[0]; // get first url from text
+    }
+    return '';
   }
 }

@@ -242,7 +242,7 @@ class LoginScreen extends StatelessWidget {
         onPressed: () async {
           ServerConfigDialogWidget configDialog =
               new ServerConfigDialogWidget();
-          configDialog.saveConfiguration(context);
+          configDialog.saveConfiguration(context,this.runtimeType);
         },
       ),
     );

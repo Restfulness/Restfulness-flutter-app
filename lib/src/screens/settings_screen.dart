@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/widgets/settings/setting_config_address.dart';
 import 'package:restfulness/src/widgets/settings/setting_logout.dart';
 import 'package:restfulness/src/widgets/settings/setting_preview_switch.dart';
+import 'package:restfulness/src/widgets/settings/setting_public_switch.dart';
 import 'package:restfulness/src/widgets/settings/setting_show_username.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -18,6 +19,7 @@ class SettingsScreen extends StatelessWidget {
         SettingShowUsername(),
         SettingConfigAddress(),
         SettingPreviewSwitch(),
+        SettingPublicSwitch(),
         SettingLogout(),
       ],
     ),);

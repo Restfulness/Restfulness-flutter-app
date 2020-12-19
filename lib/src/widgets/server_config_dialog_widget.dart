@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
+import 'package:restfulness/src/resources/repository.dart';
+import 'package:restfulness/src/screens/login/login_screen.dart';
 import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerConfigDialogWidget {
-  void saveConfiguration(BuildContext context) {
-    showAlertDialog(context).then((value) async {
+  void saveConfiguration(BuildContext context , Type screenName) {
+    showAlertDialog(context,screenName).then((value) async {
       if (value != null) {
-        final url = value["url"];
+        String url = value["url"];
         final port = value["port"];
-
-          final result =
-          _saveUrl('${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}:$port');
+        print(url);
+        if (url.isNotEmpty) {
+          Future<bool> result;
+          if (url.contains("https")) {
+            result = _saveUrl(
+                '${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}');
+          } else {
+            result = _saveUrl(
+                '${_validateUrl(url.replaceAll(new RegExp(r"\s+"), ""))}:$port');
+          }
           result.then((value) {
             if (value) {
               ToastContext(
-                  context, "Saved successfully, now you can login", true);
+                  context, "Saved successfully", true);
             } else {
               ToastContext(context, "Failed to save", false);
             }
           });
+        } else {
+          ToastContext(context, "URL can not be empty", false);
+        }
       }
     });
   }
 
-  Future<Map<String, dynamic>> showAlertDialog(BuildContext context) {
+  Future<Map<String, dynamic>> showAlertDialog(BuildContext context, Type screenName) {
     TextEditingController urlController = new TextEditingController();
     TextEditingController portController = new TextEditingController();
     return showDialog(
@@ -34,7 +46,7 @@ class ServerConfigDialogWidget {
             title: Text(
               "Enter Your Server Address",
               style:
-              TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+                  TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
             ),
             content: Row(
               children: <Widget>[
@@ -47,17 +59,36 @@ class ServerConfigDialogWidget {
               MaterialButton(
                 elevation: 2,
                 child: Text(
+                  "Demo",
+                  style: TextStyle(color: primaryColor),
+                ),
+                onPressed: () {
+                  _saveDemo(true);
+                  Map<String, dynamic> toMap = new Map<String, dynamic>();
+                  toMap["url"] = "https://api.restfulness.app";
+                  toMap["port"] = 443;
+                  Navigator.of(context).pop(toMap);
+
+                  goToLoginScreen(context,screenName);
+                },
+              ),
+              MaterialButton(
+                elevation: 2,
+                child: Text(
                   "Save",
                   style: TextStyle(color: secondaryTextColor),
                 ),
                 onPressed: () {
+                  _saveDemo(false);
                   Map<String, dynamic> toMap = new Map<String, dynamic>();
                   toMap["url"] = urlController.text;
                   toMap["port"] =
-                  portController.text.isNotEmpty ? portController.text : 80;
+                      portController.text.isNotEmpty ? portController.text : 80;
                   Navigator.of(context).pop(toMap);
+
+                  goToLoginScreen(context,screenName);
                 },
-              )
+              ),
             ],
           );
         });
@@ -68,17 +99,17 @@ class ServerConfigDialogWidget {
       future: _readUrl(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == '') {
-          return urlField(urlController , "http://server.com");
+          return urlField(urlController, "http://server.com");
         }
-        String address =  snapshot.data;
-        urlController.text = address.split(":")[1];
-        return  urlField(urlController ,address.split(":")[1]);
+        String address = snapshot.data;
+        Uri myUri = Uri.parse(address);
+        urlController.text = myUri.host;
+        return urlField(urlController, myUri.host);
       },
     );
   }
 
-  Widget urlField(TextEditingController urlController , String hint){
-
+  Widget urlField(TextEditingController urlController, String hint) {
     return TextField(
       controller: urlController,
       decoration: InputDecoration(
@@ -99,16 +130,17 @@ class ServerConfigDialogWidget {
       future: _readUrl(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == '') {
-          return portField(portController , "5000");
+          return portField(portController, "5000");
         }
-        String address =  snapshot.data;
-        portController.text = address.split(":")[2];
-        return  portField(portController ,address.split(":")[2]);
+        String address = snapshot.data;
+        Uri myUri = Uri.parse(address);
+        portController.text = myUri.port.toString();
+        return portField(portController, myUri.port.toString());
       },
     );
   }
 
-  Widget portField(TextEditingController portController , String hint ){
+  Widget portField(TextEditingController portController, String hint) {
     return TextField(
       keyboardType: TextInputType.number,
       controller: portController,
@@ -139,12 +171,37 @@ class ServerConfigDialogWidget {
     return value;
   }
 
+  Future<bool> _saveDemo(bool isDemo) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'demo';
+    final isSaved = prefs.setBool(key, isDemo);
+    return isSaved;
+  }
+
+  void goToLoginScreen(BuildContext context, Type screenName){
+
+    if(screenName != LoginScreen ){
+      Repository repository = new Repository() ;
+      repository.clearUserCache();
+      repository.clearLinkCache();
+      _redirectToPage(context, LoginScreen());
+    }
+  }
+
+  Future<void> _redirectToPage(BuildContext context, Widget page) async {
+    final MaterialPageRoute<bool> newRoute =
+    MaterialPageRoute<bool>(builder: (BuildContext context) => page);
+
+    final bool nav = await Navigator.of(context)
+        .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/'));
+  }
+
   _validateUrl(String url) {
     if (url?.startsWith('http://') == true ||
         url?.startsWith('https://') == true) {
       return url;
     } else {
-      return 'http://$url';
+      return 'https://$url';
     }
   }
 }

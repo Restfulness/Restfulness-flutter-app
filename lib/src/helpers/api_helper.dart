@@ -38,14 +38,13 @@ class ApiHelper {
         responseJson = _response(response);
       }
     } on SocketException {
-      throw FetchDataException(createMessage("No Internet connection"));
+      throw FetchDataException(createMessage("Check your internet connection or your server address"));
     }
     return responseJson;
   }
 
   Future<dynamic> post(String url,
       {Map<String, String> headers, Map<String, dynamic> body}) async {
-
     var responseJson;
     try {
       if (isValidToken(headers['Authorization'])) {
@@ -62,7 +61,7 @@ class ApiHelper {
         responseJson = _response(response);
       }
     } on SocketException {
-      throw FetchDataException(createMessage("No Internet connection"));
+      throw FetchDataException(createMessage("Check your internet connection or your server address"));
     }
     return responseJson;
   }
@@ -83,7 +82,7 @@ class ApiHelper {
         responseJson = _response(response);
       }
     } on SocketException {
-      throw FetchDataException(createMessage("No Internet connection"));
+      throw FetchDataException(createMessage("Check your internet connection or your server address"));
     }
     return responseJson;
   }
@@ -106,7 +105,7 @@ class ApiHelper {
         responseJson = _response(response);
       }
     } on SocketException {
-      throw FetchDataException(createMessage("No Internet connection"));
+      throw FetchDataException(createMessage("Check your internet connection or your server address"));
     }
     return responseJson;
   }

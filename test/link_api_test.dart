@@ -59,12 +59,26 @@ const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
 const fakeSearchLink404 = {"msg": "Pattern not found!"};
 
-const fakeUpdateCategorySuccess = {
-  "msg": "Categories updated."
+const fakeUpdateCategorySuccess = {"msg": "Categories updated."};
+const fakeUpdateCategory404 = {"msg": "Link ID not found!"};
+
+const fakeSocialUserLinksSuccess = [
+  {
+    "added_date": "2020-12-07 12:28",
+    "categories": [
+      {"id": 1, "name": "programming"},
+      {"id": 5, "name": "searching"},
+      {"id": 11, "name": "Q and A"}
+    ],
+    "id": 2,
+    "url": "https://stackoverflow.com"
+  }
+];
+const fakeSocialUserLinksFailed400 = {
+  "msg": "Input date does not match format 'YYYY-MM-DD hh:mm'"
 };
-const fakeUpdateCategory404 = {
-  "msg": "Link ID not found!"
-};
+const fakeSocialUserLinksFailed403 = {"msg": "User is not public!"};
+const fakeSocialUserLinksFailed404 = {"msg": "User not found!"};
 
 void main() {
   LinkApiProvider apiProvider;
@@ -224,7 +238,8 @@ void main() {
       return Response(json.encode(fakeUpdateCategorySuccess), 200);
     });
 
-    final msg =  await apiProvider.updateLinksCategory(token: "token", id: 1 , category: ['dev']);
+    final msg = await apiProvider
+        .updateLinksCategory(token: "token", id: 1, category: ['dev']);
     expect(msg, "Categories updated.");
   });
 
@@ -234,10 +249,64 @@ void main() {
     });
 
     try {
-      await apiProvider.updateLinksCategory(token: "token", id: 10 , category: ['dev']);
+      await apiProvider
+          .updateLinksCategory(token: "token", id: 10, category: ['dev']);
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Link ID not found!");
+    }
+  });
+
+  test("Test fetch social user links ", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSocialUserLinksSuccess), 200);
+    });
+    final link = await apiProvider.fetchSocialUsersLinks(
+        token: "token", id: 2, date: DateTime.now());
+
+    expect(link[0].id, 2);
+  });
+
+  test("Test fetch social user links if date input does not match", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSocialUserLinksFailed400), 400);
+    });
+
+    try {
+      await apiProvider.fetchSocialUsersLinks(
+          token: "token", id: 2, date: DateTime.now());
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"],
+          "Input date does not match format 'YYYY-MM-DD hh:mm'");
+    }
+  });
+
+  test("Test fetch social user links if user is not public", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSocialUserLinksFailed403), 403);
+    });
+
+    try {
+      await apiProvider.fetchSocialUsersLinks(
+          token: "token", id: 2, date: DateTime.now());
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "User is not public!");
+    }
+  });
+
+  test("Test fetch social user links if user not found", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSocialUserLinksFailed404), 404);
+    });
+
+    try {
+      await apiProvider.fetchSocialUsersLinks(
+          token: "token", id: 2, date: DateTime.now());
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "User not found!");
     }
   });
 }

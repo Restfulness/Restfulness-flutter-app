@@ -32,7 +32,7 @@ class SettingConfigAddress extends StatelessWidget {
                     onPressed: () {
                       ServerConfigDialogWidget configDialog =
                       new ServerConfigDialogWidget();
-                      configDialog.saveConfiguration(context);
+                      configDialog.saveConfiguration(context,this.runtimeType);
                     },
                     elevation: 1,
                     color: primaryLightColor,
