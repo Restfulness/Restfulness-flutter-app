@@ -4,9 +4,11 @@ import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/social/social_provider.dart';
 
 class SocialDatePicker {
+  const SocialDatePicker({this.onDateSelect});
 
-  static pickTime(BuildContext context) {
+  final PickerCallback onDateSelect;
 
+  pickTime(BuildContext context) {
     final socialBloc = SocialProvider.of(context);
 
     DatePicker.showDatePicker(context,
@@ -14,9 +16,12 @@ class SocialDatePicker {
             doneStyle: TextStyle(color: primaryColor, fontSize: 16)),
         showTitleActions: true,
         minTime: DateTime(2020, 1, 1),
-        maxTime: DateTime.now(), onChanged: (date) {
-    }, onConfirm: (date) {
-          socialBloc.fetchSocial(date);
+        maxTime: DateTime.now(),
+        onChanged: (date) {}, onConfirm: (date) {
+      onDateSelect(true);
+      socialBloc.fetchSocial(date);
     }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 }
+
+typedef PickerCallback = void Function(bool done);

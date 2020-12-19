@@ -1,11 +1,11 @@
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/blocs/category/categories_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/blocs/social/social_bloc.dart';
 import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:restfulness/src/helpers/social_date_picker.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
 
   int _currentIndex = 0;
 
-  bool isSocial = false;
+  bool isDataPicker = false;
 
   final List<Widget> _children = [
     HomeScreen(),
@@ -41,16 +41,19 @@ class _MainScreenState extends State<MainScreen> {
 
   LinksBloc linkBloc;
   CategoriesBloc categoriesBloc;
+  SocialBloc socialBloc;
 
   @override
   initState() {
     super.initState();
     _title = "Home";
+
   }
 
   @override
   Widget build(BuildContext context) {
     linkBloc = LinksProvider.of(context);
+    socialBloc = SocialProvider.of(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -72,16 +75,35 @@ class _MainScreenState extends State<MainScreen> {
           ),
           brightness: Brightness.light,
           actions: <Widget>[
-            if(_currentIndex == socialIndex)
+            if (isDataPicker && _currentIndex == socialIndex)
+              IconButton(
+                icon: Icon(
+                  MdiIcons.restart,
+                  color: primaryColor,
+                ),
+                onPressed: () {
+                  socialBloc.fetchSocial(null);
+                  setState(() {
+                    isDataPicker = false;
+                  });
+                },
+              ),
+            if (_currentIndex == socialIndex)
               IconButton(
                 icon: Icon(
                   MdiIcons.calendar,
                   color: primaryColor,
                 ),
                 onPressed: () {
-                  SocialDatePicker.pickTime(context);
+                  SocialDatePicker socialDatePicker =
+                      new SocialDatePicker(onDateSelect: (value) {
+                    setState(() {
+                      isDataPicker = value;
+                    });
+                  });
+                  socialDatePicker.pickTime(context);
                 },
-              )
+              ),
           ],
         ),
         body: _children[_currentIndex],
@@ -104,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void onTabTapped(int index) {
-    final socialBloc = SocialProvider.of(context);
+
 
     setState(() {
       _currentIndex = index;
@@ -129,7 +151,7 @@ class _MainScreenState extends State<MainScreen> {
     if (index != searchIndex) {
       linkBloc.resetSearch();
     }
-    if(index == socialIndex){
+    if (index == socialIndex) {
       socialBloc.fetchSocial(null);
     }
   }
