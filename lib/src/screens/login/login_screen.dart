@@ -88,14 +88,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   top: 1,
                   right: 10,
                 ),
-                Positioned(
-                  child: Text(
-                    '${_packageInfo.version} V',
-                    style: TextStyle(color: primaryColor),
+                Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child:  Text(
+                        '${_packageInfo.version} V',
+                        style: TextStyle(color: primaryColor),
+                      ),
                   ),
-                  bottom: 0,
-                  left: 15,
-                )
+                  
+                ),
               ],
             )));
   }
