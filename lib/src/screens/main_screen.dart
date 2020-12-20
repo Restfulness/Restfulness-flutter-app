@@ -83,6 +83,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           leading: Stack(
             children: [
+              if(isDemo)
               Positioned(
                 child: InkWell(
                   onTap: () => {
