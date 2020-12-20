@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/widgets/settings/setting_config_address.dart';
+import 'package:restfulness/src/widgets/settings/setting_github_sponsor.dart';
 import 'package:restfulness/src/widgets/settings/setting_logout.dart';
 import 'package:restfulness/src/widgets/settings/setting_preview_switch.dart';
 import 'package:restfulness/src/widgets/settings/setting_public_switch.dart';
 import 'package:restfulness/src/widgets/settings/setting_show_username.dart';
+import 'package:restfulness/src/widgets/settings/setting_version_number.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -20,6 +22,8 @@ class SettingsScreen extends StatelessWidget {
         SettingConfigAddress(),
         SettingPreviewSwitch(),
         SettingPublicSwitch(),
+        SettingVersionNumber(),
+        SettingGithubSponsor(),
         SettingLogout(),
       ],
     ),);

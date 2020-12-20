@@ -24,14 +24,15 @@ class SocialUserListWidget extends StatelessWidget {
         onTap: () {
           _readPreviewSwitch().then((value) {
             DateTime date = DateTime.parse(lastUpdate);
-            linkBloc.fetchSocialUserLinks(userId , DateTime.now().subtract(Duration(days: 7)));
+            linkBloc.fetchSocialUserLinks(
+                userId, DateTime.now().subtract(Duration(days: 7)));
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => SocialUserLinks(
-                      username: username,
-                      preview: value,
-                    ))).then((context) {
+                          username: username,
+                          preview: value,
+                        ))).then((context) {
               linkBloc.restSocialList();
             });
           });
@@ -46,12 +47,15 @@ class SocialUserListWidget extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.all(20),
-                child: Container(
-                  width: 30,
-                  height: double.infinity,
-                  child: Image.asset(
-                    "assets/images/default.png",
-                    fit: BoxFit.cover,
+                child: RotationTransition(
+                  turns: new AlwaysStoppedAnimation( -45 / 360),
+                  child: Container(
+                    width: 30,
+                    height: double.infinity,
+                    child: Image.asset(
+                      "assets/images/default.png",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -63,7 +67,7 @@ class SocialUserListWidget extends StatelessWidget {
                   ),
                 ),
                 top: 28,
-                left: 60,
+                left: 70,
               ),
               Positioned(
                 child: Text(
@@ -99,12 +103,10 @@ class SocialUserListWidget extends StatelessWidget {
     return isSaved;
   }
 
-
   Future<bool> _readPreviewSwitch() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'preview';
     final value = prefs.getBool(key) ?? true;
     return value;
   }
-
 }

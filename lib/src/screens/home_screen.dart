@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return SizedBox(
               height: MediaQuery.of(context).size.height / 1.3,
               child: Center(
-                child: CircularProgressIndicator(),
+                child:Text("No item"),
               ),
             );
           }

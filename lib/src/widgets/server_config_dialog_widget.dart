@@ -59,7 +59,7 @@ class ServerConfigDialogWidget {
               MaterialButton(
                 elevation: 2,
                 child: Text(
-                  "Demo",
+                  "Use demo server",
                   style: TextStyle(color: primaryColor),
                 ),
                 onPressed: () {
@@ -79,11 +79,17 @@ class ServerConfigDialogWidget {
                   style: TextStyle(color: secondaryTextColor),
                 ),
                 onPressed: () {
-                  _saveDemo(false);
+
+                  if(urlController.text.contains('api.restfulness.app')){
+                    _saveDemo(true);
+                  }else {
+                    _saveDemo(false);
+                  }
                   Map<String, dynamic> toMap = new Map<String, dynamic>();
                   toMap["url"] = urlController.text;
                   toMap["port"] =
                       portController.text.isNotEmpty ? portController.text : 80;
+
                   Navigator.of(context).pop(toMap);
 
                   goToLoginScreen(context,screenName);
