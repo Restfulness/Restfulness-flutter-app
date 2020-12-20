@@ -59,7 +59,7 @@ class ServerConfigDialogWidget {
               MaterialButton(
                 elevation: 2,
                 child: Text(
-                  "Demo",
+                  "Use demo server",
                   style: TextStyle(color: primaryColor),
                 ),
                 onPressed: () {
