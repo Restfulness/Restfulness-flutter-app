@@ -83,20 +83,32 @@ class _MainScreenState extends State<MainScreen> {
           ),
           leading: Stack(
             children: [
-              if(isDemo)
-              Positioned(
-                child: InkWell(
-                  onTap: () => {
-                    showAlertDialog(context)
-                  },
-                  child: Text(
-                    "Demo",
-                    style: TextStyle(color: primaryColor),
+              if (isDemo)
+                Positioned(
+                  child: InkWell(
+                    onTap: () => {showAlertDialog(context)},
+                    child: Container(
+                      width: 40,
+                      height: 20,
+                      decoration: new BoxDecoration(
+                        color: primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(30))
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Demo",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                   ),
+                  top: 20,
+                  left: 10,
                 ),
-                top: 23,
-                left: 20,
-              ),
             ],
           ),
           brightness: Brightness.light,
@@ -190,17 +202,18 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   showAlertDialog(BuildContext context) {
-
     // set up the button
     Widget okButton = FlatButton(
       child: Text("OK"),
-      onPressed: () { Navigator.of(context).pop(); },
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Demo"),
-      content:  RichText(
+      content: RichText(
         text: new TextSpan(
           // Note: Styles for TextSpans must be explicitly defined.
           // Child text spans will inherit styles from parent
@@ -209,9 +222,12 @@ class _MainScreenState extends State<MainScreen> {
             color: Colors.black,
           ),
           children: <TextSpan>[
-             TextSpan(text: 'You are using the demo URL which is '),
-             TextSpan(text: 'api.restfulness.app, ', style: new TextStyle(fontWeight: FontWeight.bold)),
-             TextSpan(text: 'if you want to set a new URL please go to the settings'),
+            TextSpan(text: 'You are using the demo URL which is '),
+            TextSpan(
+                text: 'api.restfulness.app, ',
+                style: new TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: 'if you want to set a new URL please go to the settings'),
           ],
         ),
       ),
