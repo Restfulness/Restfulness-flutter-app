@@ -93,10 +93,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.bottomCenter,
                       child:  Text(
                         '${_packageInfo.version} V',
-                        style: TextStyle(color: primaryColor),
+                        style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold , fontSize: 12),
+
                       ),
                   ),
-                  
+
                 ),
               ],
             )));
