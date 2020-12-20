@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:package_info/package_info.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
 import 'package:restfulness/src/blocs/reset_password/reset_password_provider.dart';
@@ -9,7 +10,29 @@ import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
 
 import '../../../constants.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  PackageInfo _packageInfo = PackageInfo(
+    version: 'Unknown',
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = AuthProvider.of(context);
@@ -33,39 +56,48 @@ class LoginScreen extends StatelessWidget {
 
   buildBody(AuthBloc bloc, BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
+    String version = '';
+
     return LoginBackground(
         child: SingleChildScrollView(
-      reverse: true,
-      padding: EdgeInsets.only(bottom: bottom),
-      child: Stack(
-        children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(30.0, 0, 30, 30),
-            child: Column(
+            reverse: true,
+            padding: EdgeInsets.only(bottom: bottom),
+            child: Stack(
               children: [
-                Container(margin: EdgeInsets.only(top: 60.0)),
-                Image.asset("assets/icons/restApi.png", width: 100),
-                Container(margin: EdgeInsets.only(top: 30.0)),
-                buildTitle(),
-                Container(margin: EdgeInsets.only(top: 30.0)),
-                usernameField(bloc),
-                Container(margin: EdgeInsets.only(top: 10.0)),
-                passwordField(bloc),
-                Container(margin: EdgeInsets.only(top: 10.0)),
-                buildLoginButton(bloc),
-                Container(margin: EdgeInsets.only(top: 20.0)),
-                signUpAndForgotPassButtons(context, bloc),
+                Container(
+                  margin: EdgeInsets.fromLTRB(30.0, 0, 30, 30),
+                  child: Column(
+                    children: [
+                      Container(margin: EdgeInsets.only(top: 60.0)),
+                      Image.asset("assets/icons/restApi.png", width: 100),
+                      Container(margin: EdgeInsets.only(top: 30.0)),
+                      buildTitle(),
+                      Container(margin: EdgeInsets.only(top: 30.0)),
+                      usernameField(bloc),
+                      Container(margin: EdgeInsets.only(top: 10.0)),
+                      passwordField(bloc),
+                      Container(margin: EdgeInsets.only(top: 10.0)),
+                      buildLoginButton(bloc),
+                      Container(margin: EdgeInsets.only(top: 20.0)),
+                      signUpAndForgotPassButtons(context, bloc),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  child: createGearButton(context),
+                  top: 1,
+                  right: 10,
+                ),
+                Positioned(
+                  child: Text(
+                    '${_packageInfo.version} V',
+                    style: TextStyle(color: primaryColor),
+                  ),
+                  bottom: 0,
+                  left: 15,
+                )
               ],
-            ),
-          ),
-          Positioned(
-            child: createGearButton(context),
-            top: 0,
-            right: 5,
-          ),
-        ],
-      ),
-    ));
+            )));
   }
 
   Widget buildTitle() {
@@ -242,7 +274,7 @@ class LoginScreen extends StatelessWidget {
         onPressed: () async {
           ServerConfigDialogWidget configDialog =
               new ServerConfigDialogWidget();
-          configDialog.saveConfiguration(context,this.runtimeType);
+          configDialog.saveConfiguration(context, this.runtimeType);
         },
       ),
     );
