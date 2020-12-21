@@ -58,3 +58,4 @@ build/
 /assets/config/prod.json
 /lib/main_prod.dart
 lib/generated_plugin_registrant.dart
+/android/key.jks
