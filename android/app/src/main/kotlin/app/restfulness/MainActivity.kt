@@ -1,4 +1,4 @@
-package com.example.restfulness
+package app.restfulness
 
 import io.flutter.embedding.android.FlutterActivity
 
