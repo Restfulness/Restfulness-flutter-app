@@ -3,30 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 
+import '../../../constants.dart';
 import '../link_simple_widget.dart';
 
 class LinkListSimpleWidget extends StatefulWidget {
   const LinkListSimpleWidget({
     Key key,
-    @required this.list,
   }) : super(key: key);
 
-  final List<dynamic> list;
 
   @override
-  _LinkListSimpleWidgetState createState() => _LinkListSimpleWidgetState();
+  LinkListSimpleWidgetState createState() => LinkListSimpleWidgetState();
 }
 
-class _LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
-  List<dynamic> _list;
+class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
+  List<dynamic> _list = new List<dynamic>();
 
   LinksBloc linksBloc;
 
+  ScrollController _controller;
+
+  int page;
+  int pageSize;
+
   @override
   void initState() {
-    _list = widget.list;
-
     super.initState();
+
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+
+    this.page = firstPage;
+    this.pageSize = firstPageSize;
+  }
+
+  void setList(List<dynamic> list) {
+    _list = list;
   }
 
   @override
@@ -48,21 +60,34 @@ class _LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
   }
 
   Widget buildList() {
+    print(_list.length);
     return ListView.builder(
-      itemCount: widget.list.length,
+      controller: _controller,
+      itemCount:_list.length,
       itemBuilder: (context, int index) {
         return LinkSimpleWidget(
-            id: widget.list[index].id,
-            url: widget.list[index].url,
-            category: widget.list[index].categories ,
+            id: _list[index].id,
+            url: _list[index].url,
+            category: _list[index].categories,
             onDelete: () => removeItem(index));
       },
     );
   }
 
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        page += 1;
+        linksBloc.fetchLinks(page, pageSize);
+      });
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {}
+  }
+
   void removeItem(int index) {
     setState(() {
-      _list = widget.list;
       _list = List.from(_list)..removeAt(index);
 
       linksBloc.addLinks(_list);

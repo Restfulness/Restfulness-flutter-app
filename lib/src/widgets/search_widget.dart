@@ -15,7 +15,8 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
-  final GlobalKey<LinkSearchListWidgetScreen> _key = GlobalKey();
+  final GlobalKey<LinkSearchListWidgetScreen> _keyPreviewList = GlobalKey();
+  final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
 
   LinksBloc bloc;
   int _state = 0;
@@ -144,36 +145,26 @@ class _SearchWidgetState extends State<SearchWidget> {
     return StreamBuilder(
         stream: bloc.search,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            if (isShowPreview) {
-              return LinkSearchListWidget(key: _key);
-            } else {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height / 1.3,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          }
-          print('call');
-          if ( searchController.text.isEmpty ) {
+
+
+          if ( searchController.text.isEmpty || !snapshot.hasData) {
             return CategoryWidget();
           }
 
           if (isShowPreview) {
             if (snapshot.data.length <= 0) {
-              return LinkSearchListWidget(key: _key);
+              return LinkSearchListWidget(key: _keyPreviewList);
             } else {
-              _key.currentState.setCardList(snapshot.data);
-              return LinkSearchListWidget(key: _key);
+              _keyPreviewList.currentState.setCardList(snapshot.data);
+              return LinkSearchListWidget(key: _keyPreviewList);
             }
 
           } else {
             if (snapshot.data.length <= 0) {
-              return CategoryWidget();
+              return LinkListSimpleWidget(key: _keySimpleList);
             } else {
-              return LinkListSimpleWidget(list: snapshot.data);
+              _keySimpleList.currentState.setList(snapshot.data);
+              return LinkListSimpleWidget(key: _keySimpleList);
             }
           }
         });
