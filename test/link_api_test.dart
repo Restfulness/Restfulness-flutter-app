@@ -23,6 +23,10 @@ const fakeLinkGetSuccess = [
   }
 ];
 
+const fakeLinkGetFailed400 = {
+  "msg": "Requested page size is larger than our max limit!"
+};
+
 const fakeLinkGetFailed404 = {"msg": "Link not found!"};
 
 const fakeLinkDeleteSuccess = {
@@ -139,13 +143,27 @@ void main() {
     expect(link.length, 1);
   });
 
+  test("Test get link API if page size is larger than our max limit", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeLinkGetFailed400), 400);
+    });
+
+    try {
+      await apiProvider.fetchAllLinks(token: "token" , page: 1 , pageSize: 12);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(
+          jsonData["msg"], "Requested page size is larger than our max limit!");
+    }
+  });
+
   test("Test get link API if link id not found", () async {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLinkGetFailed404), 404);
     });
 
     try {
-      await apiProvider.fetchAllLinks(token: "token");
+      await apiProvider.fetchAllLinks(token: "token", page: 1 , pageSize:10);
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Link not found!");
