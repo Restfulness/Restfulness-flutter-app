@@ -59,8 +59,8 @@ class Repository {
   Future<bool> fetchPublicLinksSetting() async {
     UserModel user = await authorizationDbProvider.currentUser();
 
-    final public =
-        await profileApiProvider.fetchPublicLinksSetting(token: user.accessToken);
+    final public = await profileApiProvider.fetchPublicLinksSetting(
+        token: user.accessToken);
 
     return public;
   }
@@ -92,26 +92,18 @@ class Repository {
     return id;
   }
 
-  Future<List<LinkModel>> fetchAllLinks() async {
+  Future<List<LinkModel>> fetchAllLinks(int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links = linkSources[1].fetchAllLinks(token: user.accessToken);
+    final links = linkSources[1].fetchAllLinks(token: user.accessToken, page: page, pageSize: pageSize);
 
     return links;
   }
 
   Future<LinkModel> fetchLink(int id) async {
-    LinkModel link;
 
-    final formLocal = await linkDbProvide.fetchLink(id: id);
-    if (formLocal != null) {
-      link = formLocal;
-    } else {
-      UserModel user = await authorizationDbProvider.currentUser();
-      final fromServer =
-          await linkApiProvider.fetchLink(id: id, token: user.accessToken);
-      link = fromServer;
-      linkDbProvide.addLink(link);
-    }
+
+    UserModel user = await authorizationDbProvider.currentUser();
+    final link  =  linkSources[1].fetchLink(id: id, token: user.accessToken);
 
     return link;
   }
@@ -210,10 +202,10 @@ abstract class UserSource {
 }
 
 abstract class ProfileSource {
-
   Future<bool> fetchPublicLinksSetting({@required String token});
 
-  Future<String> updatePublicLinksSetting({@required String token , bool public });
+  Future<String> updatePublicLinksSetting(
+      {@required String token, bool public});
 }
 
 abstract class UserCache {
@@ -230,7 +222,8 @@ abstract class LinkSource {
 
   Future<bool> deleteLink({@required String token, int id});
 
-  Future<List<LinkModel>> fetchAllLinks({@required String token});
+  Future<List<LinkModel>> fetchAllLinks(
+      {@required String token, int page, int pageSize});
 
   Future<LinkModel> fetchLink({@required int id, String token});
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/search_model.dart';
@@ -24,13 +25,20 @@ class LinkApiProvider implements LinkSource {
   }
 
   @override
-  Future<List<LinkModel>> fetchAllLinks({@required String token}) async {
+  Future<List<LinkModel>> fetchAllLinks(
+      {@required String token, int page, int pageSize}) async {
+
     List<LinkModel> links = new List<LinkModel>();
 
-    final response = await apiHelper.get("links", headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $token',
-    });
+    Map<String, String> queryParams = {'page': '$page', 'page_size': '$pageSize'};
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    final response = await apiHelper.get("links",
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        queryParameters: queryString);
 
     for (var link in response) {
       links.add(LinkModel.fromJson(link));
@@ -48,7 +56,7 @@ class LinkApiProvider implements LinkSource {
       },
     );
 
-    return LinkModel.fromJson(response);
+    return LinkModel.fromJson(response[0]);
   }
 
   @override

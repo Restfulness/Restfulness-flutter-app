@@ -12,6 +12,7 @@ import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../constants.dart';
 import 'auth_validator.dart';
 
 class AuthBloc extends Object with AuthValidator {
@@ -105,7 +106,7 @@ class AuthBloc extends Object with AuthValidator {
     final socialBloc = SocialProvider.of(context);
 
 
-    linkBloc.fetchLinks();
+    linkBloc.fetchLinks(firstPage,firstPageSize);
     categoriesBloc.fetchCategories();
 
     _readTime().then((value) {

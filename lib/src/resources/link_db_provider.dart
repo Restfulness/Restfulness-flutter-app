@@ -62,7 +62,7 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<List<LinkModel>> fetchAllLinks({@required String token}) {
+  Future<List<LinkModel>> fetchAllLinks({@required String token, int page , int pageSize}) {
     return null;
   }
 

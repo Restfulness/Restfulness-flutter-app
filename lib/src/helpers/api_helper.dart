@@ -22,19 +22,19 @@ class ApiHelper {
     });
   }
 
-  Future<dynamic> get(String url, {Map<String, String> headers}) async {
+  Future<dynamic> get(String url, {Map<String, String> headers , String queryParameters = ''}) async {
     var responseJson;
     try {
       if (isValidToken(headers['Authorization'])) {
         reNewUser().then((value) async {
           if (value) {
             final response =
-                await client.get('$baseUrl/$url', headers: headers);
+                await client.get('$baseUrl/$url?$queryParameters', headers: headers);
             responseJson = _response(response);
           }
         });
       } else {
-        final response = await client.get('$baseUrl/$url', headers: headers);
+        final response = await client.get('$baseUrl/$url?$queryParameters', headers: headers);
         responseJson = _response(response);
       }
     } on SocketException {

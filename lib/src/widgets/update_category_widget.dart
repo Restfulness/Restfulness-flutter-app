@@ -29,8 +29,8 @@ class UpdateCategoryWidget {
           await repository.updateCategory(catToList, id);
           ToastContext(context, "Category updated successfully", true);
           final linkBloc = LinksProvider.of(context);
-          linkBloc.resetLinks();
-          linkBloc.fetchLinks();
+          
+          linkBloc.updateLink(id);
 
           // get new categories if we have new one
           final categoriesBloc = CategoriesProvider.of(context);

@@ -165,8 +165,8 @@ class LinkSimpleWidget extends StatelessWidget {
         _deleteLink(context).then((response) {
           if (response) {
             final bloc = LinksProvider.of(context);
-            bloc.resetLinks();
-            bloc.fetchLinks();
+            bloc.deleteItemFromLinks(id);
+
             ToastContext(context, "Deleted successfully", true);
             // reset category list
             final categoryBloc = CategoriesProvider.of(context);

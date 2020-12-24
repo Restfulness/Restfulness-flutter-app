@@ -5,6 +5,7 @@ import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/resources/repository.dart';
 import 'package:restfulness/src/utils/json_utils.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter/foundation.dart';
 
 class LinksBloc {
   final _repository = new Repository();
@@ -29,13 +30,24 @@ class LinksBloc {
 
   Function(List<SearchLinkModel>) get addSearchLinks => _searchLinks.sink.add;
 
-  Function(List<SearchLinkModel>) get addCategoryById => _fetchLinksByCategory.sink.add;
+  Function(List<SearchLinkModel>) get addCategoryById =>
+      _fetchLinksByCategory.sink.add;
 
+  List<LinkModel> savedListCard = new List();
 
-  fetchLinks() async {
+  fetchLinks(int page, int pageSize) async {
     try {
-      final ids = await _repository.fetchAllLinks();
-      _fetchLinks.sink.add(ids);
+      final ids = await _repository.fetchAllLinks(page, pageSize);
+
+      ids.forEach((element) {
+        if ((savedListCard.singleWhere((link) => link.id == element.id,
+                orElse: () => null)) ==
+            null) {
+          savedListCard.add(element);
+        }
+      });
+
+      _fetchLinks.sink.add(savedListCard);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
@@ -45,9 +57,49 @@ class LinksBloc {
     }
   }
 
-  fetchSocialUserLinks(int id , DateTime date) async {
+  fetchLinkById(int id) async {
+
     try {
-      final ids = await _repository.fetchSocialUsersLinks(id: id ,date: date);
+      final link = await _repository.fetchLink(id);
+
+      savedListCard.insert(0, link);
+
+      _fetchLinks.sink.add(savedListCard);
+    } catch (e) {
+      print(e.toString());
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
+      } else {
+        _fetchLinks.sink.addError("Unexpected server error");
+      }
+    }
+  }
+
+  updateLink(int id) async {
+
+    int linkIndex = savedListCard.indexWhere((item) => item.id == id);
+
+    try {
+      final link = await _repository.fetchLink(id);
+
+      savedListCard[linkIndex] = link;
+
+      _fetchLinks.sink.add(savedListCard);
+    } catch (e) {
+      print(e.toString());
+      if (JsonUtils.isValidJSONString(e.toString())) {
+        _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
+      } else {
+        _fetchLinks.sink.addError("Unexpected server error");
+      }
+    }
+
+
+  }
+
+  fetchSocialUserLinks(int id, DateTime date) async {
+    try {
+      final ids = await _repository.fetchSocialUsersLinks(id: id, date: date);
       _fetchSocialUsersLinks.sink.add(ids);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
@@ -58,10 +110,10 @@ class LinksBloc {
     }
   }
 
-
   fetchLinksByCategoryId(int id) async {
     try {
-      final res = await _repository.fetchLinkByCategoryId(id);// FIXME: first get from db and then if that id not exists inside db, fetch that id from api
+      final res = await _repository.fetchLinkByCategoryId(
+          id); // FIXME: first get from db and then if that id not exists inside db, fetch that id from api
       _fetchLinksByCategory.sink.add(res);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
@@ -77,12 +129,11 @@ class LinksBloc {
       final res = await _repository.searchLink(word);
       _searchLinks.sink.add(res);
     } catch (e) {
-      if(JsonUtils.isValidJSONString(e.toString())){
+      if (JsonUtils.isValidJSONString(e.toString())) {
         _searchLinks.sink.addError(json.decode(e.toString())["msg"]);
-      }else {
+      } else {
         _searchLinks.sink.addError("Unexpected server error");
       }
-
     }
   }
 
@@ -98,7 +149,19 @@ class LinksBloc {
     _fetchLinksByCategory.close();
   }
 
-  resetLinks(){
+  deleteItemFromLinks(int id) {
+    savedListCard.removeWhere((item) => item.id == id);
+
+    _fetchLinks.sink.add(savedListCard);
+  }
+
+  refreshLinks() {
+    _fetchLinks.sink.add(savedListCard);
+  }
+
+
+
+  resetLinks() {
     _fetchLinks.add([]);
   }
 

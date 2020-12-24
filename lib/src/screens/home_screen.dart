@@ -160,9 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
             addLinkController.clear();
             _sharedText = '';
           });
+
+          bloc.fetchLinkById(id);
+
           ToastContext(context, "Link successfully added ", true);
-          bloc.resetLinks();
-          bloc.fetchLinks();
+
 
           // get new categories if we have new one
           final categoriesBloc = CategoriesProvider.of(context);
@@ -205,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
       stream: bloc.links,
       builder: (context, snapshot) {
+
         if (!snapshot.hasData) {
           if (isShowPreview) {
             return LinkListWidget(key: _key);
@@ -217,6 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
         }
+
         if (isShowPreview) {
           _key.currentState.setCardList(snapshot.data);
           return LinkListWidget(key: _key);

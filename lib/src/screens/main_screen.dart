@@ -192,12 +192,15 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       isDataPicked = false;
     }
+    if(index == homeIndex){
+      linkBloc.refreshLinks();
+    }
   }
 
   Future<bool> _readDemo() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'demo';
-    final isSaved = prefs.getBool(key) ?? '';
+    final isSaved = prefs.getBool(key) ?? false;
     return isSaved;
   }
 
