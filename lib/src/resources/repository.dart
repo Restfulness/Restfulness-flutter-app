@@ -124,10 +124,10 @@ class Repository {
     return links;
   }
 
-  Future<List<SearchLinkModel>> searchLink(String word) async {
+  Future<List<SearchLinkModel>> searchLink(String word, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
     final links =
-        linkSources[1].searchLink(token: user.accessToken, word: word);
+        linkSources[1].searchLink(token: user.accessToken, word: word , page: page,pageSize: pageSize);
 
     return links;
   }
@@ -230,7 +230,7 @@ abstract class LinkSource {
   Future<List<SearchLinkModel>> searchLink(
       {@required String token,
       String
-          word}); // FIXME: refactor to LinkModel after api changed to standard model
+          word, int page, int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
 
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {@required String token,

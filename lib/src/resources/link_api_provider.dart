@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/helpers/api_helper.dart';
 import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/models/search_model.dart';
@@ -27,10 +26,12 @@ class LinkApiProvider implements LinkSource {
   @override
   Future<List<LinkModel>> fetchAllLinks(
       {@required String token, int page, int pageSize}) async {
-
     List<LinkModel> links = new List<LinkModel>();
 
-    Map<String, String> queryParams = {'page': '$page', 'page_size': '$pageSize'};
+    Map<String, String> queryParams = {
+      'page': '$page',
+      'page_size': '$pageSize'
+    };
     String queryString = Uri(queryParameters: queryParams).query;
 
     final response = await apiHelper.get("links",
@@ -70,8 +71,15 @@ class LinkApiProvider implements LinkSource {
   }
 
   @override
-  Future<List<SearchLinkModel>> searchLink({String token, String word}) async {
+  Future<List<SearchLinkModel>> searchLink(
+      {String token, String word, int page, int pageSize}) async {
     List<SearchLinkModel> links = new List<SearchLinkModel>();
+
+    Map<String, String> queryParams = {
+      'page': '$page',
+      'page_size': '$pageSize'
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
 
     final response = await apiHelper.get(
       "links/search/$word",
@@ -79,6 +87,7 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
+      queryParameters: queryString,
     );
 
     final search = SearchModel.fromJson(response['search']).links;
@@ -94,7 +103,10 @@ class LinkApiProvider implements LinkSource {
       {String token, int id, int page, int pageSize}) async {
     List<SearchLinkModel> categories = new List<SearchLinkModel>();
 
-    Map<String, String> queryParams = {'page': '$page', 'page_size': '$pageSize'};
+    Map<String, String> queryParams = {
+      'page': '$page',
+      'page_size': '$pageSize'
+    };
     String queryString = Uri(queryParameters: queryParams).query;
 
     final response = await apiHelper.get(

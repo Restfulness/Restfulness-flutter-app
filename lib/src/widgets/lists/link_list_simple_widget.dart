@@ -6,14 +6,16 @@ import 'package:restfulness/src/screens/home_screen.dart';
 
 import '../../../constants.dart';
 import '../link_simple_widget.dart';
+import '../search_widget.dart';
 
 class LinkListSimpleWidget extends StatefulWidget {
   const LinkListSimpleWidget(
-      {Key key, @required this.screenName, this.categoryId})
+      {Key key, @required this.screenName, this.categoryId, this.searchWord})
       : super(key: key);
 
   final int categoryId;
   final Type screenName;
+  final String searchWord;
 
   @override
   LinkListSimpleWidgetState createState() => LinkListSimpleWidgetState();
@@ -86,6 +88,8 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
 
       if (widget.screenName == HomeScreenState) {
         linksBloc.fetchLinks(page, pageSize);
+      } else if (widget.screenName == SearchWidgetState) {
+        linksBloc.searchLinks(widget.searchWord, page, pageSize);
       } else {
         linksBloc.fetchLinksByCategoryId(widget.categoryId, page, pageSize);
       }

@@ -35,6 +35,7 @@ class LinksBloc {
 
   List<LinkModel> savedListCard = new List();
   List<SearchLinkModel> savedCategoryListCard = new List();
+  List<SearchLinkModel> searchListCard = new List();
 
   fetchLinks(int page, int pageSize) async {
     try {
@@ -130,10 +131,19 @@ class LinksBloc {
     }
   }
 
-  searchLinks(String word) async {
+  searchLinks(String word, int page, int pageSize) async {
     try {
-      final res = await _repository.searchLink(word);
-      _searchLinks.sink.add(res);
+      final res = await _repository.searchLink(word,page,pageSize);
+
+      res.forEach((element) {
+        if ((searchListCard.singleWhere((link) => link.id == element.id,
+            orElse: () => null)) ==
+            null) {
+          searchListCard.add(element);
+        }
+      });
+    print(searchListCard);
+      _searchLinks.sink.add(searchListCard);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
         _searchLinks.sink.addError(json.decode(e.toString())["msg"]);

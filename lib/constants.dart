@@ -8,4 +8,4 @@ const scaffoldBackgroundColor = Color(0xFFffffff);
 const appBarColor = Color(0xFFffffff);
 
 const firstPage = 1;
-const firstPageSize = 5;
+const firstPageSize = 10;
