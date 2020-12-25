@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/screens/category_list_screen.dart';
 
@@ -15,12 +16,13 @@ class CategoryCardWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () => {
-        bloc.fetchLinksByCategoryId(id),
+        bloc.fetchLinksByCategoryId(id,firstPage,firstPageSize),
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => CategoryListScreen(
                   name: name,
+                  categoryId: id,
                 ))).then((context) {
           bloc.restCategoryList();
         })

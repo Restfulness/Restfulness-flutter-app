@@ -59,6 +59,10 @@ const fakeFetchLinksByCategoryId200 = {
     "name": "dev"
   }
 };
+
+const fakeFetchLinksByCategoryId400 = {
+"msg": "Requested page size is larger than our max limit!"
+};
 const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
 const fakeSearchLink404 = {"msg": "Pattern not found!"};
@@ -232,10 +236,24 @@ void main() {
       return Response(json.encode(fakeFetchLinksByCategoryId200), 200);
     });
     final link =
-        await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
+        await apiProvider.fetchLinksByCategoryId(token: "token", id: 2 , page: 1 , pageSize: 10);
 
     expect(link.length, 2);
   });
+
+  test("Test fetch links API by category id if page size is larger than our max limit",
+          () async {
+        apiProvider.apiHelper.client = MockClient((request) async {
+          return Response(json.encode(fakeFetchLinksByCategoryId400), 400);
+        });
+
+        try {
+          await apiProvider.fetchLinksByCategoryId(token: "token", id: 10, page: 1 , pageSize: 12);
+        } catch (e) {
+          var jsonData = json.decode(e.toString());
+          expect(jsonData["msg"], "Requested page size is larger than our max limit!");
+        }
+      });
 
   test("Test fetch links API by category id if didn't exist any category",
       () async {

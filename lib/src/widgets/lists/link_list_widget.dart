@@ -3,11 +3,15 @@ import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
 class LinkListWidget extends StatefulWidget {
-  const LinkListWidget({Key key}) : super(key: key);
+  const LinkListWidget({Key key, @required this.screenName , this.categoryId}) : super(key: key);
+
+  final int categoryId;
+  final Type screenName;
 
   @override
   LinkListWidgetState createState() => LinkListWidgetState();
@@ -15,7 +19,6 @@ class LinkListWidget extends StatefulWidget {
 
 class LinkListWidgetState extends State<LinkListWidget>
     with SingleTickerProviderStateMixin {
-
   ScrollController _controller;
 
   List<LinkModel> listCardMessage;
@@ -44,12 +47,10 @@ class LinkListWidgetState extends State<LinkListWidget>
 
   List<CardTileWidget> _list = new List<CardTileWidget>();
 
-
-  LinksBloc linkBloc ;
+  LinksBloc linkBloc;
 
   int page;
   int pageSize;
-
 
   @override
   void initState() {
@@ -61,69 +62,62 @@ class LinkListWidgetState extends State<LinkListWidget>
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
 
-
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
 
     this.page = firstPage;
     this.pageSize = firstPageSize;
-
-
-
   }
 
   // Card List
   void setCardList(List<dynamic> listCard) {
+    if (listCard.length > 0) {
+      topPosition = 26;
 
+      _list = listCard.map((card) {
+        topPosition = listCard.indexOf(card) == 0
+            ? topPosition
+            : (topPosition + cardHeight);
 
-      if (listCard.length > 0) {
-        topPosition = 26;
-
-        _list = listCard.map((card) {
-          topPosition = listCard.indexOf(card) == 0
-              ? topPosition
-              : (topPosition + cardHeight);
-
-          return CardTileWidget(
-            key: GlobalKey(),
-            urlId: card.id,
-            url: card.url,
-            category: card.categories,
-            index: listCard.indexOf(card),
-            topPosition: topPosition,
-            iconsTopPosition: iconsTopPosition,
-            height: cardHeight,
-            blankCard: false,
-            bringToTop: bringToTop,
-            rightPosition: rightPosition,
-            firstIconPosition: firstIconPosition,
-            secondIconPosition: secondIconPosition,
-            thirdIconPosition: thirdIconPosition,
-            removeIndex: removeItemList,
-            removeAnimation: false,
-            selectedState: selectedState,
-          );
-        }).toList();
-
-        _list.add(
-          CardTileWidget(
-            index: (_list.length + 1),
-            blankCard: true,
-            topPosition: 0,
-          ),
+        return CardTileWidget(
+          key: GlobalKey(),
+          urlId: card.id,
+          url: card.url,
+          category: card.categories,
+          index: listCard.indexOf(card),
+          topPosition: topPosition,
+          iconsTopPosition: iconsTopPosition,
+          height: cardHeight,
+          blankCard: false,
+          bringToTop: bringToTop,
+          rightPosition: rightPosition,
+          firstIconPosition: firstIconPosition,
+          secondIconPosition: secondIconPosition,
+          thirdIconPosition: thirdIconPosition,
+          removeIndex: removeItemList,
+          removeAnimation: false,
+          selectedState: selectedState,
         );
+      }).toList();
 
-        _list.add(
-          CardTileWidget(
-            index: (_list.length + 1),
-            blankCard: true,
-            topPosition: (topPosition + 120),
-          ),
-        );
+      _list.add(
+        CardTileWidget(
+          index: (_list.length + 1),
+          blankCard: true,
+          topPosition: 0,
+        ),
+      );
 
-        setState(() {});
-      }
+      _list.add(
+        CardTileWidget(
+          index: (_list.length + 1),
+          blankCard: true,
+          topPosition: (topPosition + 120),
+        ),
+      );
 
+      setState(() {});
+    }
   }
 
   void rightPosition(bool data) {
@@ -245,7 +239,6 @@ class LinkListWidgetState extends State<LinkListWidget>
   Widget build(BuildContext context) {
     linkBloc = LinksProvider.of(context);
 
-
     _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
     return SingleChildScrollView(
@@ -282,18 +275,22 @@ class LinkListWidgetState extends State<LinkListWidget>
   }
 
   _scrollListener() {
+
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
 
       setState(() {
         page += 1;
-
-        linkBloc.fetchLinks(page, pageSize);
       });
+
+      if(widget.screenName == HomeScreenState){
+        linkBloc.fetchLinks(page, pageSize);
+      }else {
+        linkBloc.fetchLinksByCategoryId(widget.categoryId,page, pageSize);
+      }
     }
     if (_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {
-    }
+        !_controller.position.outOfRange) {}
   }
 
   Container buildCardList(BuildContext context) {

@@ -34,6 +34,7 @@ class LinksBloc {
       _fetchLinksByCategory.sink.add;
 
   List<LinkModel> savedListCard = new List();
+  List<SearchLinkModel> savedCategoryListCard = new List();
 
   fetchLinks(int page, int pageSize) async {
     try {
@@ -58,7 +59,6 @@ class LinksBloc {
   }
 
   fetchLinkById(int id) async {
-
     try {
       final link = await _repository.fetchLink(id);
 
@@ -76,7 +76,6 @@ class LinksBloc {
   }
 
   updateLink(int id) async {
-
     int linkIndex = savedListCard.indexWhere((item) => item.id == id);
 
     try {
@@ -93,8 +92,6 @@ class LinksBloc {
         _fetchLinks.sink.addError("Unexpected server error");
       }
     }
-
-
   }
 
   fetchSocialUserLinks(int id, DateTime date) async {
@@ -110,11 +107,20 @@ class LinksBloc {
     }
   }
 
-  fetchLinksByCategoryId(int id) async {
+  fetchLinksByCategoryId(int id, int page, int pageSize) async {
     try {
-      final res = await _repository.fetchLinkByCategoryId(
-          id); // FIXME: first get from db and then if that id not exists inside db, fetch that id from api
-      _fetchLinksByCategory.sink.add(res);
+      final res = await _repository.fetchLinkByCategoryId(id, page,
+          pageSize); // FIXME: first get from db and then if that id not exists inside db, fetch that id from api
+
+      res.forEach((element) {
+        if ((savedCategoryListCard.singleWhere((link) => link.id == element.id,
+            orElse: () => null)) ==
+            null) {
+          savedCategoryListCard.add(element);
+        }
+      });
+
+      _fetchLinksByCategory.sink.add(savedCategoryListCard);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinksByCategory.sink.addError(json.decode(e.toString())["msg"]);
@@ -158,8 +164,6 @@ class LinksBloc {
   refreshLinks() {
     _fetchLinks.sink.add(savedListCard);
   }
-
-
 
   resetLinks() {
     _fetchLinks.add([]);

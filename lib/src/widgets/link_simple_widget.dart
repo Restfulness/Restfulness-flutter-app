@@ -43,7 +43,7 @@ class LinkSimpleWidget extends StatelessWidget {
             Positioned(
               child: Container(
                   child: SimpleMenu(
-                    key: globalKeySimpleMenu,
+                key: globalKeySimpleMenu,
                 icons: [
                   Icon(
                     MdiIcons.shareVariantOutline,
@@ -200,12 +200,13 @@ class LinkSimpleWidget extends StatelessWidget {
 
   _openOnTagPressed(BuildContext context, int index, LinksBloc bloc) {
     globalKeySimpleMenu.currentState.closeMenu();
-    bloc.fetchLinksByCategoryId(category[index].id);
+    bloc.fetchLinksByCategoryId(category[index].id, firstPage, firstPageSize);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CategoryListScreen(
                   name: category[index].name,
+                  categoryId: category[index].id,
                 ))).then((context) {
       bloc.restCategoryList();
     });
@@ -221,7 +222,7 @@ class LinkSimpleWidget extends StatelessWidget {
 
   _updateCategory(BuildContext context) {
     UpdateCategoryWidget update = new UpdateCategoryWidget();
-    update.updateCategory(context, id,category);
+    update.updateCategory(context, id, category);
   }
 
   Future<bool> _deleteLink(BuildContext context) async {
@@ -239,6 +240,4 @@ class LinkSimpleWidget extends StatelessWidget {
     }
     return false;
   }
-
-
 }

@@ -91,8 +91,11 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
-      {String token, int id}) async {
+      {String token, int id, int page, int pageSize}) async {
     List<SearchLinkModel> categories = new List<SearchLinkModel>();
+
+    Map<String, String> queryParams = {'page': '$page', 'page_size': '$pageSize'};
+    String queryString = Uri(queryParameters: queryParams).query;
 
     final response = await apiHelper.get(
       "links/category/$id",
@@ -100,6 +103,7 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
+      queryParameters: queryString,
     );
 
     final category = SearchModel.fromJson(response['category']).links;

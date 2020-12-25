@@ -17,10 +17,10 @@ import '../../constants.dart';
 import '../widgets/lists/link_list_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final GlobalKey<LinkListWidgetState> _keyPreviewList = GlobalKey();
   final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
 
@@ -214,18 +214,22 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           if (isPreview) {
-            return LinkListWidget(key: _keyPreviewList);
+            return LinkListWidget(key: _keyPreviewList ,screenName:
+            this.runtimeType);
           } else {
-            return LinkListSimpleWidget(key: _keySimpleList);
+            return LinkListSimpleWidget(key: _keySimpleList,screenName:
+            this.runtimeType);
           }
         }
 
         if (isPreview) {
           _keyPreviewList.currentState.setCardList(snapshot.data);
-          return LinkListWidget(key: _keyPreviewList);
+          return LinkListWidget(key: _keyPreviewList,screenName:
+          this.runtimeType);
         } else {
           _keySimpleList.currentState.setList(snapshot.data);
-          return LinkListSimpleWidget(key: _keySimpleList);
+          return LinkListSimpleWidget(key: _keySimpleList,screenName:
+          this.runtimeType);
         }
       },
     );

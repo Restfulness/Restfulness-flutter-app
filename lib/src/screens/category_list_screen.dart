@@ -13,10 +13,11 @@ import '../../constants.dart';
 
 class CategoryListScreen extends StatelessWidget {
   final String name;
+  final int categoryId;
   final GlobalKey<LinkListWidgetState> _keyPreviewList = GlobalKey();
   final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
 
-  CategoryListScreen({this.name});
+  CategoryListScreen({this.name ,this.categoryId});
 
   @override
   Widget build(BuildContext context) {
@@ -62,26 +63,26 @@ class CategoryListScreen extends StatelessWidget {
     return StreamBuilder(
         stream: bloc.fetchByCategory,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            ToastContext(context, snapshot.error, false);
-            return CircularProgressIndicator(
-              value: 0,
-            );
-          }
 
           if (!snapshot.hasData || snapshot.data == null) {
             if (isPreview) {
-              return LinkListWidget(key: _keyPreviewList);
+
+              return LinkListWidget(key: _keyPreviewList,screenName:
+              this.runtimeType ,categoryId: categoryId);
             } else {
-              return LinkListSimpleWidget(key: _keySimpleList);
+              return LinkListSimpleWidget(key: _keySimpleList,screenName:
+              this.runtimeType,categoryId: categoryId);
             }
           }
+
           if (isPreview) {
             _keyPreviewList.currentState.setCardList(snapshot.data);
-            return LinkListWidget(key: _keyPreviewList);
+            return LinkListWidget(key: _keyPreviewList,screenName:
+            this.runtimeType,categoryId: categoryId);
           } else {
             _keySimpleList.currentState.setList(snapshot.data);
-            return LinkListSimpleWidget(key: _keySimpleList);
+            return LinkListSimpleWidget(key: _keySimpleList,screenName:
+            this.runtimeType,categoryId: categoryId);
           }
         });
   }

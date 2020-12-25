@@ -2,15 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/screens/home_screen.dart';
 
 import '../../../constants.dart';
 import '../link_simple_widget.dart';
 
 class LinkListSimpleWidget extends StatefulWidget {
-  const LinkListSimpleWidget({
-    Key key,
-  }) : super(key: key);
+  const LinkListSimpleWidget(
+      {Key key, @required this.screenName, this.categoryId})
+      : super(key: key);
 
+  final int categoryId;
+  final Type screenName;
 
   @override
   LinkListSimpleWidgetState createState() => LinkListSimpleWidgetState();
@@ -63,7 +66,7 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
     print(_list.length);
     return ListView.builder(
       controller: _controller,
-      itemCount:_list.length,
+      itemCount: _list.length,
       itemBuilder: (context, int index) {
         return LinkSimpleWidget(
             id: _list[index].id,
@@ -79,8 +82,13 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
         !_controller.position.outOfRange) {
       setState(() {
         page += 1;
-        linksBloc.fetchLinks(page, pageSize);
       });
+
+      if (widget.screenName == HomeScreenState) {
+        linksBloc.fetchLinks(page, pageSize);
+      } else {
+        linksBloc.fetchLinksByCategoryId(widget.categoryId, page, pageSize);
+      }
     }
     if (_controller.offset <= _controller.position.minScrollExtent &&
         !_controller.position.outOfRange) {}
