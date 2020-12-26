@@ -5,19 +5,19 @@ import 'package:restfulness/src/helpers/time_ago_since_date.dart';
 import 'package:restfulness/src/widgets/social/social_user_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SocialUserListWidget extends StatelessWidget {
+class SocialUserWidget extends StatelessWidget {
   final String username;
   final String lastUpdate;
   final int totalLinks;
   final int userId;
 
-  SocialUserListWidget(
+  SocialUserWidget(
       {this.username, this.lastUpdate, this.totalLinks, this.userId});
 
   @override
   Widget build(BuildContext context) {
     final linkBloc = LinksProvider.of(context);
-    _saveTime();
+
     return Container(
       height: 80,
       child: InkWell(
@@ -25,7 +25,7 @@ class SocialUserListWidget extends StatelessWidget {
           _readPreviewSwitch().then((value) {
             DateTime date = DateTime.parse(lastUpdate);
             linkBloc.fetchSocialUserLinks(
-                userId, DateTime.now().subtract(Duration(days: 7)));
+                userId, date);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -96,12 +96,6 @@ class SocialUserListWidget extends StatelessWidget {
     );
   }
 
-  Future<bool> _saveTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'lastSeen';
-    final isSaved = prefs.setString(key, DateTime.now().toString());
-    return isSaved;
-  }
 
   Future<bool> _readPreviewSwitch() async {
     final prefs = await SharedPreferences.getInstance();

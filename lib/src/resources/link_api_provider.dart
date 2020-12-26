@@ -28,18 +28,12 @@ class LinkApiProvider implements LinkSource {
       {@required String token, int page, int pageSize}) async {
     List<LinkModel> links = new List<LinkModel>();
 
-    Map<String, String> queryParams = {
-      'page': '$page',
-      'page_size': '$pageSize'
-    };
-    String queryString = Uri(queryParameters: queryParams).query;
-
     final response = await apiHelper.get("links",
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
         },
-        queryParameters: queryString);
+        queryParameters: createQueryString(page,pageSize));
 
     for (var link in response) {
       links.add(LinkModel.fromJson(link));
@@ -75,11 +69,7 @@ class LinkApiProvider implements LinkSource {
       {String token, String word, int page, int pageSize}) async {
     List<SearchLinkModel> links = new List<SearchLinkModel>();
 
-    Map<String, String> queryParams = {
-      'page': '$page',
-      'page_size': '$pageSize'
-    };
-    String queryString = Uri(queryParameters: queryParams).query;
+
 
     final response = await apiHelper.get(
       "links/search/$word",
@@ -87,7 +77,7 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      queryParameters: queryString,
+      queryParameters: createQueryString(page,pageSize),
     );
 
     final search = SearchModel.fromJson(response['search']).links;
@@ -103,19 +93,13 @@ class LinkApiProvider implements LinkSource {
       {String token, int id, int page, int pageSize}) async {
     List<SearchLinkModel> categories = new List<SearchLinkModel>();
 
-    Map<String, String> queryParams = {
-      'page': '$page',
-      'page_size': '$pageSize'
-    };
-    String queryString = Uri(queryParameters: queryParams).query;
-
     final response = await apiHelper.get(
       "links/category/$id",
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      queryParameters: queryString,
+      queryParameters: createQueryString(page,pageSize),
     );
 
     final category = SearchModel.fromJson(response['category']).links;
@@ -161,5 +145,15 @@ class LinkApiProvider implements LinkSource {
       links.add(LinkModel.fromJson(link));
     }
     return links;
+  }
+
+  String createQueryString(int page, int pageSize){
+
+    Map<String, String> queryParams = {
+      'page': '$page',
+      'page_size': '$pageSize'
+    };
+    return Uri(queryParameters: queryParams).query;
+
   }
 }

@@ -11,10 +11,25 @@ class SocialBloc {
 
   Observable<List<SocialModel>> get social => _social.stream;
 
-  fetchSocial(DateTime date) async {
+  List<SocialModel> savedSocialListCard = new List();
+
+  DateTime saveDate ;
+
+  fetchSocial({DateTime date, int page , int pageSize }) async {
+
     try {
-      final res = await _repository.social(date);
-      _social.sink.add(res);
+      final res = await _repository.social(date ,page,pageSize);
+
+      res.forEach((element) {
+        if ((savedSocialListCard.singleWhere((user) => user.userId == element.userId,
+            orElse: () => null)) ==
+            null) {
+
+          savedSocialListCard.add(element);
+        }
+      });
+
+      _social.sink.add(savedSocialListCard);
     } catch (e) {
 
       if (JsonUtils.isValidJSONString(e.toString())) {

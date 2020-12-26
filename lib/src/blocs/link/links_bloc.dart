@@ -67,7 +67,6 @@ class LinksBloc {
 
       _fetchLinks.sink.add(savedListCard);
     } catch (e) {
-      print(e.toString());
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -86,7 +85,6 @@ class LinksBloc {
 
       _fetchLinks.sink.add(savedListCard);
     } catch (e) {
-      print(e.toString());
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -142,7 +140,6 @@ class LinksBloc {
           searchListCard.add(element);
         }
       });
-    print(searchListCard);
       _searchLinks.sink.add(searchListCard);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {

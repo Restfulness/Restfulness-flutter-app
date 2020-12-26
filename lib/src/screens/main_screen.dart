@@ -91,9 +91,8 @@ class _MainScreenState extends State<MainScreen> {
                       width: 40,
                       height: 20,
                       decoration: new BoxDecoration(
-                        color: primaryColor,
-                          borderRadius: BorderRadius.all(Radius.circular(30))
-                      ),
+                          color: primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(30))),
                       child: Center(
                         child: Text(
                           "Demo",
@@ -120,7 +119,9 @@ class _MainScreenState extends State<MainScreen> {
                   color: primaryColor,
                 ),
                 onPressed: () {
-                  socialBloc.fetchSocial(null);
+                  _deletePickedDate();
+                  socialBloc.fetchSocial(
+                      page: firstPage, pageSize: firstPageSize);
                   setState(() {
                     isDataPicked = false;
                   });
@@ -188,11 +189,12 @@ class _MainScreenState extends State<MainScreen> {
       linkBloc.resetSearch();
     }
     if (index == socialIndex) {
-      socialBloc.fetchSocial(null);
+      socialBloc.fetchSocial(page: firstPage, pageSize: firstPageSize);
+      ;
     } else {
       isDataPicked = false;
     }
-    if(index == homeIndex){
+    if (index == homeIndex) {
       linkBloc.refreshLinks();
     }
   }
@@ -202,6 +204,12 @@ class _MainScreenState extends State<MainScreen> {
     final key = 'demo';
     final isSaved = prefs.getBool(key) ?? false;
     return isSaved;
+  }
+
+  Future<bool> _deletePickedDate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'pickedDate';
+    return prefs.remove(key);
   }
 
   showAlertDialog(BuildContext context) {

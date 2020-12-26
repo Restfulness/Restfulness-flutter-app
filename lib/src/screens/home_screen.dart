@@ -120,6 +120,7 @@ class HomeScreenState extends State<HomeScreen> {
       onChanged: (value) {
         _sharedText = '';
       },
+      keyboardType: TextInputType.url,
       controller: addLinkController,
       textInputAction: TextInputAction.done,
       onSubmitted: (value) {

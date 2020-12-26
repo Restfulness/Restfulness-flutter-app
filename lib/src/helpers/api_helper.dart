@@ -44,19 +44,19 @@ class ApiHelper {
   }
 
   Future<dynamic> post(String url,
-      {Map<String, String> headers, Map<String, dynamic> body}) async {
+      {Map<String, String> headers, Map<String, dynamic> body, String queryParameters = ''}) async {
     var responseJson;
     try {
       if (isValidToken(headers['Authorization'])) {
         reNewUser().then((value) async {
           if (value) {
-            final response = await client.post('$baseUrl/$url',
+            final response = await client.post('$baseUrl/$url?$queryParameters',
                 headers: headers, body: jsonEncode(body));
             responseJson = _response(response);
           }
         });
       } else {
-        final response = await client.post('$baseUrl/$url',
+        final response = await client.post('$baseUrl/$url?$queryParameters',
             headers: headers, body: jsonEncode(body));
         responseJson = _response(response);
       }

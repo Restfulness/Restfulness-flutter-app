@@ -9,13 +9,37 @@ import 'package:restfulness/src/widgets/social/social_link_simple_widget.dart';
 
 import '../../../constants.dart';
 
-class SocialUserLinks extends StatelessWidget {
-
+class SocialUserLinks extends StatefulWidget {
   final String username;
   final bool preview;
 
-  SocialUserLinks({this.username ,this.preview});
+  SocialUserLinks({this.username, this.preview});
 
+  SocialUserLinksState createState() => SocialUserLinksState();
+}
+
+class SocialUserLinksState extends State<SocialUserLinks> {
+
+
+  ScrollController _controller;
+
+  LinksBloc linkBloc;
+
+  int page;
+  int pageSize;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+
+    this.page = firstPage;
+    this.pageSize = firstPageSize;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +60,7 @@ class SocialUserLinks extends StatelessWidget {
           backgroundColor: appBarColor,
           centerTitle: true,
           title: Text(
-            username,
+            widget.username,
             style: TextStyle(color: Colors.black),
           ),
           brightness: Brightness.light,
@@ -63,24 +87,37 @@ class SocialUserLinks extends StatelessWidget {
           itemBuilder: (context, int index) {
             LinkModel linkModel = snapshot.data[index];
 
-            if(preview){
+            if (widget.preview) {
               return SocialLinkPreviewWidget(
                 id: linkModel.id,
                 url: linkModel.url,
                 category: linkModel.categories,
               );
-            }else {
+            } else {
               return SocialLinkSimpleWidget(
                 id: linkModel.id,
                 url: linkModel.url,
                 category: linkModel.categories,
               );
             }
-
           },
         );
       },
     );
   }
 
+  _scrollListener() {
+
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+
+      setState(() {
+        page += 1;
+      });
+
+
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {}
+  }
 }

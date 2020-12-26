@@ -94,16 +94,15 @@ class Repository {
 
   Future<List<LinkModel>> fetchAllLinks(int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links = linkSources[1].fetchAllLinks(token: user.accessToken, page: page, pageSize: pageSize);
+    final links = linkSources[1]
+        .fetchAllLinks(token: user.accessToken, page: page, pageSize: pageSize);
 
     return links;
   }
 
   Future<LinkModel> fetchLink(int id) async {
-
-
     UserModel user = await authorizationDbProvider.currentUser();
-    final link  =  linkSources[1].fetchLink(id: id, token: user.accessToken);
+    final link = linkSources[1].fetchLink(id: id, token: user.accessToken);
 
     return link;
   }
@@ -124,18 +123,20 @@ class Repository {
     return links;
   }
 
-  Future<List<SearchLinkModel>> searchLink(String word, int page, int pageSize) async {
+  Future<List<SearchLinkModel>> searchLink(
+      String word, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links =
-        linkSources[1].searchLink(token: user.accessToken, word: word , page: page,pageSize: pageSize);
+    final links = linkSources[1].searchLink(
+        token: user.accessToken, word: word, page: page, pageSize: pageSize);
 
     return links;
   }
 
-  Future<List<SearchLinkModel>> fetchLinkByCategoryId(int id ,int page, int pageSize) async {
+  Future<List<SearchLinkModel>> fetchLinkByCategoryId(
+      int id, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links =
-        linkSources[1].fetchLinksByCategoryId(token: user.accessToken, id: id , page: page, pageSize: pageSize);
+    final links = linkSources[1].fetchLinksByCategoryId(
+        token: user.accessToken, id: id, page: page, pageSize: pageSize);
 
     return links;
   }
@@ -183,10 +184,11 @@ class Repository {
     return msg;
   }
 
-  Future<List<SocialModel>> social(DateTime date) async {
+  Future<List<SocialModel>> social(
+      DateTime date, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
     List<SocialModel> otherUserLinks = await socialApiProvider.fetchSocial(
-        token: user.accessToken, date: date);
+        token: user.accessToken, date: date, page: page, pageSize: pageSize);
     return otherUserLinks;
   }
 
@@ -229,12 +231,15 @@ abstract class LinkSource {
 
   Future<List<SearchLinkModel>> searchLink(
       {@required String token,
-      String
-          word, int page, int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
+      String word,
+      int page,
+      int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
 
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {@required String token,
-      int id, int page, int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
+      int id,
+      int page,
+      int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
 
   Future<String> updateLinksCategory(
       {List<String> category, int id, @required String token});
