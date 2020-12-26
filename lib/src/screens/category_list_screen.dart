@@ -13,9 +13,11 @@ import '../../constants.dart';
 
 class CategoryListScreen extends StatelessWidget {
   final String name;
-  final GlobalKey<LinkListWidgetState> _key = GlobalKey();
+  final int categoryId;
+  final GlobalKey<LinkListWidgetState> _keyPreviewList = GlobalKey();
+  final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
 
-  CategoryListScreen({this.name});
+  CategoryListScreen({this.name ,this.categoryId});
 
   @override
   Widget build(BuildContext context) {
@@ -41,46 +43,47 @@ class CategoryListScreen extends StatelessWidget {
           ),
           brightness: Brightness.light,
         ),
-        body: buildList(bloc),
+        body: getPreviewSetting(bloc),
       ),
     );
   }
 
-  Widget buildList(LinksBloc bloc) {
-    bool isShowPreview = true;
-    _readPreviewSwitch().then((value) {
-      isShowPreview = value;
-    });
+  Widget getPreviewSetting(LinksBloc bloc) {
+    return FutureBuilder(
+        future: _readPreviewSwitch(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+          return buildList(bloc, snapshot.data);
+        });
+  }
 
+  Widget buildList(LinksBloc bloc, bool isPreview) {
     return StreamBuilder(
         stream: bloc.fetchByCategory,
         builder: (context, snapshot) {
-          if (snapshot.error != null) {
-            ToastContext(context, snapshot.error, false);
-            return CircularProgressIndicator(
-              value: 0,
-            );
-          }
 
           if (!snapshot.hasData || snapshot.data == null) {
-            if (isShowPreview) {
-              return LinkListWidget(key: _key);
+            if (isPreview) {
+
+              return LinkListWidget(key: _keyPreviewList,screenName:
+              this.runtimeType ,categoryId: categoryId);
             } else {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height / 1.3,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return LinkListSimpleWidget(key: _keySimpleList,screenName:
+              this.runtimeType,categoryId: categoryId);
             }
           }
-          if (isShowPreview) {
-            _key.currentState.setCardList(snapshot.data);
-            return LinkListWidget(key: _key);
-          } else {
-            return LinkListSimpleWidget(list: snapshot.data);
-          }
 
+          if (isPreview) {
+            _keyPreviewList.currentState.setCardList(snapshot.data);
+            return LinkListWidget(key: _keyPreviewList,screenName:
+            this.runtimeType,categoryId: categoryId);
+          } else {
+            _keySimpleList.currentState.setList(snapshot.data);
+            return LinkListSimpleWidget(key: _keySimpleList,screenName:
+            this.runtimeType,categoryId: categoryId);
+          }
         });
   }
 

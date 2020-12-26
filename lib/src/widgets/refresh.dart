@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 
 class Refresh extends StatelessWidget {
@@ -13,7 +14,7 @@ class Refresh extends StatelessWidget {
     return RefreshIndicator(
       child: child,
       onRefresh: () async {
-        await bloc.fetchLinks();
+        await bloc.fetchLinks(firstPage,firstPageSize);
       },
     );
   }

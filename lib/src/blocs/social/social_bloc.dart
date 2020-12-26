@@ -11,18 +11,40 @@ class SocialBloc {
 
   Observable<List<SocialModel>> get social => _social.stream;
 
-  fetchSocial(DateTime date) async {
-    try {
-      final res = await _repository.social(date);
-      _social.sink.add(res);
-    } catch (e) {
+  List<SocialModel> savedSocialListCard = new List();
 
+  bool isSocialHasData = false;
+
+  DateTime saveDate ;
+
+  fetchSocial({DateTime date, int page , int pageSize }) async {
+
+    try {
+      final res = await _repository.social(date ,page,pageSize);
+
+      res.forEach((element) {
+        if ((savedSocialListCard.singleWhere((user) => user.userId == element.userId,
+            orElse: () => null)) ==
+            null) {
+
+          savedSocialListCard.add(element);
+        }
+      });
+      isSocialHasData = true;
+      _social.sink.add(savedSocialListCard);
+    } catch (e) {
+      isSocialHasData = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _social.sink.addError(json.decode(e.toString())["msg"]);
       } else {
         _social.sink.addError("Unexpected server error");
       }
     }
+  }
+
+  resetSocial(){
+    savedSocialListCard = [];
+    _social.sink.add(savedSocialListCard);
   }
 
   dispose() {

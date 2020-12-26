@@ -17,15 +17,15 @@ import '../../constants.dart';
 import '../widgets/lists/link_list_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<LinkListWidgetState> _key = GlobalKey();
+class HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<LinkListWidgetState> _keyPreviewList = GlobalKey();
+  final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
+
   TextEditingController addLinkController;
   int _state = 0;
-
-  bool isShowPreview = true;
 
   // receive sharing
   StreamSubscription _intentDataStreamSubscription;
@@ -36,10 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     addLinkController = new TextEditingController();
-
-    _readPreviewSwitch().then((value) {
-      isShowPreview = value;
-    });
 
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription =
@@ -57,8 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _sharedText = value;
       });
     });
-
-
   }
 
   @override
@@ -79,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         buildAddBar(),
         Expanded(
-          child: buildList(bloc),
+          child: getPreviewSetting(bloc),
         ),
       ],
     );
@@ -126,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onChanged: (value) {
         _sharedText = '';
       },
+      keyboardType: TextInputType.url,
       controller: addLinkController,
       textInputAction: TextInputAction.done,
       onSubmitted: (value) {
@@ -160,9 +155,10 @@ class _HomeScreenState extends State<HomeScreen> {
             addLinkController.clear();
             _sharedText = '';
           });
+
+          bloc.fetchLinkById(id);
+
           ToastContext(context, "Link successfully added ", true);
-          bloc.resetLinks();
-          bloc.fetchLinks();
 
           // get new categories if we have new one
           final categoriesBloc = CategoriesProvider.of(context);
@@ -201,27 +197,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget buildList(LinksBloc bloc) {
+  Widget getPreviewSetting(LinksBloc bloc) {
+    return FutureBuilder(
+        future: _readPreviewSwitch(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          return buildList(bloc, snapshot.data);
+        });
+  }
+
+  Widget buildList(LinksBloc bloc, bool isPreview) {
     return StreamBuilder(
       stream: bloc.links,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          if (isShowPreview) {
-            return LinkListWidget(key: _key);
+          if (isPreview) {
+            return LinkListWidget(key: _keyPreviewList ,screenName:
+            this.runtimeType);
           } else {
-            return SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: Center(
-                child:Text("No item"),
-              ),
-            );
+            return LinkListSimpleWidget(key: _keySimpleList,screenName:
+            this.runtimeType);
           }
         }
-        if (isShowPreview) {
-          _key.currentState.setCardList(snapshot.data);
-          return LinkListWidget(key: _key);
+
+        if (isPreview) {
+          _keyPreviewList.currentState.setCardList(snapshot.data);
+          return LinkListWidget(key: _keyPreviewList,screenName:
+          this.runtimeType);
         } else {
-          return LinkListSimpleWidget(list: snapshot.data);
+          _keySimpleList.currentState.setList(snapshot.data);
+          return LinkListSimpleWidget(key: _keySimpleList,screenName:
+          this.runtimeType);
         }
       },
     );

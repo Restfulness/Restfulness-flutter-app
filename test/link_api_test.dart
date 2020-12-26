@@ -23,6 +23,10 @@ const fakeLinkGetSuccess = [
   }
 ];
 
+const fakeLinkGetFailed400 = {
+  "msg": "Requested page size is larger than our max limit!"
+};
+
 const fakeLinkGetFailed404 = {"msg": "Link not found!"};
 
 const fakeLinkDeleteSuccess = {
@@ -46,6 +50,12 @@ const fakeSearchLink200 = {
   }
 };
 
+const fakeSearchLink400 = {
+  "msg": "Requested page size is larger than our max limit!"
+};
+
+const fakeSearchLink404 = {"msg": "Pattern not found!"};
+
 const fakeFetchLinksByCategoryId200 = {
   "category": {
     "links": [
@@ -55,9 +65,11 @@ const fakeFetchLinksByCategoryId200 = {
     "name": "dev"
   }
 };
-const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
-const fakeSearchLink404 = {"msg": "Pattern not found!"};
+const fakeFetchLinksByCategoryId400 = {
+  "msg": "Requested page size is larger than our max limit!"
+};
+const fakeFetchLinksByCategoryId404 = {"msg": "Category ID not found!"};
 
 const fakeUpdateCategorySuccess = {"msg": "Categories updated."};
 const fakeUpdateCategory404 = {"msg": "Link ID not found!"};
@@ -139,13 +151,27 @@ void main() {
     expect(link.length, 1);
   });
 
+  test("Test get link API if page size is larger than our max limit", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeLinkGetFailed400), 400);
+    });
+
+    try {
+      await apiProvider.fetchAllLinks(token: "token", page: 1, pageSize: 12);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(
+          jsonData["msg"], "Requested page size is larger than our max limit!");
+    }
+  });
+
   test("Test get link API if link id not found", () async {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeLinkGetFailed404), 404);
     });
 
     try {
-      await apiProvider.fetchAllLinks(token: "token");
+      await apiProvider.fetchAllLinks(token: "token", page: 1, pageSize: 10);
     } catch (e) {
       var jsonData = json.decode(e.toString());
       expect(jsonData["msg"], "Link not found!");
@@ -196,6 +222,19 @@ void main() {
     expect(link.length, 2);
   });
 
+  test("Test search link API if page size is larger than our max limit", () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeSearchLink400), 400);
+    });
+
+    try {
+      await apiProvider.searchLink(token: "token", word: 'test' , page: 1, pageSize: 12);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(jsonData["msg"], "Requested page size is larger than our max limit!");
+    }
+  });
+
   test("Test search link API if didn't found the link", () async {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeSearchLink404), 404);
@@ -213,10 +252,27 @@ void main() {
     apiProvider.apiHelper.client = MockClient((request) async {
       return Response(json.encode(fakeFetchLinksByCategoryId200), 200);
     });
-    final link =
-        await apiProvider.fetchLinksByCategoryId(token: "token", id: 2);
+    final link = await apiProvider.fetchLinksByCategoryId(
+        token: "token", id: 2, page: 1, pageSize: 10);
 
     expect(link.length, 2);
+  });
+
+  test(
+      "Test fetch links API by category id if page size is larger than our max limit",
+      () async {
+    apiProvider.apiHelper.client = MockClient((request) async {
+      return Response(json.encode(fakeFetchLinksByCategoryId400), 400);
+    });
+
+    try {
+      await apiProvider.fetchLinksByCategoryId(
+          token: "token", id: 10, page: 1, pageSize: 12);
+    } catch (e) {
+      var jsonData = json.decode(e.toString());
+      expect(
+          jsonData["msg"], "Requested page size is larger than our max limit!");
+    }
   });
 
   test("Test fetch links API by category id if didn't exist any category",

@@ -80,15 +80,15 @@ class _DecisionScreenState extends State<DecisionScreen> {
     final socialBloc = SocialProvider.of(context);
 
 
-    linkBloc.fetchLinks();
+    linkBloc.fetchLinks(firstPage,firstPageSize);
     categoriesBloc.fetchCategories();
 
     _readTime().then((value) {
       if (value.isEmpty) {
-        socialBloc.fetchSocial(null);
+        socialBloc.fetchSocial(page: firstPage , pageSize: firstPageSize);
       } else {
         DateTime date = DateTime.parse(value);
-        socialBloc.fetchSocial(date);
+        socialBloc.fetchSocial(date:date,page:firstPage,pageSize: firstPageSize);
       }
     });
 

@@ -1,19 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restfulness/src/blocs/link/links_bloc.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/search_model.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
+import '../../../constants.dart';
 import '../category_widget.dart';
 
 class LinkSearchListWidget extends StatefulWidget {
-  const LinkSearchListWidget({Key key}) : super(key: key);
+  const LinkSearchListWidget({Key key, this.searchWord}) : super(key: key);
+
+
+  final String searchWord;
+
   @override
   LinkSearchListWidgetScreen createState() => LinkSearchListWidgetScreen();
 }
 
 class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     with SingleTickerProviderStateMixin {
+
+  ScrollController _controller;
+
   List<SearchLinkModel> listCardMessage;
   double _headingBarHeight = 4.0;
   double _buttonBarHeight = 0.0;
@@ -42,6 +52,13 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
 
   List<CardTileWidget> _list = new List<CardTileWidget>();
 
+  LinksBloc linkBloc;
+
+  int page;
+  int pageSize;
+
+  bool hasDate = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +70,13 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
     searchController = new TextEditingController();
+
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+
+    this.page = firstPage;
+    this.pageSize = firstPageSize;
+
   }
 
   // Card List
@@ -225,31 +249,70 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
 
   @override
   Widget build(BuildContext context) {
+    linkBloc = LinksProvider.of(context);
+
+    checkIfHasData();
+
     double _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
     return SingleChildScrollView(
+      controller: _controller,
       physics: AlwaysScrollableScrollPhysics(),
-      child: Container(
-        height: _totalHeight < (MediaQuery.of(context).size.height - 190)
-            ? (MediaQuery.of(context).size.height - 190)
-            : _totalHeight,
-        child: Stack(
-          children: <Widget>[
-            //Person Card List
-            buildCardList(context),
-            // Animation Icons
-            IconAnimation(
-              leftPosition: -27.0,
-              topPosition: (iconsTopPositionData - 100.0),
-              rightAnimationStart: rightPositionData,
-              firstIconAnimationStart: firstIconAnimationStartData,
-              secondIconAnimationStart: secondIconAnimationStartData,
-              thirdIconAnimationStart: thirdIconAnimationStartData,
+      child: Column(
+        children: [
+          Container(
+            height: _totalHeight < (MediaQuery.of(context).size.height - 190)
+                ? (MediaQuery.of(context).size.height - 190)
+                : _totalHeight,
+            child: Stack(
+              children: <Widget>[
+                //Person Card List
+                buildCardList(context),
+                // Animation Icons
+                IconAnimation(
+                  leftPosition: -27.0,
+                  topPosition: (iconsTopPositionData - 100.0),
+                  rightAnimationStart: rightPositionData,
+                  firstIconAnimationStart: firstIconAnimationStartData,
+                  secondIconAnimationStart: secondIconAnimationStartData,
+                  thirdIconAnimationStart: thirdIconAnimationStartData,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          hasDate
+              ? Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: CircularProgressIndicator()),
+          )
+              : Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: Text('nothing more to load!')),
+          ),
+          SizedBox(
+            height: 30,
+          )
+        ],
       ),
     );
+  }
+
+  _scrollListener() {
+
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+
+      setState(() {
+        page += 1;
+      });
+      linkBloc.searchLinks(widget.searchWord,page,pageSize);
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {}
+  }
+
+  checkIfHasData() {
+      hasDate = linkBloc.isSearchHasDate;
   }
 
   Container buildCardList(BuildContext context) {

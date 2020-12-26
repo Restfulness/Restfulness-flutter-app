@@ -3,6 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
+import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'category_widget.dart';
@@ -11,19 +12,18 @@ import 'lists/link_search_list_widget.dart';
 
 class SearchWidget extends StatefulWidget {
   @override
-  _SearchWidgetState createState() => _SearchWidgetState();
+  SearchWidgetState createState() => SearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
-  final GlobalKey<LinkSearchListWidgetScreen> _key = GlobalKey();
+class SearchWidgetState extends State<SearchWidget> {
+  final GlobalKey<LinkSearchListWidgetScreen> _keyPreviewList = GlobalKey();
+  final GlobalKey<LinkListSimpleWidgetState> _keySimpleList = GlobalKey();
 
   LinksBloc bloc;
   int _state = 0;
   TextEditingController searchController;
 
   bool isHaveSearchResult;
-
-  bool isShowPreview = true;
 
   @override
   void dispose() {
@@ -34,12 +34,6 @@ class _SearchWidgetState extends State<SearchWidget> {
   initState() {
     super.initState();
     searchController = new TextEditingController();
-
-    isHaveSearchResult = false;
-
-    _readPreviewSwitch().then((value) {
-      isShowPreview = value;
-    });
   }
 
   @override
@@ -71,7 +65,8 @@ class _SearchWidgetState extends State<SearchWidget> {
                     bloc.resetSearch();
                     FocusScope.of(context).unfocus();
                     if (searchController.text != '') {
-                      bloc.searchLinks(searchController.text);
+                      bloc.searchLinks(
+                          searchController.text, firstPage, firstPageSize);
                       setState(() {
                         _state = 1;
                       });
@@ -89,25 +84,24 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
         Expanded(
-          child:  searchController.text.isEmpty ? CategoryWidget() :_buildList(bloc),
+          child: searchController.text.isEmpty
+              ? CategoryWidget()
+              : getPreviewSetting(bloc),
         ),
       ],
     );
   }
 
-
-
   Widget _buildSearchField(BuildContext context, LinksBloc bloc) {
     return TextField(
       onChanged: (word) {
         bloc.resetSearch();
-        if(word != ''){
-          bloc.searchLinks(word);
+        if (word != '') {
+          bloc.searchLinks(word, firstPage, firstPageSize);
           setState(() {
             _state = 1;
           });
         }
-
       },
       controller: searchController,
       decoration: InputDecoration(
@@ -140,43 +134,63 @@ class _SearchWidgetState extends State<SearchWidget> {
     }
   }
 
-  Widget _buildList(LinksBloc bloc) {
+  Widget getPreviewSetting(LinksBloc bloc) {
+    return FutureBuilder(
+        future: _readPreviewSwitch(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          return _buildList(bloc, snapshot.data);
+        });
+  }
+
+  Widget _buildList(LinksBloc bloc, bool isPreview) {
     return StreamBuilder(
         stream: bloc.search,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            if (isShowPreview) {
-              return LinkSearchListWidget(key: _key);
-            } else {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height / 1.3,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          }
-          print('call');
-          if ( searchController.text.isEmpty ) {
+          if (searchController.text.isEmpty) {
             return CategoryWidget();
           }
 
-          if (isShowPreview) {
-            if (snapshot.data.length <= 0) {
-              return LinkSearchListWidget(key: _key);
+          if (!snapshot.hasData) {
+            if (isPreview) {
+              return LinkSearchListWidget(
+                  key: _keyPreviewList, searchWord: searchController.text);
             } else {
-              _key.currentState.setCardList(snapshot.data);
-              return LinkSearchListWidget(key: _key);
+              return LinkListSimpleWidget(
+                  key: _keySimpleList, screenName: this.runtimeType,searchWord: searchController.text,);
             }
+          }
 
+          if (isPreview) {
+            if (snapshot.data.length <= 0) {
+              return LinkSearchListWidget(
+                  key: _keyPreviewList, searchWord: searchController.text);
+            } else {
+              _keyPreviewList.currentState.setCardList(snapshot.data);
+              return LinkSearchListWidget(
+                  key: _keyPreviewList, searchWord: searchController.text);
+            }
           } else {
             if (snapshot.data.length <= 0) {
-              return CategoryWidget();
+              return LinkListSimpleWidget(
+                  key: _keySimpleList, screenName: this.runtimeType,searchWord: searchController.text,);
             } else {
-              return LinkListSimpleWidget(list: snapshot.data);
+              _keySimpleList.currentState.setList(snapshot.data);
+              return LinkListSimpleWidget(
+                  key: _keySimpleList, screenName: this.runtimeType,searchWord: searchController.text,);
             }
           }
         });
+  }
+
+  Future<bool> _readPreviewSwitch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'preview';
+    final value = prefs.getBool(key) ?? true;
+    return value;
   }
 
   void hideIndicator() {
@@ -188,12 +202,5 @@ class _SearchWidgetState extends State<SearchWidget> {
         });
       });
     });
-  }
-
-  Future<bool> _readPreviewSwitch() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'preview';
-    final value = prefs.getBool(key) ?? true;
-    return value;
   }
 }

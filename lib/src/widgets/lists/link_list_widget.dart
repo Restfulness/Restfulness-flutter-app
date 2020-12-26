@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:restfulness/constants.dart';
+import 'package:restfulness/src/blocs/link/links_bloc.dart';
+import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/models/link_model.dart';
+import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
 
 class LinkListWidget extends StatefulWidget {
-  const LinkListWidget({Key key}) : super(key: key);
+  const LinkListWidget({Key key, @required this.screenName, this.categoryId})
+      : super(key: key);
+
+  final int categoryId;
+  final Type screenName;
 
   @override
   LinkListWidgetState createState() => LinkListWidgetState();
@@ -12,6 +20,8 @@ class LinkListWidget extends StatefulWidget {
 
 class LinkListWidgetState extends State<LinkListWidget>
     with SingleTickerProviderStateMixin {
+  ScrollController _controller;
+
   List<LinkModel> listCardMessage;
   double _headingBarHeight = 4.0;
   double _buttonBarHeight = 0.0;
@@ -38,6 +48,13 @@ class LinkListWidgetState extends State<LinkListWidget>
 
   List<CardTileWidget> _list = new List<CardTileWidget>();
 
+  LinksBloc linkBloc;
+
+  int page;
+  int pageSize;
+
+  bool hasDate = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +64,12 @@ class LinkListWidgetState extends State<LinkListWidget>
     secondIconAnimationStartData = false;
     thirdIconAnimationStartData = false;
     iconsTopPositionData = 0.0;
+
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
+
+    this.page = firstPage;
+    this.pageSize = firstPageSize;
   }
 
   // Card List
@@ -217,38 +240,85 @@ class LinkListWidgetState extends State<LinkListWidget>
 
   @override
   Widget build(BuildContext context) {
+    linkBloc = LinksProvider.of(context);
+
+    checkIfHasData();
+
     _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
     return SingleChildScrollView(
+      controller: _controller,
       physics: AlwaysScrollableScrollPhysics(),
-      child: _list == null
-          ? SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          : Container(
-              height: _totalHeight < (MediaQuery.of(context).size.height - 190)
-                  ? (MediaQuery.of(context).size.height - 190)
-                  : _totalHeight,
-              child: Stack(
-                children: <Widget>[
-                  // Card List
-                  buildCardList(context),
-                  // Animation Icons
-                  IconAnimation(
-                    leftPosition: -27.0,
-                    topPosition: (iconsTopPositionData - 100.0),
-                    rightAnimationStart: rightPositionData,
-                    firstIconAnimationStart: firstIconAnimationStartData,
-                    secondIconAnimationStart: secondIconAnimationStartData,
-                    thirdIconAnimationStart: thirdIconAnimationStartData,
+      child: Column(
+        children: [
+          _list == null
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.3,
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ],
-              ),
-            ),
+                )
+              : Container(
+                  height:
+                      _totalHeight < (MediaQuery.of(context).size.height - 190)
+                          ? (MediaQuery.of(context).size.height - 190)
+                          : _totalHeight,
+                  child: Stack(
+                    children: <Widget>[
+                      // Card List
+                      buildCardList(context),
+                      // Animation Icons
+                      IconAnimation(
+                        leftPosition: -27.0,
+                        topPosition: (iconsTopPositionData - 100.0),
+                        rightAnimationStart: rightPositionData,
+                        firstIconAnimationStart: firstIconAnimationStartData,
+                        secondIconAnimationStart: secondIconAnimationStartData,
+                        thirdIconAnimationStart: thirdIconAnimationStartData,
+                      ),
+                    ],
+                  ),
+                ),
+          hasDate && _list.length >= firstPageSize
+              ? Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32.0),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32.0),
+                  child: Center(child: Text('nothing more to load!')),
+                ),
+          SizedBox(
+            height: 30,
+          )
+        ],
+      ),
     );
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        page += 1;
+      });
+
+      if (widget.screenName == HomeScreenState) {
+        linkBloc.fetchLinks(page, pageSize);
+      } else {
+        linkBloc.fetchLinksByCategoryId(widget.categoryId, page, pageSize);
+      }
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {}
+  }
+
+  checkIfHasData() {
+    if (widget.screenName == HomeScreenState) {
+      hasDate = linkBloc.isUserHasData;
+    } else {
+      hasDate = linkBloc.isCategoryHasDate;
+    }
   }
 
   Container buildCardList(BuildContext context) {

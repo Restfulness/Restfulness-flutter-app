@@ -59,8 +59,8 @@ class Repository {
   Future<bool> fetchPublicLinksSetting() async {
     UserModel user = await authorizationDbProvider.currentUser();
 
-    final public =
-        await profileApiProvider.fetchPublicLinksSetting(token: user.accessToken);
+    final public = await profileApiProvider.fetchPublicLinksSetting(
+        token: user.accessToken);
 
     return public;
   }
@@ -92,35 +92,26 @@ class Repository {
     return id;
   }
 
-  Future<List<LinkModel>> fetchAllLinks() async {
+  Future<List<LinkModel>> fetchAllLinks(int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links = linkSources[1].fetchAllLinks(token: user.accessToken);
+    final links = linkSources[1]
+        .fetchAllLinks(token: user.accessToken, page: page, pageSize: pageSize);
 
     return links;
   }
 
   Future<LinkModel> fetchLink(int id) async {
-    LinkModel link;
-
-    final formLocal = await linkDbProvide.fetchLink(id: id);
-    if (formLocal != null) {
-      link = formLocal;
-    } else {
-      UserModel user = await authorizationDbProvider.currentUser();
-      final fromServer =
-          await linkApiProvider.fetchLink(id: id, token: user.accessToken);
-      link = fromServer;
-      linkDbProvide.addLink(link);
-    }
+    UserModel user = await authorizationDbProvider.currentUser();
+    final link = linkSources[1].fetchLink(id: id, token: user.accessToken);
 
     return link;
   }
 
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required int id, DateTime date}) async {
+      {@required int id, DateTime date, int page, int pageSize}) async {
     UserModel user = await authorizationDbProvider.currentUser();
     final links = linkSources[1]
-        .fetchSocialUsersLinks(token: user.accessToken, id: id, date: date);
+        .fetchSocialUsersLinks(token: user.accessToken, id: id, date: date,page: page,pageSize: pageSize);
 
     return links;
   }
@@ -132,18 +123,20 @@ class Repository {
     return links;
   }
 
-  Future<List<SearchLinkModel>> searchLink(String word) async {
+  Future<List<SearchLinkModel>> searchLink(
+      String word, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links =
-        linkSources[1].searchLink(token: user.accessToken, word: word);
+    final links = linkSources[1].searchLink(
+        token: user.accessToken, word: word, page: page, pageSize: pageSize);
 
     return links;
   }
 
-  Future<List<SearchLinkModel>> fetchLinkByCategoryId(int id) async {
+  Future<List<SearchLinkModel>> fetchLinkByCategoryId(
+      int id, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
-    final links =
-        linkSources[1].fetchLinksByCategoryId(token: user.accessToken, id: id);
+    final links = linkSources[1].fetchLinksByCategoryId(
+        token: user.accessToken, id: id, page: page, pageSize: pageSize);
 
     return links;
   }
@@ -191,10 +184,11 @@ class Repository {
     return msg;
   }
 
-  Future<List<SocialModel>> social(DateTime date) async {
+  Future<List<SocialModel>> social(
+      DateTime date, int page, int pageSize) async {
     UserModel user = await authorizationDbProvider.currentUser();
     List<SocialModel> otherUserLinks = await socialApiProvider.fetchSocial(
-        token: user.accessToken, date: date);
+        token: user.accessToken, date: date, page: page, pageSize: pageSize);
     return otherUserLinks;
   }
 
@@ -210,10 +204,10 @@ abstract class UserSource {
 }
 
 abstract class ProfileSource {
-
   Future<bool> fetchPublicLinksSetting({@required String token});
 
-  Future<String> updatePublicLinksSetting({@required String token , bool public });
+  Future<String> updatePublicLinksSetting(
+      {@required String token, bool public});
 }
 
 abstract class UserCache {
@@ -230,24 +224,28 @@ abstract class LinkSource {
 
   Future<bool> deleteLink({@required String token, int id});
 
-  Future<List<LinkModel>> fetchAllLinks({@required String token});
+  Future<List<LinkModel>> fetchAllLinks(
+      {@required String token, int page, int pageSize});
 
   Future<LinkModel> fetchLink({@required int id, String token});
 
   Future<List<SearchLinkModel>> searchLink(
       {@required String token,
-      String
-          word}); // FIXME: refactor to LinkModel after api changed to standard model
+      String word,
+      int page,
+      int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
 
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
       {@required String token,
-      int id}); // FIXME: refactor to LinkModel after api changed to standard model
+      int id,
+      int page,
+      int pageSize}); // FIXME: refactor to LinkModel after api changed to standard model
 
   Future<String> updateLinksCategory(
       {List<String> category, int id, @required String token});
 
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required int id, @required String token, DateTime date});
+      {@required int id, @required String token, DateTime date, int page, int pageSize});
 }
 
 abstract class LinkCache {

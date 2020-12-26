@@ -2,34 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/helpers/time_ago_since_date.dart';
-import 'package:restfulness/src/widgets/social/social_user_links.dart';
+import 'package:restfulness/src/widgets/social/social_user_links_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SocialUserListWidget extends StatelessWidget {
+class SocialUserWidget extends StatelessWidget {
   final String username;
   final String lastUpdate;
   final int totalLinks;
   final int userId;
 
-  SocialUserListWidget(
+  SocialUserWidget(
       {this.username, this.lastUpdate, this.totalLinks, this.userId});
 
   @override
   Widget build(BuildContext context) {
     final linkBloc = LinksProvider.of(context);
-    _saveTime();
+
     return Container(
       height: 80,
       child: InkWell(
         onTap: () {
           _readPreviewSwitch().then((value) {
-            DateTime date = DateTime.parse(lastUpdate);
+            linkBloc.restSocialList();
+            DateTime date =
+                DateTime.parse(lastUpdate); // FIXME: what date should be?
             linkBloc.fetchSocialUserLinks(
-                userId, DateTime.now().subtract(Duration(days: 7)));
+                userId, date, firstPage, firstPageSize);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SocialUserLinks(
+                    builder: (context) => SocialUserLinksWidget(
+                          userId: userId,
                           username: username,
                           preview: value,
                         ))).then((context) {
@@ -48,7 +51,7 @@ class SocialUserListWidget extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(20),
                 child: RotationTransition(
-                  turns: new AlwaysStoppedAnimation( -45 / 360),
+                  turns: new AlwaysStoppedAnimation(-45 / 360),
                   child: Container(
                     width: 30,
                     height: double.infinity,
@@ -94,13 +97,6 @@ class SocialUserListWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<bool> _saveTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'lastSeen';
-    final isSaved = prefs.setString(key, DateTime.now().toString());
-    return isSaved;
   }
 
   Future<bool> _readPreviewSwitch() async {

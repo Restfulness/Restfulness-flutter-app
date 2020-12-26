@@ -11,6 +11,7 @@ import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../constants.dart';
 import '../link_preview_widget.dart';
 
 class CardTileWidget extends StatefulWidget {
@@ -438,8 +439,8 @@ class _CardTileWidgetState extends State<CardTileWidget>
             opacityController.forward();
 
             final bloc = LinksProvider.of(context);
-            bloc.resetLinks();
-            bloc.fetchLinks();
+            bloc.deleteItemFromLinks(widget.urlId);
+
             ToastContext(context, "Deleted successfully", true);
             // reset category list
             final categoryBloc = CategoriesProvider.of(context);

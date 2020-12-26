@@ -62,7 +62,7 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<List<LinkModel>> fetchAllLinks({@required String token}) {
+  Future<List<LinkModel>> fetchAllLinks({@required String token, int page , int pageSize}) {
     return null;
   }
 
@@ -72,12 +72,12 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<List<SearchLinkModel>> searchLink({String token, String word}) {
+  Future<List<SearchLinkModel>> searchLink({String token, String word, int page, int pageSize}) {
     return null;
   }
 
   @override
-  Future<List<SearchLinkModel>> fetchLinksByCategoryId({String token, int id}) {
+  Future<List<SearchLinkModel>> fetchLinksByCategoryId({String token, int id, int page, int pageSize}) {
     return null;
   }
 
@@ -88,7 +88,7 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<List<LinkModel>> fetchSocialUsersLinks({int id, String token ,DateTime date}) {
+  Future<List<LinkModel>> fetchSocialUsersLinks({int id, String token ,DateTime date, int page, int pageSize}) {
     return null;
   }
 }

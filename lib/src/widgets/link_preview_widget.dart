@@ -137,7 +137,7 @@ class LinkPreviewWidget extends StatelessWidget {
                 child: MaterialButton(
                     onPressed: () {
                       UpdateCategoryWidget update = new UpdateCategoryWidget();
-                      update.updateCategory(context, id,category);
+                      update.updateCategory(context, id, category);
                     },
                     elevation: 1,
                     color: primaryLightColor,
@@ -170,14 +170,14 @@ class LinkPreviewWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                  Container(
-                    width: 120,
-                    height: double.infinity,
-                    child: Image.asset(
-                      "assets/images/default.png",
-                      fit: BoxFit.cover,
-                    ),
+                Container(
+                  width: 120,
+                  height: double.infinity,
+                  child: Image.asset(
+                    "assets/images/default.png",
+                    fit: BoxFit.cover,
                   ),
+                ),
                 Container(
                   width: cWidth,
                   child: Column(
@@ -253,12 +253,13 @@ class LinkPreviewWidget extends StatelessWidget {
   }
 
   _openOnTagPressed(BuildContext context, int index, LinksBloc bloc) {
-    bloc.fetchLinksByCategoryId(category[index].id);
+    bloc.fetchLinksByCategoryId(category[index].id, firstPage, firstPageSize);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => CategoryListScreen(
                   name: category[index].name,
+                  categoryId: category[index].id,
                 ))).then((context) {
       bloc.restCategoryList();
     });

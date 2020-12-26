@@ -24,13 +24,16 @@ class LinkApiProvider implements LinkSource {
   }
 
   @override
-  Future<List<LinkModel>> fetchAllLinks({@required String token}) async {
+  Future<List<LinkModel>> fetchAllLinks(
+      {@required String token, int page, int pageSize}) async {
     List<LinkModel> links = new List<LinkModel>();
 
-    final response = await apiHelper.get("links", headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $token',
-    });
+    final response = await apiHelper.get("links",
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        queryParameters: createQueryString(page,pageSize));
 
     for (var link in response) {
       links.add(LinkModel.fromJson(link));
@@ -48,7 +51,7 @@ class LinkApiProvider implements LinkSource {
       },
     );
 
-    return LinkModel.fromJson(response);
+    return LinkModel.fromJson(response[0]);
   }
 
   @override
@@ -62,8 +65,11 @@ class LinkApiProvider implements LinkSource {
   }
 
   @override
-  Future<List<SearchLinkModel>> searchLink({String token, String word}) async {
+  Future<List<SearchLinkModel>> searchLink(
+      {String token, String word, int page, int pageSize}) async {
     List<SearchLinkModel> links = new List<SearchLinkModel>();
+
+
 
     final response = await apiHelper.get(
       "links/search/$word",
@@ -71,6 +77,7 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
+      queryParameters: createQueryString(page,pageSize),
     );
 
     final search = SearchModel.fromJson(response['search']).links;
@@ -83,7 +90,7 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<SearchLinkModel>> fetchLinksByCategoryId(
-      {String token, int id}) async {
+      {String token, int id, int page, int pageSize}) async {
     List<SearchLinkModel> categories = new List<SearchLinkModel>();
 
     final response = await apiHelper.get(
@@ -92,6 +99,7 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
+      queryParameters: createQueryString(page,pageSize),
     );
 
     final category = SearchModel.fromJson(response['category']).links;
@@ -118,7 +126,7 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required String token, int id, DateTime date}) async {
+      {@required String token, int id, DateTime date , int page, int pageSize}) async {
     List<LinkModel> links = new List<LinkModel>();
 
     final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
@@ -130,12 +138,23 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      body: <String, dynamic>{'date_from': formatted},
+      body: <String, dynamic>{},
+      queryParameters: createQueryString(page, pageSize),
     );
 
     for (var link in response) {
       links.add(LinkModel.fromJson(link));
     }
     return links;
+  }
+
+  String createQueryString(int page, int pageSize){
+
+    Map<String, String> queryParams = {
+      'page': '$page',
+      'page_size': '$pageSize'
+    };
+    return Uri(queryParameters: queryParams).query;
+
   }
 }
