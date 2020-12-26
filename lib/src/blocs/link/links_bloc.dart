@@ -33,6 +33,11 @@ class LinksBloc {
   Function(List<SearchLinkModel>) get addCategoryById =>
       _fetchLinksByCategory.sink.add;
 
+  bool isUserHasData = false;
+  bool isCategoryHasDate = false;
+  bool isSearchHasDate = false;
+  bool isSocialUserHasData = false;
+
   List<LinkModel> savedListCard = new List();
   List<SearchLinkModel> savedCategoryListCard = new List();
   List<SearchLinkModel> searchListCard = new List();
@@ -49,9 +54,10 @@ class LinksBloc {
           savedListCard.add(element);
         }
       });
-
+      isUserHasData = true;
       _fetchLinks.sink.add(savedListCard);
     } catch (e) {
+      isUserHasData = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -96,18 +102,21 @@ class LinksBloc {
 
   fetchSocialUserLinks(int id, DateTime date, int page, int pageSize) async {
     try {
-      final ids = await _repository.fetchSocialUsersLinks(id: id, date: date,page: page,pageSize: pageSize);
+      final ids = await _repository.fetchSocialUsersLinks(
+          id: id, date: date, page: page, pageSize: pageSize);
 
       ids.forEach((element) {
-        if ((savedSocialUserLinkListCard.singleWhere((link) => link.id == element.id,
-            orElse: () => null)) ==
+        if ((savedSocialUserLinkListCard.singleWhere(
+                (link) => link.id == element.id,
+                orElse: () => null)) ==
             null) {
           savedSocialUserLinkListCard.add(element);
         }
       });
-
+      isSocialUserHasData = true;
       _fetchSocialUsersLinks.sink.add(savedSocialUserLinkListCard);
     } catch (e) {
+      isSocialUserHasData = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchSocialUsersLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -123,14 +132,15 @@ class LinksBloc {
 
       res.forEach((element) {
         if ((savedCategoryListCard.singleWhere((link) => link.id == element.id,
-            orElse: () => null)) ==
+                orElse: () => null)) ==
             null) {
           savedCategoryListCard.add(element);
         }
       });
-
+      isCategoryHasDate = true;
       _fetchLinksByCategory.sink.add(savedCategoryListCard);
     } catch (e) {
+      isCategoryHasDate = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchLinksByCategory.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -141,17 +151,19 @@ class LinksBloc {
 
   searchLinks(String word, int page, int pageSize) async {
     try {
-      final res = await _repository.searchLink(word,page,pageSize);
+      final res = await _repository.searchLink(word, page, pageSize);
 
       res.forEach((element) {
         if ((searchListCard.singleWhere((link) => link.id == element.id,
-            orElse: () => null)) ==
+                orElse: () => null)) ==
             null) {
           searchListCard.add(element);
         }
       });
+      isSearchHasDate = true;
       _searchLinks.sink.add(searchListCard);
     } catch (e) {
+      isSearchHasDate = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _searchLinks.sink.addError(json.decode(e.toString())["msg"]);
       } else {
@@ -187,11 +199,13 @@ class LinksBloc {
   }
 
   resetSearch() {
-    _searchLinks.add([]);
+    searchListCard = [];
+    _searchLinks.add(searchListCard);
   }
 
   restCategoryList() {
-    _fetchLinksByCategory.add([]);
+    savedCategoryListCard = [];
+    _fetchLinksByCategory.add(savedCategoryListCard);
   }
 
   restSocialList() {

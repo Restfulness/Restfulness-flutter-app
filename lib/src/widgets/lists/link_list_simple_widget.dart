@@ -31,6 +31,8 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
   int page;
   int pageSize;
 
+  bool hasDate = false;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +51,9 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
   @override
   Widget build(BuildContext context) {
     linksBloc = LinksProvider.of(context);
+
+    checkIfHasData();
+
     return Column(
       children: [
         Expanded(
@@ -65,16 +70,27 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
   }
 
   Widget buildList() {
-    print(_list.length);
     return ListView.builder(
       controller: _controller,
-      itemCount: _list.length,
+      itemCount: _list.length + 1,
       itemBuilder: (context, int index) {
-        return LinkSimpleWidget(
-            id: _list[index].id,
-            url: _list[index].url,
-            category: _list[index].categories,
-            onDelete: () => removeItem(index));
+        if (index < _list.length) {
+          return LinkSimpleWidget(
+              id: _list[index].id,
+              url: _list[index].url,
+              category: _list[index].categories,
+              onDelete: () => removeItem(index));
+        } else if (hasDate && _list.length >= firstPageSize) {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: Text('nothing more to load!')),
+          );
+        }
       },
     );
   }
@@ -96,6 +112,16 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
     }
     if (_controller.offset <= _controller.position.minScrollExtent &&
         !_controller.position.outOfRange) {}
+  }
+
+  checkIfHasData() {
+    if (widget.screenName == HomeScreenState) {
+      hasDate = linksBloc.isUserHasData;
+    } else if (widget.screenName == SearchWidgetState) {
+      hasDate = linksBloc.isSearchHasDate;
+    } else {
+      hasDate = linksBloc.isCategoryHasDate;
+    }
   }
 
   void removeItem(int index) {

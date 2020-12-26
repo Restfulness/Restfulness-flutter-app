@@ -72,7 +72,6 @@ class SocialUserLinksWidgetState extends State<SocialUserLinksWidget> {
   }
 
   Widget buildBody(LinksBloc bloc) {
-
     return StreamBuilder(
       stream: bloc.socialLinks,
       builder: (context, snapshot) {
@@ -84,26 +83,39 @@ class SocialUserLinksWidgetState extends State<SocialUserLinksWidget> {
             ),
           );
         }
-        if(snapshot.hasData){
+        if (snapshot.hasData) {
           _list = snapshot.data;
         }
+
         return ListView.builder(
           controller: _controller,
-          itemCount: _list.length,
+          itemCount: _list.length + 1,
           itemBuilder: (context, int index) {
-            LinkModel linkModel = _list[index];
+            if (index < _list.length) {
+              LinkModel linkModel = _list[index];
 
-            if (widget.preview) {
-              return SocialLinkPreviewWidget(
-                id: linkModel.id,
-                url: linkModel.url,
-                category: linkModel.categories,
+              if (widget.preview) {
+                return SocialLinkPreviewWidget(
+                  id: linkModel.id,
+                  url: linkModel.url,
+                  category: linkModel.categories,
+                );
+              } else {
+                return SocialLinkSimpleWidget(
+                  id: linkModel.id,
+                  url: linkModel.url,
+                  category: linkModel.categories,
+                );
+              }
+            } else if (bloc.isSocialUserHasData) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 32.0),
+                child: Center(child: CircularProgressIndicator()),
               );
             } else {
-              return SocialLinkSimpleWidget(
-                id: linkModel.id,
-                url: linkModel.url,
-                category: linkModel.categories,
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 32.0),
+                child: Center(child: Text('nothing more to load!')),
               );
             }
           },
@@ -118,7 +130,6 @@ class SocialUserLinksWidgetState extends State<SocialUserLinksWidget> {
       setState(() {
         page += 1;
       });
-    print('end');
       linkBloc.fetchSocialUserLinks(
           widget.userId, DateTime.now(), page, pageSize);
 

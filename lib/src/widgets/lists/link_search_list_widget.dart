@@ -57,6 +57,8 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
   int page;
   int pageSize;
 
+  bool hasDate = false;
+
   @override
   void initState() {
     super.initState();
@@ -249,30 +251,48 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
   Widget build(BuildContext context) {
     linkBloc = LinksProvider.of(context);
 
+    checkIfHasData();
+
     double _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
     return SingleChildScrollView(
       controller: _controller,
       physics: AlwaysScrollableScrollPhysics(),
-      child: Container(
-        height: _totalHeight < (MediaQuery.of(context).size.height - 190)
-            ? (MediaQuery.of(context).size.height - 190)
-            : _totalHeight,
-        child: Stack(
-          children: <Widget>[
-            //Person Card List
-            buildCardList(context),
-            // Animation Icons
-            IconAnimation(
-              leftPosition: -27.0,
-              topPosition: (iconsTopPositionData - 100.0),
-              rightAnimationStart: rightPositionData,
-              firstIconAnimationStart: firstIconAnimationStartData,
-              secondIconAnimationStart: secondIconAnimationStartData,
-              thirdIconAnimationStart: thirdIconAnimationStartData,
+      child: Column(
+        children: [
+          Container(
+            height: _totalHeight < (MediaQuery.of(context).size.height - 190)
+                ? (MediaQuery.of(context).size.height - 190)
+                : _totalHeight,
+            child: Stack(
+              children: <Widget>[
+                //Person Card List
+                buildCardList(context),
+                // Animation Icons
+                IconAnimation(
+                  leftPosition: -27.0,
+                  topPosition: (iconsTopPositionData - 100.0),
+                  rightAnimationStart: rightPositionData,
+                  firstIconAnimationStart: firstIconAnimationStartData,
+                  secondIconAnimationStart: secondIconAnimationStartData,
+                  thirdIconAnimationStart: thirdIconAnimationStartData,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          hasDate
+              ? Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: CircularProgressIndicator()),
+          )
+              : Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: Text('nothing more to load!')),
+          ),
+          SizedBox(
+            height: 30,
+          )
+        ],
       ),
     );
   }
@@ -290,6 +310,11 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     if (_controller.offset <= _controller.position.minScrollExtent &&
         !_controller.position.outOfRange) {}
   }
+
+  checkIfHasData() {
+      hasDate = linkBloc.isSearchHasDate;
+  }
+
   Container buildCardList(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 0.0, bottom: 30),

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:restfulness/src/blocs/social/social_bloc.dart';
 import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:restfulness/src/models/social_model.dart';
@@ -64,16 +65,31 @@ class SocialListWidgetState extends State<SocialListWidget> {
   Widget buildList() {
     return ListView.builder(
       controller: _controller,
-      itemCount: _list.length,
+      itemCount: _list.length + 1 ,
       itemBuilder: (context, int index) {
-        SocialModel user = _list[index];
 
-        return SocialUserWidget(
-          userId: user.userId,
-          username: user.username,
-          totalLinks: user.totalLinks,
-          lastUpdate: user.lastUpdate,
-        );
+        if (index < _list.length) {
+          SocialModel user = _list[index];
+
+          return SocialUserWidget(
+            userId: user.userId,
+            username: user.username,
+            totalLinks: user.totalLinks,
+            lastUpdate: user.lastUpdate,
+          );
+        } else if (socialBloc.isSocialHasData && _list.length >= firstPageSize) {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(child: Text('nothing more to load!')),
+          );
+        }
+
+
       },
     );
   }

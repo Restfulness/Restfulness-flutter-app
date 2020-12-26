@@ -13,6 +13,8 @@ class SocialBloc {
 
   List<SocialModel> savedSocialListCard = new List();
 
+  bool isSocialHasData = false;
+
   DateTime saveDate ;
 
   fetchSocial({DateTime date, int page , int pageSize }) async {
@@ -28,10 +30,10 @@ class SocialBloc {
           savedSocialListCard.add(element);
         }
       });
-
+      isSocialHasData = true;
       _social.sink.add(savedSocialListCard);
     } catch (e) {
-
+      isSocialHasData = false;
       if (JsonUtils.isValidJSONString(e.toString())) {
         _social.sink.addError(json.decode(e.toString())["msg"]);
       } else {
