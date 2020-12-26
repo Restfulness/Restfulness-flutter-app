@@ -108,10 +108,10 @@ class Repository {
   }
 
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required int id, DateTime date}) async {
+      {@required int id, DateTime date, int page, int pageSize}) async {
     UserModel user = await authorizationDbProvider.currentUser();
     final links = linkSources[1]
-        .fetchSocialUsersLinks(token: user.accessToken, id: id, date: date);
+        .fetchSocialUsersLinks(token: user.accessToken, id: id, date: date,page: page,pageSize: pageSize);
 
     return links;
   }
@@ -245,7 +245,7 @@ abstract class LinkSource {
       {List<String> category, int id, @required String token});
 
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required int id, @required String token, DateTime date});
+      {@required int id, @required String token, DateTime date, int page, int pageSize});
 }
 
 abstract class LinkCache {

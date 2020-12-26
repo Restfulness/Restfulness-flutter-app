@@ -189,6 +189,7 @@ class _MainScreenState extends State<MainScreen> {
       linkBloc.resetSearch();
     }
     if (index == socialIndex) {
+      socialBloc.resetSocial();
       socialBloc.fetchSocial(page: firstPage, pageSize: firstPageSize);
       ;
     } else {

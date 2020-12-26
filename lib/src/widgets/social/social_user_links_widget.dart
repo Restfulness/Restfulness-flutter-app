@@ -9,17 +9,18 @@ import 'package:restfulness/src/widgets/social/social_link_simple_widget.dart';
 
 import '../../../constants.dart';
 
-class SocialUserLinks extends StatefulWidget {
+class SocialUserLinksWidget extends StatefulWidget {
+  final int userId;
   final String username;
   final bool preview;
 
-  SocialUserLinks({this.username, this.preview});
+  SocialUserLinksWidget({this.userId, this.username, this.preview});
 
-  SocialUserLinksState createState() => SocialUserLinksState();
+  SocialUserLinksWidgetState createState() => SocialUserLinksWidgetState();
 }
 
-class SocialUserLinksState extends State<SocialUserLinks> {
-
+class SocialUserLinksWidgetState extends State<SocialUserLinksWidget> {
+  List<dynamic> _list = new List<dynamic>();
 
   ScrollController _controller;
 
@@ -28,11 +29,11 @@ class SocialUserLinksState extends State<SocialUserLinks> {
   int page;
   int pageSize;
 
-
   @override
   void initState() {
     super.initState();
 
+    _list = [];
 
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
@@ -43,7 +44,7 @@ class SocialUserLinksState extends State<SocialUserLinks> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = LinksProvider.of(context);
+    linkBloc = LinksProvider.of(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -65,16 +66,17 @@ class SocialUserLinksState extends State<SocialUserLinks> {
           ),
           brightness: Brightness.light,
         ),
-        body: buildBody(bloc),
+        body: buildBody(linkBloc),
       ),
     );
   }
 
   Widget buildBody(LinksBloc bloc) {
+
     return StreamBuilder(
       stream: bloc.socialLinks,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData && _list.length == 0) {
           return SizedBox(
             height: MediaQuery.of(context).size.height / 1.3,
             child: Center(
@@ -82,10 +84,14 @@ class SocialUserLinksState extends State<SocialUserLinks> {
             ),
           );
         }
+        if(snapshot.hasData){
+          _list = snapshot.data;
+        }
         return ListView.builder(
-          itemCount: snapshot.data.length,
+          controller: _controller,
+          itemCount: _list.length,
           itemBuilder: (context, int index) {
-            LinkModel linkModel = snapshot.data[index];
+            LinkModel linkModel = _list[index];
 
             if (widget.preview) {
               return SocialLinkPreviewWidget(
@@ -107,17 +113,17 @@ class SocialUserLinksState extends State<SocialUserLinks> {
   }
 
   _scrollListener() {
-
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-
       setState(() {
         page += 1;
       });
+    print('end');
+      linkBloc.fetchSocialUserLinks(
+          widget.userId, DateTime.now(), page, pageSize);
 
-
+      if (_controller.offset <= _controller.position.minScrollExtent &&
+          !_controller.position.outOfRange) {}
     }
-    if (_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {}
   }
 }

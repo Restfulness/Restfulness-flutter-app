@@ -88,7 +88,7 @@ class LinkDBProvider implements LinkSource, LinkCache {
   }
 
   @override
-  Future<List<LinkModel>> fetchSocialUsersLinks({int id, String token ,DateTime date}) {
+  Future<List<LinkModel>> fetchSocialUsersLinks({int id, String token ,DateTime date, int page, int pageSize}) {
     return null;
   }
 }

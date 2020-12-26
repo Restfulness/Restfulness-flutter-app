@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/helpers/time_ago_since_date.dart';
-import 'package:restfulness/src/widgets/social/social_user_links.dart';
+import 'package:restfulness/src/widgets/social/social_user_links_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SocialUserWidget extends StatelessWidget {
@@ -23,13 +23,16 @@ class SocialUserWidget extends StatelessWidget {
       child: InkWell(
         onTap: () {
           _readPreviewSwitch().then((value) {
-            DateTime date = DateTime.parse(lastUpdate);
+            linkBloc.restSocialList();
+            DateTime date =
+                DateTime.parse(lastUpdate); // FIXME: what date should be?
             linkBloc.fetchSocialUserLinks(
-                userId, date);
+                userId, date, firstPage, firstPageSize);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SocialUserLinks(
+                    builder: (context) => SocialUserLinksWidget(
+                          userId: userId,
                           username: username,
                           preview: value,
                         ))).then((context) {
@@ -48,7 +51,7 @@ class SocialUserWidget extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(20),
                 child: RotationTransition(
-                  turns: new AlwaysStoppedAnimation( -45 / 360),
+                  turns: new AlwaysStoppedAnimation(-45 / 360),
                   child: Container(
                     width: 30,
                     height: double.infinity,
@@ -95,7 +98,6 @@ class SocialUserWidget extends StatelessWidget {
       ),
     );
   }
-
 
   Future<bool> _readPreviewSwitch() async {
     final prefs = await SharedPreferences.getInstance();

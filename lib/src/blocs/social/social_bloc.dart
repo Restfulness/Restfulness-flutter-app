@@ -40,6 +40,11 @@ class SocialBloc {
     }
   }
 
+  resetSocial(){
+    savedSocialListCard = [];
+    _social.sink.add(savedSocialListCard);
+  }
+
   dispose() {
     _social.close();
   }

@@ -36,6 +36,7 @@ class LinksBloc {
   List<LinkModel> savedListCard = new List();
   List<SearchLinkModel> savedCategoryListCard = new List();
   List<SearchLinkModel> searchListCard = new List();
+  List<LinkModel> savedSocialUserLinkListCard = new List();
 
   fetchLinks(int page, int pageSize) async {
     try {
@@ -93,10 +94,19 @@ class LinksBloc {
     }
   }
 
-  fetchSocialUserLinks(int id, DateTime date) async {
+  fetchSocialUserLinks(int id, DateTime date, int page, int pageSize) async {
     try {
-      final ids = await _repository.fetchSocialUsersLinks(id: id, date: date);
-      _fetchSocialUsersLinks.sink.add(ids);
+      final ids = await _repository.fetchSocialUsersLinks(id: id, date: date,page: page,pageSize: pageSize);
+
+      ids.forEach((element) {
+        if ((savedSocialUserLinkListCard.singleWhere((link) => link.id == element.id,
+            orElse: () => null)) ==
+            null) {
+          savedSocialUserLinkListCard.add(element);
+        }
+      });
+
+      _fetchSocialUsersLinks.sink.add(savedSocialUserLinkListCard);
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
         _fetchSocialUsersLinks.sink.addError(json.decode(e.toString())["msg"]);
@@ -185,6 +195,7 @@ class LinksBloc {
   }
 
   restSocialList() {
-    _fetchSocialUsersLinks.add([]);
+    savedSocialUserLinkListCard = [];
+    _fetchSocialUsersLinks.add(savedSocialUserLinkListCard);
   }
 }

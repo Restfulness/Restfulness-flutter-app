@@ -126,7 +126,7 @@ class LinkApiProvider implements LinkSource {
 
   @override
   Future<List<LinkModel>> fetchSocialUsersLinks(
-      {@required String token, int id, DateTime date}) async {
+      {@required String token, int id, DateTime date , int page, int pageSize}) async {
     List<LinkModel> links = new List<LinkModel>();
 
     final DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
@@ -138,7 +138,8 @@ class LinkApiProvider implements LinkSource {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      body: <String, dynamic>{'date_from': formatted},
+      body: <String, dynamic>{},
+      queryParameters: createQueryString(page, pageSize),
     );
 
     for (var link in response) {
