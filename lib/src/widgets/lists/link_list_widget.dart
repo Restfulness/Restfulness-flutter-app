@@ -279,21 +279,28 @@ class LinkListWidgetState extends State<LinkListWidget>
                     ],
                   ),
                 ),
-          hasDate && _list.length >= firstPageSize
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32.0),
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              : Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32.0),
-                  child: Center(child: Text('nothing more to load!')),
-                ),
+          showListIndicator(),
           SizedBox(
             height: 30,
           )
         ],
       ),
     );
+  }
+
+  Widget showListIndicator() {
+    if (hasDate && _list.length >= firstPageSize) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 32.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    } else if (!hasDate && _list.length >= firstPageSize) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 32.0),
+        child: Center(child: Text('nothing more to load!')),
+      );
+    }
+    return Container();
   }
 
   _scrollListener() {
