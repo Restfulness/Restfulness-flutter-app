@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () async {
           ServerConfigDialogWidget configDialog =
               new ServerConfigDialogWidget();
-          configDialog.saveConfiguration(context, this.runtimeType);
+          configDialog.saveConfiguration(context);
         },
       ),
     );

@@ -6,8 +6,8 @@ import 'package:restfulness/src/widgets/toast_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServerConfigDialogWidget {
-  void saveConfiguration(BuildContext context , Type screenName) {
-    showAlertDialog(context,screenName).then((value) async {
+  void saveConfiguration(BuildContext context ) {
+    showAlertDialog(context).then((value) async {
       if (value != null) {
         String url = value["url"];
         final port = value["port"];
@@ -36,7 +36,7 @@ class ServerConfigDialogWidget {
     });
   }
 
-  Future<Map<String, dynamic>> showAlertDialog(BuildContext context, Type screenName) {
+  Future<Map<String, dynamic>> showAlertDialog(BuildContext context) {
     TextEditingController urlController = new TextEditingController();
     TextEditingController portController = new TextEditingController();
     return showDialog(
@@ -69,7 +69,7 @@ class ServerConfigDialogWidget {
                   toMap["port"] = 443;
                   Navigator.of(context).pop(toMap);
 
-                  goToLoginScreen(context,screenName);
+                  goToLoginScreen(context);
                 },
               ),
               MaterialButton(
@@ -92,7 +92,7 @@ class ServerConfigDialogWidget {
 
                   Navigator.of(context).pop(toMap);
 
-                  goToLoginScreen(context,screenName);
+                  goToLoginScreen(context);
                 },
               ),
             ],
@@ -109,8 +109,9 @@ class ServerConfigDialogWidget {
         }
         String address = snapshot.data;
         Uri myUri = Uri.parse(address);
-        urlController.text = myUri.host;
-        return urlField(urlController, myUri.host);
+        String fullAddress = '${myUri.scheme}://${myUri.host}';
+        urlController.text = fullAddress;
+        return urlField(urlController, fullAddress);
       },
     );
   }
@@ -184,14 +185,12 @@ class ServerConfigDialogWidget {
     return isSaved;
   }
 
-  void goToLoginScreen(BuildContext context, Type screenName){
+  void goToLoginScreen(BuildContext context){
 
-    if(screenName != LoginScreen ){
       Repository repository = new Repository() ;
       repository.clearUserCache();
       repository.clearLinkCache();
       _redirectToPage(context, LoginScreen());
-    }
   }
 
   Future<void> _redirectToPage(BuildContext context, Widget page) async {

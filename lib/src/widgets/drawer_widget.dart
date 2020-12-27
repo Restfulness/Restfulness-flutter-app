@@ -30,7 +30,7 @@ class DrawerWidget extends StatelessWidget{
               onTap: ()  {
                 ServerConfigDialogWidget configDialog =
                 new ServerConfigDialogWidget();
-                 configDialog.saveConfiguration(context,this.runtimeType);
+                 configDialog.saveConfiguration(context);
 
               },
 
