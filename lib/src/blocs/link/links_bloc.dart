@@ -195,7 +195,8 @@ class LinksBloc {
   }
 
   resetLinks() {
-    _fetchLinks.add([]);
+    savedListCard = [];
+    _fetchLinks.add(savedListCard);
   }
 
   resetSearch() {
