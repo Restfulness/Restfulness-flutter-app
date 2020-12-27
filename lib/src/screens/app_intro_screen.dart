@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:restfulness/src/screens/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

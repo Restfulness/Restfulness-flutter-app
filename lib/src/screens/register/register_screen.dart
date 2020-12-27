@@ -72,11 +72,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget usernameField(AuthBloc bloc) {
     return StreamBuilder(
-      stream: bloc.usernameSignUp,
+      stream: bloc.emailSignUp,
       builder: (context, snapshot) {
         return TextField(
           onChanged: (newValue) {
-            bloc.changeUsernameSignUp(newValue);
+            bloc.changeEmailSignUp(newValue);
           },
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -86,8 +86,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(30))),
-            labelText: "Username",
-            hintText: "example",
+            labelText: "Email",
+            hintText: "example@email.com",
             errorText: snapshot.error,
           ),
           autofocus: false,

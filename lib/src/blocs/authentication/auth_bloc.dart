@@ -18,40 +18,40 @@ import 'auth_validator.dart';
 class AuthBloc extends Object with AuthValidator {
   final _repository = new Repository();
 
-  final _usernameLogin = BehaviorSubject<String>();
+  final _emailLogin = BehaviorSubject<String>();
   final _passwordLogin = BehaviorSubject<String>();
 
-  final _usernameSignUp = BehaviorSubject<String>();
+  final _emailSignUp = BehaviorSubject<String>();
   final _passwordSignUp = BehaviorSubject<String>();
 
   // Stream
-  Observable<String> get usernameLogin => _usernameLogin.stream;
+  Observable<String> get emailLogin => _emailLogin.stream;
 
   Observable<String> get passwordLogin => _passwordLogin.stream;
 
   Observable<bool> get submitButtonLogin =>
-      Observable.combineLatest2(usernameLogin, passwordLogin, (e, p) => true);
+      Observable.combineLatest2(emailLogin, passwordLogin, (e, p) => true);
 
-  Observable<String> get usernameSignUp =>
-      _usernameSignUp.stream.transform(validUsername);
+  Observable<String> get emailSignUp =>
+      _emailSignUp.stream.transform(validEmail);
 
   Observable<String> get passwordSignUp =>
       _passwordSignUp.stream.transform(validPassword);
 
   Observable<bool> get submitButtonSignUp =>
-      Observable.combineLatest2(usernameSignUp, passwordSignUp, (e, p) => true);
+      Observable.combineLatest2(emailSignUp, passwordSignUp, (e, p) => true);
 
   // Sink
-  Function(String) get changeUsernameLogin => _usernameLogin.sink.add;
+  Function(String) get changeEmailLogin => _emailLogin.sink.add;
 
   Function(String) get changePasswordLogin => _passwordLogin.sink.add;
 
-  Function(String) get changeUsernameSignUp => _usernameSignUp.sink.add;
+  Function(String) get changeEmailSignUp => _emailSignUp.sink.add;
 
   Function(String) get changePasswordSignUp => _passwordSignUp.sink.add;
 
   submitLogin(BuildContext context) async {
-    final validUsername = _usernameLogin.value.toLowerCase();
+    final validEmail = _emailLogin.value.toLowerCase();
     final validPassword = _passwordLogin.value;
 
     /// login
@@ -59,7 +59,7 @@ class AuthBloc extends Object with AuthValidator {
     await user.initializationAuth;
 
     try {
-      final response = await user.login(validUsername, validPassword);
+      final response = await user.login(validEmail, validPassword);
       if (response.accessToken.isNotEmpty) {
         goToMainScreen(context);
       }
@@ -73,19 +73,19 @@ class AuthBloc extends Object with AuthValidator {
   }
 
   submitRegister(BuildContext context) async {
-    final validUsername = _usernameSignUp.value.toLowerCase();
+    final validEmail = _emailSignUp.value.toLowerCase();
     final validPassword = _passwordSignUp.value;
 
     /// Sign-up  TODO refactor signUp after Restfulness api changed. because we need first register and then use login method
     AuthorizationApiProvider userSignUp = new AuthorizationApiProvider();
 
     try {
-      final response = await userSignUp.signUp(validUsername, validPassword);
+      final response = await userSignUp.signUp(validEmail, validPassword);
       if (response.username.isNotEmpty) {
         Repository user = new Repository();
         await user.initializationAuth;
 
-        final response = await user.login(validUsername, validPassword);
+        final response = await user.login(validEmail, validPassword);
         if (response.accessToken.isNotEmpty) {
           goToMainScreen(context);
         }
@@ -149,9 +149,9 @@ class AuthBloc extends Object with AuthValidator {
   }
 
   dispose() {
-    _usernameLogin.close();
+    _emailLogin.close();
     _passwordLogin.close();
-    _usernameSignUp.close();
+    _emailSignUp.close();
     _passwordSignUp.close();
   }
 }

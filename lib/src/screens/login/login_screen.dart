@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(margin: EdgeInsets.only(top: 30.0)),
                       buildTitle(),
                       Container(margin: EdgeInsets.only(top: 30.0)),
-                      usernameField(bloc),
+                      emailField(bloc),
                       Container(margin: EdgeInsets.only(top: 10.0)),
                       passwordField(bloc),
                       Container(margin: EdgeInsets.only(top: 10.0)),
@@ -115,13 +115,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget usernameField(AuthBloc bloc) {
+  Widget emailField(AuthBloc bloc) {
     return StreamBuilder(
-      stream: bloc.usernameLogin,
+      stream: bloc.emailLogin,
       builder: (context, snapshot) {
         return TextField(
           onChanged: (newValue) {
-            bloc.changeUsernameLogin(newValue);
+            bloc.changeEmailLogin(newValue);
           },
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -131,8 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(30))),
-            labelText: "Username",
-            hintText: "example",
+            labelText: "Email",
+            hintText: "example@email.com",
             errorText: snapshot.error,
           ),
           autofocus: false,
