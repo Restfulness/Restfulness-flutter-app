@@ -23,5 +23,40 @@ Make sure you are implemented [Restfulness-core-api](https://github.com/Restfuln
       values: AppValues(apiBaseUrl: 'http://localhost:5000'));
 ```
 __NOTE:__ In the Login screen you can configure your server address by taping on the __Gear__ icon :gear: on the top right.
+## Signing the app
+To publish on the Play Store, you need to give your app a digital signature. Use the following instructions to sign your app.
+##### Create a keystore
+You can create one by running the following at the command line:
+On Mac/Linux, use the following command:
+```
+keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+```
+On Windows, use the following command:
+```
+keytool -genkey -v -keystore c:\Users\USER_NAME\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
+```
+change __USER_NAME__ to your username
+##### Reference the keystore from the app
+Create a file named __<app dir>/android/key.properties__ that contains a reference to your keystore:
+```
+storePassword=<password from previous step>
+keyPassword=<password from previous step>
+keyAlias=key
+storeFile=<location of the key store file, such as /Users/<user name>/key.jks>
+```
+##### Configure signing in gradle
+
+Configure signing for your app by editing the __<app dir>/android/app/build.gradle__ file.
+
+Go to this line and change __.debug__ to __.release__
+```
+ buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+```
+
+For more information, you can check this link [Build and release an Android app](https://flutter.dev/docs/deployment/android)
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
