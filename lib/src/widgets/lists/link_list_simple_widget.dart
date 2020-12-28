@@ -85,12 +85,13 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
             padding: EdgeInsets.symmetric(vertical: 32.0),
             child: Center(child: CircularProgressIndicator()),
           );
-        } else {
+        } else if (!hasDate && _list.length >= firstPageSize) {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 32.0),
             child: Center(child: Text('nothing more to load!')),
           );
         }
+        return Container();
       },
     );
   }

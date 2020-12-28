@@ -12,7 +12,6 @@ import '../category_widget.dart';
 class LinkSearchListWidget extends StatefulWidget {
   const LinkSearchListWidget({Key key, this.searchWord}) : super(key: key);
 
-
   final String searchWord;
 
   @override
@@ -21,7 +20,6 @@ class LinkSearchListWidget extends StatefulWidget {
 
 class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     with SingleTickerProviderStateMixin {
-
   ScrollController _controller;
 
   List<SearchLinkModel> listCardMessage;
@@ -76,7 +74,6 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
 
     this.page = firstPage;
     this.pageSize = firstPageSize;
-
   }
 
   // Card List
@@ -127,7 +124,7 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
       );
 
       setState(() {});
-    }else {
+    } else {
       _list.clear();
     }
   }
@@ -280,15 +277,7 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
               ],
             ),
           ),
-          hasDate
-              ? Padding(
-            padding: EdgeInsets.symmetric(vertical: 32.0),
-            child: Center(child: CircularProgressIndicator()),
-          )
-              : Padding(
-            padding: EdgeInsets.symmetric(vertical: 32.0),
-            child: Center(child: Text('nothing more to load!')),
-          ),
+          showListIndicator(),
           SizedBox(
             height: 30,
           )
@@ -297,22 +286,35 @@ class LinkSearchListWidgetScreen extends State<LinkSearchListWidget>
     );
   }
 
-  _scrollListener() {
+  Widget showListIndicator() {
+    if (hasDate && _list.length >= firstPageSize) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 32.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    } else if (!hasDate && _list.length >= firstPageSize) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 32.0),
+        child: Center(child: Text('nothing more to load!')),
+      );
+    }
+    return Container();
+  }
 
+  _scrollListener() {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-
       setState(() {
         page += 1;
       });
-      linkBloc.searchLinks(widget.searchWord,page,pageSize);
+      linkBloc.searchLinks(widget.searchWord, page, pageSize);
     }
     if (_controller.offset <= _controller.position.minScrollExtent &&
         !_controller.position.outOfRange) {}
   }
 
   checkIfHasData() {
-      hasDate = linkBloc.isSearchHasDate;
+    hasDate = linkBloc.isSearchHasDate;
   }
 
   Container buildCardList(BuildContext context) {

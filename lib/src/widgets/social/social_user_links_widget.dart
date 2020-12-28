@@ -107,17 +107,18 @@ class SocialUserLinksWidgetState extends State<SocialUserLinksWidget> {
                   category: linkModel.categories,
                 );
               }
-            } else if (bloc.isSocialUserHasData) {
+            } else if (bloc.isSocialUserHasData && _list.length >= firstPageSize) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 32.0),
                 child: Center(child: CircularProgressIndicator()),
               );
-            } else {
+            } else if (!bloc.isSocialUserHasData && _list.length >= firstPageSize) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 32.0),
                 child: Center(child: Text('nothing more to load!')),
               );
             }
+            return Container();
           },
         );
       },

@@ -77,19 +77,20 @@ class SocialListWidgetState extends State<SocialListWidget> {
             totalLinks: user.totalLinks,
             lastUpdate: user.lastUpdate,
           );
-        } else if (socialBloc.isSocialHasData && _list.length >= firstPageSize) {
+        } else if (socialBloc.isSocialHasData &&
+            _list.length >= firstPageSize) {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 32.0),
             child: Center(child: CircularProgressIndicator()),
           );
-        } else {
+        } else if (!socialBloc.isSocialHasData &&
+            _list.length >= firstPageSize) {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 32.0),
             child: Center(child: Text('nothing more to load!')),
           );
         }
-
-
+        return Container();
       },
     );
   }

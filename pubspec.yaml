@@ -46,6 +46,7 @@ dependencies:
   jwt_decoder: ^1.0.3
   receive_sharing_intent: ^1.4.2
   flutter_datetime_picker: ^1.4.0
+  introduction_screen: ^1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,12 @@ flutter:
    - assets/images/signup_bottom.png
    - assets/images/default.png
    - assets/icons/restApi.png
+   - assets/intro/img1.png
+   - assets/intro/img2.png
+   - assets/intro/img3.png
+   - assets/intro/img4.png
+   - assets/intro/img5.png
+   - assets/intro/animation1.gif
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

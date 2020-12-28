@@ -1,12 +1,13 @@
 import 'dart:async';
 
 class AuthValidator {
-  final validUsername = StreamTransformer<String, String>.fromHandlers(
-      handleData: (username, sink) {
-    if (username.length > 3) {
-      sink.add(username);
+  final validEmail = StreamTransformer<String, String>.fromHandlers(
+      handleData: (email, sink) {
+        bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+    if (emailValid) {
+      sink.add(email);
     } else {
-      sink.addError("Username must be at least 4 character");
+      sink.addError("Enter valid email");
     }
   });
 
