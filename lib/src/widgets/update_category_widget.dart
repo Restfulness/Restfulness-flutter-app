@@ -70,7 +70,7 @@ class UpdateCategoryWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Text('You can add more categories by adding space',style: TextStyle(fontSize: 12,color: Colors.grey),),
+                Text('You can add more categories by separating via space',style: TextStyle(fontSize: 12,color: Colors.grey),),
               ],
             ),
             actions: [
