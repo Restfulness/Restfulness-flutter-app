@@ -1,6 +1,6 @@
 # Reatfulness Flutter
 
-Sample application for Restfulness API calling in flutter
+Sample application for Restfulness API in flutter
 
 # How to Use
 #### Step 1:
@@ -13,9 +13,9 @@ Go to project root and execute the following command in console to get the requi
 ```bash
 flutter pub get 
 ```
-And if your are using Andriod Studio go to __pubspec.yaml__ file and click on __Pub get__. after that you're good to go!
+And if your are using Andriod Studio go to __pubspec.yaml__ file and click on __Pub get__. after that, you're good to go!
 ## Usage
-Make sure you are implemented [Restfulness-core-api](https://github.com/Restfulness/Restfulness-core-api) and the server is running, then go to __main.dart__ and change __AppConfig__. if your server not running on localhost change __apiBaseUrl__ to your server IP
+Make sure [Restfulness-core-api](https://github.com/Restfulness/Restfulness-core-api) is running on your infrastructure, then go to __main.dart__ and change __AppConfig__. if your server is not running on localhost change __apiBaseUrl__ to your server IP
 ```dart
    AppConfig(
       flavor: Flavor.DEV,
@@ -26,16 +26,17 @@ __NOTE:__ In the Login screen you can configure your server address by taping on
 ## Signing the app
 To publish on the Play Store, you need to give your app a digital signature. Use the following instructions to sign your app.
 ##### Create a keystore
-You can create one by running the following at the command line:
+You can create one key by running the following steps.
+
 On Mac/Linux, use the following command:
 ```
 keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
 ```
-On Windows, use the following command:
+On Windows:
 ```
 keytool -genkey -v -keystore c:\Users\USER_NAME\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
 ```
-change __USER_NAME__ to your username
+change __USER_NAME__ to the desierd one.
 ##### Reference the keystore from the app
 Create a file named __<app dir>/android/key.properties__ that contains a reference to your keystore:
 ```
@@ -46,7 +47,7 @@ storeFile=<location of the key store file, such as /Users/<user name>/key.jks>
 ```
 ##### Configure signing in gradle
 
-Configure signing for your app by editing the __<app dir>/android/app/build.gradle__ file.
+Configure signing mode for your app by editing the __<app dir>/android/app/build.gradle__ file.
 
 Go to this line and change __.debug__ to __.release__
 ```
