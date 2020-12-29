@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
@@ -55,9 +56,10 @@ class LinkPreviewWidget extends StatelessWidget {
                   Container(
                     width: 120,
                     height: double.infinity,
-                    child: Image.network(
+                    child: ExtendedImage.network(
                       info.image,
                       fit: BoxFit.cover,
+                      cache: true,
                     ),
                   ),
                 if (info.image == '')
