@@ -67,7 +67,8 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final bloc = LinksProvider.of(context);
     if (_sharedText != '') {
-      addLinkController.text = _getUrlFromString(_sharedText);
+      addLinkShare(bloc);
+      //addLinkController.text = _getUrlFromString(_sharedText);
     }
     return Column(
       children: [
@@ -222,7 +223,6 @@ class HomeScreenState extends State<HomeScreen> {
             this.runtimeType);
           }
         }
-
         if (isPreview) {
           _keyPreviewList.currentState.setCardList(snapshot.data);
           return LinkListWidget(key: _keyPreviewList,screenName:
@@ -248,7 +248,40 @@ class HomeScreenState extends State<HomeScreen> {
         url?.startsWith('https://') == true) {
       return url;
     } else {
-      return 'http://$url';
+      return 'https://$url';
+    }
+  }
+
+  void addLinkShare(LinksBloc bloc) async {
+    if (_getUrlFromString(_sharedText) != '') {
+
+      List<String> tags = new List<String>();
+      tags.add("untagged");
+
+      Repository repository = new Repository();
+      await repository.initializationLink;
+      try {
+        final id = await repository.insertLink(
+            tags, _validateUrl(_getUrlFromString(_sharedText)));
+
+        if (id != null) {
+
+          bloc.fetchLinkById(id);
+
+          ToastContext(context, "Link successfully added ", true);
+
+          // get new categories if we have new one
+          final categoriesBloc = CategoriesProvider.of(context);
+          categoriesBloc.fetchCategories();
+
+        }
+      } catch (e) {
+        if (JsonUtils.isValidJSONString(e.toString())) {
+          ToastContext(context, json.decode(e.toString())["msg"], false);
+        } else {
+          ToastContext(context, "Unexpected server error", false);
+        }
+      }
     }
   }
 

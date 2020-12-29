@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
@@ -6,6 +7,8 @@ import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
+import 'package:restfulness/src/widgets/tutorial/link_tutorial_dialog_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LinkListWidget extends StatefulWidget {
   const LinkListWidget({Key key, @required this.screenName, this.categoryId})
@@ -81,7 +84,6 @@ class LinkListWidgetState extends State<LinkListWidget>
         topPosition = listCard.indexOf(card) == 0
             ? topPosition
             : (topPosition + cardHeight);
-
         return CardTileWidget(
           key: GlobalKey(),
           urlId: card.id,
@@ -265,8 +267,17 @@ class LinkListWidgetState extends State<LinkListWidget>
                           : _totalHeight,
                   child: Stack(
                     children: <Widget>[
-                      // Card List
-                      buildCardList(context),
+                      InkWell(
+                          onTap: () {
+                            _readLinkTutorial().then((value) {
+                              if (!value) {
+                                LinkTutorialDialogWidget linkTutorial =
+                                    new LinkTutorialDialogWidget();
+                                linkTutorial.showTutorial(context);
+                              }
+                            });
+                          },
+                          child: buildCardList(context)),
                       // Animation Icons
                       IconAnimation(
                         leftPosition: -27.0,
@@ -286,6 +297,14 @@ class LinkListWidgetState extends State<LinkListWidget>
         ],
       ),
     );
+  }
+
+  checkIfHasData() {
+    if (widget.screenName == HomeScreenState) {
+      hasDate = linkBloc.isUserHasData;
+    } else {
+      hasDate = linkBloc.isCategoryHasDate;
+    }
   }
 
   Widget showListIndicator() {
@@ -320,12 +339,11 @@ class LinkListWidgetState extends State<LinkListWidget>
         !_controller.position.outOfRange) {}
   }
 
-  checkIfHasData() {
-    if (widget.screenName == HomeScreenState) {
-      hasDate = linkBloc.isUserHasData;
-    } else {
-      hasDate = linkBloc.isCategoryHasDate;
-    }
+  Future<bool> _readLinkTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'linkTutorial';
+    final value = prefs.getBool(key) ?? false;
+    return value;
   }
 
   Container buildCardList(BuildContext context) {

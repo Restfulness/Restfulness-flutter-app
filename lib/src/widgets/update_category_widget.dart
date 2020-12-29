@@ -63,9 +63,14 @@ class UpdateCategoryWidget {
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
             ),
-            content: Row(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Expanded(child: _buildCategoryField(context,categoryController)),
+                 _buildCategoryField(context,categoryController),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('You can add more categories by adding space',style: TextStyle(fontSize: 12,color: Colors.grey),),
               ],
             ),
             actions: [
