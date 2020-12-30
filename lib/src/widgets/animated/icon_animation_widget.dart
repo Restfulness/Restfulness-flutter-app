@@ -57,7 +57,7 @@ class _IconAnimationState extends State<IconAnimation>
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration(milliseconds: 200),
         to: Duration(milliseconds: 300),
-        tag: 'upload')
+        tag: 'open')
         .animate(_sequenceAnimationController);
     _sequenceAnimationController.addListener(() {
       setState(() {});
@@ -136,7 +136,7 @@ class _IconAnimationState extends State<IconAnimation>
       setState(() {
         _firstAnimationValueX = _sequenceAnimation['star'].value;
         _secondAnimationValueX = _sequenceAnimation['trash'].value;
-        _thirdAnimationValueX = _sequenceAnimation['upload'].value;
+        _thirdAnimationValueX = _sequenceAnimation['open'].value;
       });
 
       // Share Icon Animation
@@ -192,7 +192,7 @@ class _IconAnimationState extends State<IconAnimation>
         _rightAnimationIsCompleted = false;
         _firstAnimationValueX = _sequenceAnimation['star'].value;
         _secondAnimationValueX = _sequenceAnimation['trash'].value;
-        _thirdAnimationValueX = _sequenceAnimation['upload'].value;
+        _thirdAnimationValueX = _sequenceAnimation['open'].value;
       });
     }
 
@@ -294,7 +294,7 @@ class _IconAnimationState extends State<IconAnimation>
                 width: _iconsCircleSize,
                 height: _iconsCircleSize,
                 child: Icon(
-                  MdiIcons.openInApp,
+                  MdiIcons.earth,
                   size: _whiteIconSize,
                   color: Colors.white,
                 ),

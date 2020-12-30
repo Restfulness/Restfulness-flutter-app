@@ -104,8 +104,6 @@ class AuthBloc extends Object with AuthValidator {
     final linkBloc = LinksProvider.of(context);
     final categoriesBloc = CategoriesProvider.of(context);
     final socialBloc = SocialProvider.of(context);
-
-
     linkBloc.fetchLinks(firstPage,firstPageSize);
     categoriesBloc.fetchCategories();
 

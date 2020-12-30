@@ -42,7 +42,7 @@ class _SettingPublicSwitchState extends State<SettingPublicSwitch> {
             Padding(
               padding: EdgeInsets.all(18),
               child: Text(
-                "Public links",
+                "Make your links public",
                 style: TextStyle(
                   fontSize: 15.0,
                 ),
