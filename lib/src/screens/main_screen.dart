@@ -234,12 +234,12 @@ class _MainScreenState extends State<MainScreen> {
             color: Colors.black,
           ),
           children: <TextSpan>[
-            TextSpan(text: 'You are using the demo URL which is '),
+            TextSpan(text: 'You are using the demo server which is '),
             TextSpan(
                 text: 'api.restfulness.app, ',
                 style: new TextStyle(fontWeight: FontWeight.bold)),
             TextSpan(
-                text: 'if you want to set a new URL please go to the settings'),
+                text: 'if you want to set a new server please go to the settings'),
           ],
         ),
       ),

@@ -8,6 +8,6 @@ void main() {
   AppConfig(
       flavor: Flavor.DEV,
       color: primaryColor,
-      values: AppValues(apiBaseUrl: 'http://localhost:5000'));
+      values: AppValues(apiBaseUrl: 'https://api.restfulness.app'));
   runApp(App());
 }
