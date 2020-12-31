@@ -64,8 +64,8 @@ class _AppIntroScreenState extends State<AppIntroScreen> {
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Control your links",
-          body: "You have two options to control your links, by going to settings you can turn on/off the preview",
+          title: "Swipe to the right",
+          body: "Here you have three options including deleting, sharing, or opening the desired link",
           image: Align(
             child: Column(
               children: [
@@ -78,8 +78,8 @@ class _AppIntroScreenState extends State<AppIntroScreen> {
           decoration: pageDecoration,
         ),
         PageViewModel(
-          title: "Update categories",
-          body: "By Clicking on plus or hashtag you can update your category",
+          title: "Control your links view mode",
+          body: "By going to the settings you can turn on/off the preview mode",
           image: Align(
             child: Column(
               children: [
