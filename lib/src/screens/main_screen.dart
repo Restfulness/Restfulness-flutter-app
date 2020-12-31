@@ -7,6 +7,7 @@ import 'package:restfulness/src/blocs/link/links_bloc.dart';
 import 'package:restfulness/src/blocs/link/links_provider.dart';
 import 'package:restfulness/src/blocs/social/social_bloc.dart';
 import 'package:restfulness/src/blocs/social/social_provider.dart';
+import 'package:restfulness/src/config/app_config.dart';
 import 'package:restfulness/src/helpers/social_date_picker.dart';
 import 'package:restfulness/src/screens/search_screen.dart';
 import 'package:restfulness/src/screens/settings_screen.dart';
@@ -15,6 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import 'home_screen.dart';
+
+String baseUrl = AppConfig.instance.values.apiBaseUrl;
 
 class MainScreen extends StatefulWidget {
   @override
@@ -51,10 +54,16 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _title = "Home";
 
-    _readDemo().then((value) {
-      setState(() {
-        isDemo = value;
-      });
+    _readUrl().then((value) {
+      if (value != "") {
+        baseUrl = value;
+      }
+      if (baseUrl.contains("api.restfulness.app")) {
+        isDemo = true;
+      } else {
+        isDemo = false;
+      }
+      setState(() {});
     });
   }
 
@@ -200,11 +209,11 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  Future<bool> _readDemo() async {
+  Future<String> _readUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'demo';
-    final isSaved = prefs.getBool(key) ?? false;
-    return isSaved;
+    final key = 'urlAddress';
+    final value = prefs.getString(key) ?? '';
+    return value;
   }
 
   Future<bool> _deletePickedDate() async {
@@ -239,7 +248,8 @@ class _MainScreenState extends State<MainScreen> {
                 text: 'api.restfulness.app, ',
                 style: new TextStyle(fontWeight: FontWeight.bold)),
             TextSpan(
-                text: 'if you want to set a new server please go to the settings'),
+                text:
+                    'if you want to set a new server please go to the settings'),
           ],
         ),
       ),
