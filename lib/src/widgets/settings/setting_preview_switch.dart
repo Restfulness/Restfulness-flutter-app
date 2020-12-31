@@ -35,7 +35,7 @@ class _SettingPreviewSwitchState extends State<SettingPreviewSwitch> {
             Padding(
               padding: EdgeInsets.all(18),
               child: Text(
-                "Set on/off links preview",
+                "Set on or off links preview",
                 style: TextStyle(
                   fontSize: 15.0,
                 ),

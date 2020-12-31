@@ -79,7 +79,7 @@ class _AppIntroScreenState extends State<AppIntroScreen> {
         ),
         PageViewModel(
           title: "Control your links view mode",
-          body: "By going to the settings you can turn on/off the preview mode",
+          body: "By going to the settings you can turn on or off the preview mode",
           image: Align(
             child: Column(
               children: [
