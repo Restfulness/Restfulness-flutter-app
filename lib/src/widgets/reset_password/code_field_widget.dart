@@ -96,7 +96,7 @@ class CodeFieldWidgetState extends State<CodeFieldWidget> {
             }
           });
           FocusScope.of(context).unfocus();
-          bloc.verifyCode(widget.hashData, int.parse(codeController.text));
+          bloc.verifyCode(widget.hashData, int.parse(codeController.text.replaceAll(new RegExp(r"\s+"), "")));
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
