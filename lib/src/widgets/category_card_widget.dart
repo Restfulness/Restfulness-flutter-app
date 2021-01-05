@@ -34,15 +34,19 @@ class CategoryCardWidget extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 15.0,
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child:  Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                  ),
                 ),
               ),
+              left: 20,
             ),
+
           ],
         ),
       ),
