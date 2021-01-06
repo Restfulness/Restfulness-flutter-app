@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:package_info/package_info.dart';
+import 'package:restfulness/src/widgets/server_config_dialog_widget.dart';
 
-class LoginBackground extends StatelessWidget {
+import '../../../constants.dart';
+
+class LoginBackground extends StatefulWidget {
   final Widget child;
+
   const LoginBackground({
     Key key,
     @required this.child,
   }) : super(key: key);
+
+  @override
+  _LoginBackgroundState createState() => _LoginBackgroundState();
+}
+
+class _LoginBackgroundState extends State<LoginBackground> {
+
+  PackageInfo _packageInfo = PackageInfo(
+    version: 'Unknown',
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +61,46 @@ class LoginBackground extends StatelessWidget {
               width: size.width * 0.4,
             ),
           ),
-          child,
+          widget.child,
+          Positioned(
+            child: createGearButton(context),
+            top: 30,
+            right: 10,
+          ),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                'v${_packageInfo.version}',
+                style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
+              ),
+            ),
+            bottom: 15,
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget createGearButton(BuildContext context) {
+    return ButtonTheme(
+      minWidth: 1,
+      height: 40.0,
+      child: FlatButton(
+        child: Icon(
+          MdiIcons.cogOutline,
+          color: primaryColor,
+        ),
+        shape: CircleBorder(),
+        color: Colors.transparent,
+        onPressed: () async {
+          ServerConfigDialogWidget configDialog =
+              new ServerConfigDialogWidget();
+          configDialog.saveConfiguration(context);
+        },
       ),
     );
   }

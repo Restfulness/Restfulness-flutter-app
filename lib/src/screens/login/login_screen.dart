@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:package_info/package_info.dart';
 import 'package:restfulness/src/blocs/authentication/auth_bloc.dart';
 import 'package:restfulness/src/blocs/authentication/auth_provider.dart';
 import 'package:restfulness/src/blocs/reset_password/reset_password_provider.dart';
@@ -16,23 +15,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  PackageInfo _packageInfo = PackageInfo(
-    version: 'Unknown',
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    _initPackageInfo();
-  }
-
-  Future<void> _initPackageInfo() async {
-    final PackageInfo info = await PackageInfo.fromPlatform();
-    setState(() {
-      _packageInfo = info;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final bloc = AuthProvider.of(context);
@@ -56,51 +38,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
   buildBody(AuthBloc bloc, BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
-    String version = '';
 
     return LoginBackground(
-        child: SingleChildScrollView(
-            reverse: true,
-            padding: EdgeInsets.only(bottom: bottom),
-            child: Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(30.0, 0, 30, 30),
-                  child: Column(
-                    children: [
-                      Container(margin: EdgeInsets.only(top: 60.0)),
-                      Image.asset("assets/icons/restApi.png", width: 100),
-                      Container(margin: EdgeInsets.only(top: 30.0)),
-                      buildTitle(),
-                      Container(margin: EdgeInsets.only(top: 30.0)),
-                      emailField(bloc),
-                      Container(margin: EdgeInsets.only(top: 10.0)),
-                      passwordField(bloc),
-                      Container(margin: EdgeInsets.only(top: 10.0)),
-                      buildLoginButton(bloc),
-                      Container(margin: EdgeInsets.only(top: 20.0)),
-                      signUpAndForgotPassButtons(context, bloc),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  child: createGearButton(context),
-                  top: 1,
-                  right: 10,
-                ),
-                Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child:  Text(
-                        'v${_packageInfo.version}',
-                        style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold , fontSize: 12),
-
-                      ),
-                  ),
-
-                ),
-              ],
-            )));
+      child: SingleChildScrollView(
+        reverse: true,
+        padding: EdgeInsets.only(bottom: bottom),
+        child: Container(
+          margin: EdgeInsets.fromLTRB(30.0, 0, 30, 0),
+          child: Column(
+            children: [
+              Container(margin: EdgeInsets.only(top: 60.0)),
+              Image.asset("assets/icons/restApi.png", width: 100),
+              Container(margin: EdgeInsets.only(top: 30.0)),
+              buildTitle(),
+              Container(margin: EdgeInsets.only(top: 30.0)),
+              emailField(bloc),
+              Container(margin: EdgeInsets.only(top: 10.0)),
+              passwordField(bloc),
+              Container(margin: EdgeInsets.only(top: 10.0)),
+              buildLoginButton(bloc),
+              Container(margin: EdgeInsets.only(top: 10.0)),
+              signUpAndForgotPassButtons(context, bloc),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildTitle() {
