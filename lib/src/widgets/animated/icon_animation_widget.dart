@@ -47,12 +47,12 @@ class _IconAnimationState extends State<IconAnimation>
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration.zero,
         to: Duration(milliseconds: 80),
-        tag: 'star')
+        tag: 'trash')
         .addAnimatable(
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration(milliseconds: 80),
         to: Duration(milliseconds: 200),
-        tag: 'trash')
+        tag: 'share')
         .addAnimatable(
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration(milliseconds: 200),
@@ -134,8 +134,8 @@ class _IconAnimationState extends State<IconAnimation>
     if (widget.rightAnimationStart) {
       _sequenceAnimationController.forward();
       setState(() {
-        _firstAnimationValueX = _sequenceAnimation['star'].value;
-        _secondAnimationValueX = _sequenceAnimation['trash'].value;
+        _firstAnimationValueX = _sequenceAnimation['trash'].value;
+        _secondAnimationValueX = _sequenceAnimation['share'].value;
         _thirdAnimationValueX = _sequenceAnimation['open'].value;
       });
 
@@ -190,8 +190,8 @@ class _IconAnimationState extends State<IconAnimation>
       _thirdIconPositionAnimationController.reset();
       setState(() {
         _rightAnimationIsCompleted = false;
-        _firstAnimationValueX = _sequenceAnimation['star'].value;
-        _secondAnimationValueX = _sequenceAnimation['trash'].value;
+        _firstAnimationValueX = _sequenceAnimation['trash'].value;
+        _secondAnimationValueX = _sequenceAnimation['share'].value;
         _thirdAnimationValueX = _sequenceAnimation['open'].value;
       });
     }
@@ -228,11 +228,11 @@ class _IconAnimationState extends State<IconAnimation>
               left: _firstAnimationValueX,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.red,
                   borderRadius: BorderRadius.circular(15.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.2),
+                      color: Colors.red.withOpacity(0.2),
                       blurRadius: 2.0,
                       spreadRadius: 1.5,
                       offset: Offset.zero,
@@ -242,7 +242,7 @@ class _IconAnimationState extends State<IconAnimation>
                 width: _iconsCircleSize,
                 height: _iconsCircleSize,
                 child: Icon(
-                  MdiIcons.shareVariantOutline,
+                  MdiIcons.trashCanOutline,
                   size: _whiteIconSize,
                   color: Colors.white,
                 ),
@@ -254,11 +254,11 @@ class _IconAnimationState extends State<IconAnimation>
               left: _secondAnimationValueX,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.blue,
                   borderRadius: BorderRadius.circular(15.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.blue.withOpacity(0.2),
                       blurRadius: 1.0,
                       spreadRadius: 1.5,
                       offset: Offset.zero,
@@ -268,7 +268,7 @@ class _IconAnimationState extends State<IconAnimation>
                 width: _iconsCircleSize,
                 height: _iconsCircleSize,
                 child: Icon(
-                    MdiIcons.trashCanOutline,
+                    MdiIcons.shareVariantOutline,
                   size: _whiteIconSize,
                   color: Colors.white,
                 ),

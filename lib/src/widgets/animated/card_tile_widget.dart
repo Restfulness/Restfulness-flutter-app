@@ -292,7 +292,7 @@ class _CardTileWidgetState extends State<CardTileWidget>
               controller3.forward();
               setState(() {
                 selectedState = 2;
-                remove = true;
+                share = true;
                 backX = true;
               });
             }
@@ -348,9 +348,9 @@ class _CardTileWidgetState extends State<CardTileWidget>
                 (position.delta.dy > 1.2 && position.delta.dy < 2.2)) {
               controller2.forward();
               setState(() {
-                remove = false;
+                remove = true;
                 openUrl = false;
-                share = true;
+                share = false;
                 selectedState = 1;
                 animationTop = false;
                 yAnimationAxis = 1;
