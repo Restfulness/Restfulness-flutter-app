@@ -7,6 +7,7 @@ import 'package:restfulness/src/models/link_model.dart';
 import 'package:restfulness/src/screens/home_screen.dart';
 import 'package:restfulness/src/widgets/animated/card_tile_widget.dart';
 import 'package:restfulness/src/widgets/animated/icon_animation_widget.dart';
+import 'package:restfulness/src/widgets/refresh.dart';
 import 'package:restfulness/src/widgets/tutorial/link_tutorial_dialog_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -248,55 +249,74 @@ class LinkListWidgetState extends State<LinkListWidget>
 
     _totalHeight =
         (topPosition + _headingBarHeight + _buttonBarHeight + cardHeight + 25);
-    return SingleChildScrollView(
-      controller: _controller,
-      physics: AlwaysScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          _list == null
-              ? SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.3,
-                  child: Center(
-                    child: CircularProgressIndicator(),
+    return refresh(
+       SingleChildScrollView(
+        controller: _controller,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            _list == null
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.3,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(
+                    height: _totalHeight <
+                            (MediaQuery.of(context).size.height - 190)
+                        ? (MediaQuery.of(context).size.height - 190)
+                        : _totalHeight,
+                    child: Stack(
+                      children: <Widget>[
+                        InkWell(
+                            onTap: () {
+                              _readLinkTutorial().then((value) {
+                                if (!value) {
+                                  LinkTutorialDialogWidget linkTutorial =
+                                      new LinkTutorialDialogWidget();
+                                  linkTutorial.showTutorial(context);
+                                }
+                              });
+                            },
+                            child: buildCardList(context)),
+                        // Animation Icons
+                        IconAnimation(
+                          leftPosition: -27.0,
+                          topPosition: (iconsTopPositionData - 100.0),
+                          rightAnimationStart: rightPositionData,
+                          firstIconAnimationStart: firstIconAnimationStartData,
+                          secondIconAnimationStart:
+                              secondIconAnimationStartData,
+                          thirdIconAnimationStart: thirdIconAnimationStartData,
+                        ),
+                      ],
+                    ),
                   ),
-                )
-              : Container(
-                  height:
-                      _totalHeight < (MediaQuery.of(context).size.height - 190)
-                          ? (MediaQuery.of(context).size.height - 190)
-                          : _totalHeight,
-                  child: Stack(
-                    children: <Widget>[
-                      InkWell(
-                          onTap: () {
-                            _readLinkTutorial().then((value) {
-                              if (!value) {
-                                LinkTutorialDialogWidget linkTutorial =
-                                    new LinkTutorialDialogWidget();
-                                linkTutorial.showTutorial(context);
-                              }
-                            });
-                          },
-                          child: buildCardList(context)),
-                      // Animation Icons
-                      IconAnimation(
-                        leftPosition: -27.0,
-                        topPosition: (iconsTopPositionData - 100.0),
-                        rightAnimationStart: rightPositionData,
-                        firstIconAnimationStart: firstIconAnimationStartData,
-                        secondIconAnimationStart: secondIconAnimationStartData,
-                        thirdIconAnimationStart: thirdIconAnimationStartData,
-                      ),
-                    ],
-                  ),
-                ),
-          showListIndicator(),
-          SizedBox(
-            height: 30,
-          )
-        ],
+            showListIndicator(),
+            SizedBox(
+              height: 30,
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  Widget refresh(Widget child) {
+    if (widget.screenName == HomeScreenState) {
+      return RefreshIndicator(
+        color: secondaryTextColor,
+        child: child,
+        onRefresh: () async {
+          linkBloc.resetLinks();
+          page = 0;
+          await linkBloc.fetchLinks(firstPage, firstPageSize);
+        },
+      );
+    } else {
+      return child;
+    }
   }
 
   checkIfHasData() {
