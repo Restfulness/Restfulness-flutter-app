@@ -70,30 +70,48 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
   }
 
   Widget buildList() {
-    return ListView.builder(
-      controller: _controller,
-      itemCount: _list.length + 1,
-      itemBuilder: (context, int index) {
-        if (index < _list.length) {
-          return LinkSimpleWidget(
-              id: _list[index].id,
-              url: _list[index].url,
-              category: _list[index].categories,
-              onDelete: () => removeItem(index));
-        } else if (hasDate && _list.length >= firstPageSize) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 32.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        } else if (!hasDate && _list.length >= firstPageSize) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 32.0),
-            child: Center(child: Text('nothing more to load!')),
-          );
-        }
-        return Container();
-      },
+    return refresh(
+      ListView.builder(
+        controller: _controller,
+        itemCount: _list.length + 1,
+        itemBuilder: (context, int index) {
+          if (index < _list.length) {
+            return LinkSimpleWidget(
+                id: _list[index].id,
+                url: _list[index].url,
+                category: _list[index].categories,
+                onDelete: () => removeItem(index));
+          } else if (hasDate && _list.length >= firstPageSize) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (!hasDate && _list.length >= firstPageSize) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(child: Text('nothing more to load!')),
+            );
+          }
+          return Container();
+        },
+      ),
     );
+  }
+
+  Widget refresh(Widget child) {
+    if (widget.screenName == HomeScreenState) {
+      return RefreshIndicator(
+        color: secondaryTextColor,
+        child: child,
+        onRefresh: () async {
+          linksBloc.resetLinks();
+          page = 0;
+          await linksBloc.fetchLinks(firstPage, firstPageSize);
+        },
+      );
+    } else {
+      return child;
+    }
   }
 
   _scrollListener() {

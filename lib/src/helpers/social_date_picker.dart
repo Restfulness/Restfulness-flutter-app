@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:restfulness/constants.dart';
 import 'package:restfulness/src/blocs/social/social_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,20 +8,25 @@ class SocialDatePicker {
 
   final PickerCallback onDateSelect;
 
-  pickTime(BuildContext context) {
+  pickTime(BuildContext context) async {
     final socialBloc = SocialProvider.of(context);
 
-    DatePicker.showDatePicker(context,
-        theme: DatePickerTheme(
-            doneStyle: TextStyle(color: primaryColor, fontSize: 16)),
-        showTitleActions: true,
-        minTime: DateTime(2020, 1, 1),
-        maxTime: DateTime.now(),
-        onChanged: (date) {}, onConfirm: (date) {
+    DateTime selectedDate = DateTime.now();
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != selectedDate) {
+      selectedDate = picked;
       onDateSelect(true);
-      _savePickedDate(date);
-      socialBloc.fetchSocial(date:date,page: firstPage,pageSize:firstPageSize);
-    }, currentTime: DateTime.now(), locale: LocaleType.en);
+      _savePickedDate(picked);
+      socialBloc.resetSocial();
+      socialBloc.fetchSocial(
+          date: picked, page: firstPage, pageSize: firstPageSize);
+      print(picked);
+    }
   }
 
   Future<bool> _savePickedDate(DateTime date) async {
@@ -32,7 +36,5 @@ class SocialDatePicker {
     return isSaved;
   }
 }
-
-
 
 typedef PickerCallback = void Function(bool done);
