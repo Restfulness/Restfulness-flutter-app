@@ -40,26 +40,28 @@ class SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
     bloc = LinksProvider.of(context);
 
+    double cWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         Align(
           alignment: Alignment.topCenter,
           child: Row(
             children: [
-              Expanded(
-                child: Container(
+            Container(
+            height: 50,
+            width: cWidth * 0.77,
                   margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
                   child: Material(
                     elevation: 6.0,
                     borderRadius: BorderRadius.circular(30),
                     child: _buildSearchField(context, bloc),
                   ),
-                  height: 50,
-                  width: double.infinity,
                 ),
-                flex: 4,
-              ),
-              Expanded(
+
+              Container(
+                height: 50,
+                width: cWidth * 0.20,
                 child: MaterialButton(
                   onPressed: () async {
                     bloc.resetSearch();
@@ -78,7 +80,6 @@ class SearchWidgetState extends State<SearchWidget> {
                   padding: EdgeInsets.all(14.0),
                   shape: CircleBorder(),
                 ),
-                flex: 1,
               ),
             ],
           ),
