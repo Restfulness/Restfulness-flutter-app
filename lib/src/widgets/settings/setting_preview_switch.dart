@@ -10,7 +10,6 @@ class SettingPreviewSwitch extends StatefulWidget {
 class _SettingPreviewSwitchState extends State<SettingPreviewSwitch> {
   bool isSwitched = true;
 
-
   @override
   void initState() {
     super.initState();
@@ -41,17 +40,20 @@ class _SettingPreviewSwitchState extends State<SettingPreviewSwitch> {
                 ),
               ),
             ),
-            Positioned(
-              child: Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    _savePreviewSwitch(isSwitched);
-                  });
-                },
-                activeTrackColor: primaryLightColor,
-                activeColor: primaryColor,
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Switch(
+                  value: isSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      isSwitched = value;
+                      _savePreviewSwitch(isSwitched);
+                    });
+                  },
+                  activeTrackColor: primaryLightColor,
+                  activeColor: primaryColor,
+                ),
               ),
               right: 22,
             ),

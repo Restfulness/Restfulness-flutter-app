@@ -48,17 +48,20 @@ class _SettingPublicSwitchState extends State<SettingPublicSwitch> {
                 ),
               ),
             ),
-            Positioned(
-              child: Switch(
-                value: isSwitched,
-                onChanged: (isChanged) {
-                  setState(()  {
-                    isSwitched = isChanged;
-                    updatePublicSetting(isChanged);
-                  });
-                },
-                activeTrackColor: primaryLightColor,
-                activeColor: primaryColor,
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Switch(
+                  value: isSwitched,
+                  onChanged: (isChanged) {
+                    setState(() {
+                      isSwitched = isChanged;
+                      updatePublicSetting(isChanged);
+                    });
+                  },
+                  activeTrackColor: primaryLightColor,
+                  activeColor: primaryColor,
+                ),
               ),
               right: 22,
             ),
@@ -68,18 +71,15 @@ class _SettingPublicSwitchState extends State<SettingPublicSwitch> {
     );
   }
 
-  Future updatePublicSetting(bool isChanged) async{
-
+  Future updatePublicSetting(bool isChanged) async {
     try {
-      final msg =
-          await _repository.updatePublicLinksSetting(isChanged);
+      final msg = await _repository.updatePublicLinksSetting(isChanged);
       if (msg.contains("Publicity updated.")) {
         _savePublicSwitch(isSwitched);
       }
     } catch (e) {
       if (JsonUtils.isValidJSONString(e.toString())) {
-        ToastContext(
-            context, json.decode(e.toString())["msg"], false);
+        ToastContext(context, json.decode(e.toString())["msg"], false);
         setState(() {
           isSwitched = !isChanged;
         });

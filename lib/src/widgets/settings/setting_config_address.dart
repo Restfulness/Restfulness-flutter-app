@@ -24,29 +24,32 @@ class SettingConfigAddress extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              child: ButtonTheme(
-                minWidth: 1,
-                height: 1,
-                child: MaterialButton(
-                    onPressed: () {
-                      ServerConfigDialogWidget configDialog =
-                      new ServerConfigDialogWidget();
-                      configDialog.saveConfiguration(context);
-                    },
-                    elevation: 1,
-                    color: primaryLightColor,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        "config",
-                        style: TextStyle(color: Colors.white),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: ButtonTheme(
+                  minWidth: 1,
+                  height: 1,
+                  child: MaterialButton(
+                      onPressed: () {
+                        ServerConfigDialogWidget configDialog =
+                        new ServerConfigDialogWidget();
+                        configDialog.saveConfiguration(context);
+                      },
+                      elevation: 1,
+                      color: primaryLightColor,
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          "config",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    )),
-              ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      )),
+                ),),
+
               right: 10,
             ),
           ],
