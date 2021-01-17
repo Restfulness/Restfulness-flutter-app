@@ -24,13 +24,13 @@ class App extends StatelessWidget {
               builder: (context, widget) => ResponsiveWrapper.builder(
                   BouncingScrollWrapper.builder(context, widget),
                   maxWidth: 1200,
-                  minWidth: 400,
+                  minWidth: 420,
                   defaultScale: true,
                   breakpoints: [
-                    ResponsiveBreakpoint.resize(400, name: MOBILE),
+                    ResponsiveBreakpoint.resize(420, name: MOBILE),
                     ResponsiveBreakpoint.autoScale(800, name: TABLET),
                     ResponsiveBreakpoint.autoScale(1000, name: TABLET),
-                    ResponsiveBreakpoint.autoScale(1200, name: DESKTOP),
+                    ResponsiveBreakpoint.resize(1200, name: DESKTOP),
                   ],
                   background: Container(color: Color(0xFFF5F5F5))),
               title: 'Restfulness',
