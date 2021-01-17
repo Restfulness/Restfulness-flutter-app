@@ -310,7 +310,7 @@ class LinkListWidgetState extends State<LinkListWidget>
         child: child,
         onRefresh: () async {
           linkBloc.resetLinks();
-          page = 0;
+          page = firstPage;
           await linkBloc.fetchLinks(firstPage, firstPageSize);
         },
       );
