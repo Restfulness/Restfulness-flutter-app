@@ -105,7 +105,7 @@ class LinkListSimpleWidgetState extends State<LinkListSimpleWidget> {
         child: child,
         onRefresh: () async {
           linksBloc.resetLinks();
-          page = 0;
+          page = firstPage;
           await linksBloc.fetchLinks(firstPage, firstPageSize);
         },
       );

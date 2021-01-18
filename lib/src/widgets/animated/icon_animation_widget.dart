@@ -52,12 +52,12 @@ class _IconAnimationState extends State<IconAnimation>
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration(milliseconds: 80),
         to: Duration(milliseconds: 200),
-        tag: 'share')
+        tag: 'open')
         .addAnimatable(
         animatable: Tween<double>(begin: 0.0, end: 34.0),
         from: Duration(milliseconds: 200),
         to: Duration(milliseconds: 300),
-        tag: 'open')
+        tag: 'share')
         .animate(_sequenceAnimationController);
     _sequenceAnimationController.addListener(() {
       setState(() {});
@@ -135,8 +135,8 @@ class _IconAnimationState extends State<IconAnimation>
       _sequenceAnimationController.forward();
       setState(() {
         _firstAnimationValueX = _sequenceAnimation['trash'].value;
-        _secondAnimationValueX = _sequenceAnimation['share'].value;
-        _thirdAnimationValueX = _sequenceAnimation['open'].value;
+        _secondAnimationValueX = _sequenceAnimation['open'].value;
+        _thirdAnimationValueX = _sequenceAnimation['share'].value;
       });
 
       // Share Icon Animation
@@ -191,8 +191,8 @@ class _IconAnimationState extends State<IconAnimation>
       setState(() {
         _rightAnimationIsCompleted = false;
         _firstAnimationValueX = _sequenceAnimation['trash'].value;
-        _secondAnimationValueX = _sequenceAnimation['share'].value;
-        _thirdAnimationValueX = _sequenceAnimation['open'].value;
+        _secondAnimationValueX = _sequenceAnimation['open'].value;
+        _thirdAnimationValueX = _sequenceAnimation['share'].value;
       });
     }
 
@@ -254,11 +254,11 @@ class _IconAnimationState extends State<IconAnimation>
               left: _secondAnimationValueX,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.orange,
                   borderRadius: BorderRadius.circular(15.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.2),
+                      color: Colors.orange.withOpacity(0.2),
                       blurRadius: 1.0,
                       spreadRadius: 1.5,
                       offset: Offset.zero,
@@ -268,7 +268,7 @@ class _IconAnimationState extends State<IconAnimation>
                 width: _iconsCircleSize,
                 height: _iconsCircleSize,
                 child: Icon(
-                    MdiIcons.shareVariantOutline,
+                    MdiIcons.earth,
                   size: _whiteIconSize,
                   color: Colors.white,
                 ),
@@ -280,11 +280,11 @@ class _IconAnimationState extends State<IconAnimation>
               left: _thirdAnimationValueX,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.orange,
+                  color: Colors.blue,
                   borderRadius: BorderRadius.circular(15.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withOpacity(0.2),
+                      color: Colors.blue.withOpacity(0.2),
                       blurRadius: 2.0,
                       spreadRadius: 1.5,
                       offset: Offset.zero,
@@ -294,7 +294,7 @@ class _IconAnimationState extends State<IconAnimation>
                 width: _iconsCircleSize,
                 height: _iconsCircleSize,
                 child: Icon(
-                  MdiIcons.earth,
+                  MdiIcons.shareVariantOutline,
                   size: _whiteIconSize,
                   color: Colors.white,
                 ),

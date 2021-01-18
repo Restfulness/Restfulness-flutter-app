@@ -81,24 +81,25 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildAddBar() {
+    double cWidth = MediaQuery.of(context).size.width;
+
     return Align(
       alignment: Alignment.topCenter,
       child: Row(
         children: [
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
-              child: Material(
-                elevation: 6.0,
-                borderRadius: BorderRadius.circular(30),
-                child: _buildAddField(context),
-              ),
-              height: 50,
-              width: double.infinity,
+          Container(
+            height: 50,
+            width: cWidth * 0.77,
+            margin: EdgeInsets.fromLTRB(11, 15, 0, 15),
+            child: Material(
+              elevation: 6.0,
+              borderRadius: BorderRadius.circular(30),
+              child: _buildAddField(context),
             ),
-            flex: 4,
           ),
-          Expanded(
+          Container(
+            height: 50,
+            width: cWidth * 0.20,
             child: MaterialButton(
               onPressed: () async {
                 addLink();
@@ -106,10 +107,9 @@ class HomeScreenState extends State<HomeScreen> {
               elevation: 8.0,
               color: primaryColor,
               child: _buildButtonIcon(),
-              padding: EdgeInsets.all(14.0),
+              padding: EdgeInsets.all(15.0),
               shape: CircleBorder(),
             ),
-            flex: 1,
           ),
         ],
       ),
@@ -216,21 +216,21 @@ class HomeScreenState extends State<HomeScreen> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           if (isPreview) {
-            return LinkListWidget(key: _keyPreviewList ,screenName:
-            this.runtimeType);
+            return LinkListWidget(
+                key: _keyPreviewList, screenName: this.runtimeType);
           } else {
-            return LinkListSimpleWidget(key: _keySimpleList,screenName:
-            this.runtimeType);
+            return LinkListSimpleWidget(
+                key: _keySimpleList, screenName: this.runtimeType);
           }
         }
         if (isPreview) {
           _keyPreviewList.currentState.setCardList(snapshot.data);
-          return LinkListWidget(key: _keyPreviewList,screenName:
-          this.runtimeType);
+          return LinkListWidget(
+              key: _keyPreviewList, screenName: this.runtimeType);
         } else {
           _keySimpleList.currentState.setList(snapshot.data);
-          return LinkListSimpleWidget(key: _keySimpleList,screenName:
-          this.runtimeType);
+          return LinkListSimpleWidget(
+              key: _keySimpleList, screenName: this.runtimeType);
         }
       },
     );
@@ -254,7 +254,6 @@ class HomeScreenState extends State<HomeScreen> {
 
   void addLinkShare(LinksBloc bloc) async {
     if (_getUrlFromString(_sharedText) != '') {
-
       List<String> tags = new List<String>();
       tags.add("untagged");
 
@@ -265,7 +264,6 @@ class HomeScreenState extends State<HomeScreen> {
             tags, _validateUrl(_getUrlFromString(_sharedText)));
 
         if (id != null) {
-
           bloc.fetchLinkById(id);
 
           ToastContext(context, "Link successfully added ", true);
@@ -273,7 +271,6 @@ class HomeScreenState extends State<HomeScreen> {
           // get new categories if we have new one
           final categoriesBloc = CategoriesProvider.of(context);
           categoriesBloc.fetchCategories();
-
         }
       } catch (e) {
         if (JsonUtils.isValidJSONString(e.toString())) {

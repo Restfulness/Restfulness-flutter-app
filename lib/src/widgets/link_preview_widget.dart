@@ -133,24 +133,24 @@ class LinkPreviewWidget extends StatelessWidget {
               ],
             ),
             Positioned(
-              child: ButtonTheme(
-                minWidth: 0.5,
-                height: 0.5,
-                child: MaterialButton(
-                    onPressed: () {
+              child:  ClipOval(
+                child: Material(
+                  color: primaryLightColor, // button color
+                  child: InkWell(
+                    splashColor: secondaryTextColor, // inkwell color
+                    child: SizedBox(width: 25, height: 25, child:Icon(
+                      MdiIcons.plus,
+                      color: Colors.white,
+                    )),
+                    onTap: () {
                       UpdateCategoryWidget update = new UpdateCategoryWidget();
                       update.updateCategory(context, id, category);
                     },
-                    elevation: 1,
-                    color: primaryLightColor,
-                    child: Icon(
-                      MdiIcons.plus,
-                      color: Colors.white,
-                    ),
-                    shape: CircleBorder()),
+                  ),
+                ),
               ),
-              bottom: -4,
-              right: -8,
+              bottom: 5,
+              right: 8,
             )
           ],
         ),
