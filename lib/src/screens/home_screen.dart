@@ -187,8 +187,8 @@ class HomeScreenState extends State<HomeScreen> {
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
         ),
-        height: 25.0,
-        width: 25.0,
+        height: 20.0,
+        width: 20.0,
       );
     } else {
       return Icon(

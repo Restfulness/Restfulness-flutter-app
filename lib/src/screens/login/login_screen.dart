@@ -26,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
         body: Builder(
           builder: (BuildContext context) {
             return buildBody(bloc, context);
