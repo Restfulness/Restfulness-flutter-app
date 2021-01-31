@@ -25,7 +25,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bloc = AuthProvider.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       body: buildBody(bloc, context),
     );
   }

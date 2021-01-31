@@ -95,7 +95,7 @@ class LinkPreviewWidget extends StatelessWidget {
                             padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
                             child: Text(
                               info.description,
-                              maxLines: 3,
+                              maxLines: 2,
                             ),
                           ),
                         ),

@@ -21,7 +21,6 @@ class ForgotPasswordScreen extends StatelessWidget {
     final bloc = AuthProvider.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       body: buildBody(bloc, context),
     );
   }
